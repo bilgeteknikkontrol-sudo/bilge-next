@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #0b1f3a;
+  --color-navy2: #11294d;
+  --color-blue: #1c5fd6;
+  --color-blue-soft: #e7f0ff;
+  --color-accent: #f5a623;
+  --color-accent2: #16c79a;
+  --color-ink: #15233b;
+  --color-muted: #5b6b85;
+  --color-line: #e3e8f0;
+  --color-bgsoft: #f6f9ff;
+
+  --radius-card: 16px;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+:root { color-scheme: light; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: #fff;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mobil menü vs. için küçük yardımcılar */
+.nav-link { @apply text-ink font-semibold text-[.95rem] transition-colors hover:text-blue; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}
