@@ -5,6 +5,8 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ALL_EKIPMAN } from "@/lib/content";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return ALL_EKIPMAN.map((e) => ({ slug: e.slug }));
 }

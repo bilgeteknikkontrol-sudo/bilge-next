@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
-import { readJSON } from "@/lib/store";
-
-type Rapor = {
-  no: string; firma: string; ekipman: string; tarih: string; gecerli: string;
-  durum: "ok" | "warn" | "yeni"; ek: string;
-};
+import { findTeklif } from "@/lib/store";
 
 // Demo sabit kayıtlar ( üretimde DB + ekipnet doğrulamadan gelir)
-const DEMO: Record<string, Rapor> = {
+const DEMO: Record<string, unknown> = {
   "AB0296-2026-0412": { no: "AB0296-2026-0412", firma: "Örnek Sanayi A.Ş.", ekipman: "Kompresör Hava Tankı", tarih: "20.06.2026", gecerli: "20.06.2027", durum: "ok", ek: "AB-0296-M" },
   "AB0296-2025-1180": { no: "AB0296-2025-1180", firma: "Yıldız Makine Ltd.", ekipman: "Forklift", tarih: "10.07.2025", gecerli: "10.07.2026", durum: "warn", ek: "AB-0296-M" },
 };
@@ -18,8 +13,18 @@ export async function GET(req: Request) {
 
   if (DEMO[no]) return NextResponse.json(DEMO[no]);
 
-  const stored = (await readJSON<Rapor>("raporlar.json")).find((r) => r.no.toUpperCase() === no);
-  if (stored) return NextResponse.json(stored);
+  const t = await findTeklif(no);
+  if (t) {
+    return NextResponse.json({
+      no: t.raporNo,
+      firma: t.firma,
+      ekipman: t.ekipmanlar.join(", "),
+      tarih: new Date(t.tarih).toLocaleDateString("tr-TR"),
+      gecerli: t.gecerli,
+      durum: t.durum,
+      ek: t.ek,
+    });
+  }
 
   return NextResponse.json({
     error: "Rapor bulunamadı. Geçerli demo no: AB0296-2026-0412 veya AB0296-2025-1180. Bir teklif oluşturduysanız size iletilen BLG- referansını deneyin.",

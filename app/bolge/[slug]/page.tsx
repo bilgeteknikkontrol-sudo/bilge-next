@@ -5,6 +5,8 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { LOCATIONS } from "@/lib/content";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return LOCATIONS.map((l) => ({ slug: l.slug }));
 }
