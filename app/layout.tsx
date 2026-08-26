@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import { getSettings } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
 
@@ -30,46 +33,78 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: "Bilge Teknik Kontrol",
-  legalName: "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti.",
-  url: "https://bilgekontrol.com",
-  logo: "https://bilgekontrol.com/img/marka/logo.png",
-  image: "https://bilgekontrol.com/img/marka/logo.png",
-  telephone: "+902128725204",
-  email: "info@bilgeteknikkontrol.com",
-  priceRange: "$$",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Yakuplu Mah. 65. Sk. No:35 İç Kapı No:4",
-    addressLocality: "Beylikdüzü",
-    addressRegion: "İstanbul",
-    addressCountry: "TR",
-  },
-  areaServed: "TR",
-  hasCredential: {
-    "@type": "EducationalOccupationalCredential",
-    name: "TÜRKAK Akredite Muayene Kuruluşu",
-    competencyRequired: "TS EN ISO/IEC 17020",
-    identifier: "AB-0296-M",
-  },
-  sameAs: ["https://www.linkedin.com/company/bilgeteknikkontrol"],
+const COLOR_VAR: Record<string, string> = {
+  navy: "--color-navy",
+  navy2: "--color-navy2",
+  blue: "--color-blue",
+  blueSoft: "--color-blue-soft",
+  accent: "--color-accent",
+  accent2: "--color-accent2",
+  amberSoft: "--color-amber-soft",
+  emeraldSoft: "--color-emerald-soft",
+  ink: "--color-ink",
+  muted: "--color-muted",
+  line: "--color-line",
+  bgsoft: "--color-bgsoft",
 };
 
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "Bilge Teknik Kontrol",
-  url: "https://bilgekontrol.com",
-  publisher: { "@type": "Organization", name: "Bilge Teknik Kontrol" },
-};
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  let settings;
+  try {
+    settings = await getSettings();
+  } catch {
+    settings = null;
+  }
+  const colors = settings?.colors ?? {};
+  const fonts = settings?.fonts ?? { hero: "3.5rem", h2: "2.25rem", body: "1rem" };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const cssVars = Object.entries(COLOR_VAR)
+    .map(([k, v]) => (colors[k] ? `${v}:${colors[k]}` : null))
+    .filter(Boolean)
+    .concat([`--fs-hero:${fonts.hero}`, `--fs-h2:${fonts.h2}`, `--fs-body:${fonts.body}`])
+    .join(";");
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: "Bilge Teknik Kontrol",
+    legalName: "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti.",
+    url: "https://bilgekontrol.com",
+    telephone: settings?.phone || "+902128725204",
+    email: settings?.email || "info@bilgeteknikkontrol.com",
+    priceRange: "$$",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: settings?.address || "Yakuplu Mah. 65. Sk. No:35 İç Kapı No:4",
+      addressLocality: "Beylikdüzü",
+      addressRegion: "İstanbul",
+      addressCountry: "TR",
+    },
+    areaServed: "TR",
+    hasCredential: {
+      "@type": "EducationalOccupationalCredential",
+      name: "TÜRKAK Akredite Muayene Kuruluşu",
+      competencyRequired: "TS EN ISO/IEC 17020",
+      identifier: "AB-0296-M",
+    },
+    sameAs: settings?.sameAs?.length ? settings.sameAs : ["https://www.linkedin.com/company/bilgeteknikkontrol"],
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Bilge Teknik Kontrol",
+    url: "https://bilgekontrol.com",
+    publisher: { "@type": "Organization", name: "Bilge Teknik Kontrol" },
+  };
+
   return (
     <html lang="tr" className={inter.variable}>
-      <body>
+      <head>
+        <link rel="icon" href={settings?.favicon || "/icon.svg"} />
+        <style dangerouslySetInnerHTML={{ __html: `:root{${cssVars}}` }} />
+      </head>
+      <body style={{ fontSize: "var(--fs-body)" }}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

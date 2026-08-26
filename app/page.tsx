@@ -1,10 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { KATEGORILER } from "@/lib/data";
-import { EKIPMAN_GORSEL } from "@/lib/images";
-import { REFERANSLAR, EKIP } from "@/lib/site-data";
+import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 const AVANTAJLAR = [
   ["📝", "Online Teklif Sistemi", "Ekipmanınızı seçin, saniyeler içinde ön bilgi ve randevu talebi oluşturun."],
@@ -20,7 +19,33 @@ const SUREC = [
   ["Takip ve Hatırlatma", "Rapor portalı ile bir sonraki kontrol tarihinizde size hatırlatma yapılır."],
 ];
 
-export default function Home() {
+function groupByKategori(items: Equipment[]) {
+  const map = new Map<string, Equipment[]>();
+  for (const e of items) {
+    if (!map.has(e.kategori)) map.set(e.kategori, []);
+    map.get(e.kategori)!.push(e);
+  }
+  return Array.from(map.entries());
+}
+
+export default async function Home() {
+  const settings = await getSettings().catch(() => null);
+  const equipment = await getEquipment().catch(() => []);
+  const kategoriler = groupByKategori(equipment.filter((e) => e.aktif));
+
+  const heroTitle = settings?.heroTitle || "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla";
+  const heroSubtitle =
+    settings?.heroSubtitle ||
+    "Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri periyodik kontrolünü uluslararası geçerli raporlarla belgeliyoruz.";
+  const aboutTitle = settings?.aboutTitle || "2014'ten beri iş güvenliğinin yanında";
+  const aboutText =
+    settings?.aboutText ||
+    "Bilge Teknik Kontrol; iş ekipmanlarının periyodik kontrolünde TÜRKAK akreditasyonuyla (AB-0296-M) bağımsız, tarafsız ve yasal olarak geçerli raporlar sunar.";
+  const ctaTitle = settings?.ctaTitle || "İş Güvenliğinizi Sıraya Koymayın";
+  const ctaText =
+    settings?.ctaText ||
+    "2 dakikada online teklif alın veya yasal sürenizi hesaplayın. TÜRKAK akredite farkıyla tanışın.";
+
   return (
     <>
       <Header />
@@ -30,15 +55,10 @@ export default function Home() {
         <div className="container-x grid items-center gap-10 py-16 lg:grid-cols-[1.1fr_.9fr] lg:py-24">
           <div>
             <span className="chip bg-white/10 text-[#cfe0ff]">🛡️ TÜRKAK Akredite A Tipi Muayene Kuruluşu · AB-0296-M</span>
-            <h1 className="mt-5 text-4xl font-black tracking-tight md:text-5xl">
-              İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla
+            <h1 className="mt-5 font-black tracking-tight md:text-5xl" style={{ fontSize: "var(--fs-hero)", lineHeight: 1.1 }}>
+              {heroTitle}
             </h1>
-            <p className="mt-4 text-lg text-[#c7d6f0]">
-              Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri periyodik kontrolünü
-              uluslararası geçerli raporlarla belgeliyoruz. Rakiplerden farklı olarak;{" "}
-              <b>online teklif</b>, <b>yasal süre hesaplayıcı</b> ve <b>müşteri rapor portalı</b> ile
-              süreci şeffaf yönetiyoruz.
-            </p>
+            <p className="mt-4 text-lg text-[#c7d6f0]">{heroSubtitle}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/teklif" className="btn-primary">Ücretsiz Teklif Al →</Link>
               <Link href="/hesapla" className="btn-ghost border-white/40 text-white hover:bg-white/10 hover:text-white">Süremi Hesapla</Link>
@@ -70,12 +90,8 @@ export default function Home() {
         <div className="container-x grid items-center gap-10 lg:grid-cols-2">
           <div>
             <span className="chip">Kurumsal</span>
-            <h2 className="mt-4 text-3xl font-black text-navy md:text-4xl">2014&apos;ten beri iş güvenliğinin yanında</h2>
-            <p className="mt-4 text-muted">
-              Bilge Teknik Kontrol; iş ekipmanlarının periyodik kontrolünde TÜRKAK akreditasyonuyla
-              (AB-0296-M) bağımsız, tarafsız ve yasal olarak geçerli raporlar sunar. Beylikdüzü / İstanbul
-              merkezli ekibimiz, tüm Türkiye&apos;ye yerinde muayene hizmeti verir.
-            </p>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>{aboutTitle}</h2>
+            <p className="mt-4 text-muted">{aboutText}</p>
             <p className="mt-3 text-muted">
               Amacımız yalnızca bir kontrol belgesi vermek değil; işletmenizin İSG risklerini azaltmak
               ve yasal yükümlülüklerini zamanında karşılamasını sağlamaktır.
@@ -98,37 +114,19 @@ export default function Home() {
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
             <span className="chip">Zorunlu Periyodik Muayeneler</span>
-            <h2 className="mt-4 text-3xl font-black text-navy md:text-4xl">Tüm İş Ekipmanınız Tek Çatı Altında</h2>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>Tüm İş Ekipmanınız Tek Çatı Altında</h2>
             <p className="mt-3 text-muted">TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.</p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {KATEGORILER.map((kat) => {
-              const g = EKIPMAN_GORSEL[kat.ekipmanlar[0].slug];
-              return (
-                <Link key={kat.baslik} href={`/ekipman/${kat.ekipmanlar[0].slug}`} className="group card flex flex-col overflow-hidden transition hover:-translate-y-1">
-                  {g && (
-                    <span className="relative block aspect-[16/9] overflow-hidden bg-bgsoft">
-                      <Image
-                        src={g}
-                        alt=""
-                        aria-hidden
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                        placeholder="blur"
-                      />
-                      <span className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/95 text-xl shadow">{kat.ikon}</span>
-                    </span>
-                  )}
-                  <span className="flex flex-1 flex-col p-6">
-                    <h3 className="text-xl text-navy group-hover:text-blue">{kat.baslik}</h3>
-                    <span className="mt-1 block text-sm text-muted">{kat.ekipmanlar.length} ekipman türü · {kat.ekipmanlar[0].standart} ve ilgili standartlar</span>
-                  </span>
-                </Link>
-              );
-            })}
+            {kategoriler.map(([kat, items]) => (
+              <Link key={kat} href={`/ekipman/${items[0].slug}`} className="group card flex flex-col p-6 transition hover:-translate-y-1">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl text-blue">🛠️</div>
+                <h3 className="text-xl text-navy group-hover:text-blue">{kat}</h3>
+                <p className="mt-1 text-sm text-muted">{items.length} ekipman türü · {items[0].standart} ve ilgili standartlar</p>
+              </Link>
+            ))}
           </div>
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
-            <Link href="/ekipman" className="btn-ghost">Tüm Hizmetleri Gör ({KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0)})</Link>
+          <div className="mt-9 text-center">
             <Link href="/teklif" className="btn-primary">Ekipmanınızı Seçip Teklif Alın</Link>
           </div>
         </div>
@@ -139,7 +137,7 @@ export default function Home() {
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
             <span className="chip">Neden Bilge?</span>
-            <h2 className="mt-4 text-3xl font-black text-navy md:text-4xl">Rakiplerden Ayıran 4 Fark</h2>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>Rakiplerden Ayıran 4 Fark</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {AVANTAJLAR.map(([i, t, d]) => (
@@ -158,7 +156,7 @@ export default function Home() {
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
             <span className="chip">Süreç</span>
-            <h2 className="mt-4 text-3xl font-black text-navy md:text-4xl">4 Adımda Güvenli Kontrol</h2>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>4 Adımda Güvenli Kontrol</h2>
           </div>
           <div className="mx-auto grid max-w-[820px] gap-6 md:grid-cols-2">
             {SUREC.map(([t, d], i) => (
@@ -178,47 +176,11 @@ export default function Home() {
       <section id="referans" className="section">
         <div className="container-x text-center">
           <span className="chip">Referanslarımız</span>
-          <h2 className="mt-4 text-3xl font-black text-navy md:text-4xl">500+ firma bize güveniyor</h2>
+          <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>500+ firma bize güveniyor</h2>
           <p className="mx-auto mt-3 max-w-[640px] text-muted">
             Üretimden lojistiğe, enerjiden kamuya kadar birçok sektörde; periyodik kontrol ve
             akreditasyon raporlarıyla iş ortaklarımızın yasal yükümlülüklerini güvence altına alıyoruz.
           </p>
-
-          <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {REFERANSLAR.map((r) => (
-              <li key={r.name} className="flex h-24 items-center justify-center rounded-xl border border-line bg-white p-4">
-                <Image
-                  src={r.logo}
-                  alt={r.name}
-                  sizes="200px"
-                  className="max-h-14 w-auto object-contain opacity-80 transition hover:opacity-100"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* EKİP */}
-      <section className="section bg-bgsoft">
-        <div className="container-x">
-          <div className="mx-auto mb-10 max-w-[720px] text-center">
-            <span className="chip">Uzman Kadro</span>
-            <h2 className="mt-4 text-3xl font-black text-navy md:text-4xl">Raporunuzun arkasında gerçek mühendisler var</h2>
-            <p className="mt-3 text-muted">
-              Muayeneleriniz, kendi alanında yetkili mühendis kadromuz tarafından yerinde yapılır;
-              rapor bu kişilerin teknik değerlendirmesine dayanır.
-            </p>
-          </div>
-          <div className="mx-auto grid max-w-[820px] gap-5 sm:grid-cols-3">
-            {EKIP.map((u) => (
-              <div key={u.name} className="card p-6 text-center">
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-soft text-2xl">👷</div>
-                <h3 className="text-lg text-navy">{u.name}</h3>
-                <p className="mt-1 text-sm text-muted">{u.title}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -241,8 +203,8 @@ export default function Home() {
       {/* CTA */}
       <section className="bg-gradient-to-br from-navy to-navy2 py-16 text-center text-white">
         <div className="container-x mx-auto max-w-[680px]">
-          <h2 className="text-3xl font-black">İş Güvenliğinizi Sıraya Koymayın</h2>
-          <p className="mt-3 text-[#c7d6f0]">2 dakikada online teklif alın veya yasal sürenizi hesaplayın. TÜRKAK akredite farkıyla tanışın.</p>
+          <h2 className="font-black" style={{ fontSize: "var(--fs-h2)" }}>{ctaTitle}</h2>
+          <p className="mt-3 text-[#c7d6f0]">{ctaText}</p>
           <Link href="/teklif" className="btn-primary mt-5 bg-accent text-navy hover:bg-amber-soft">Hemen Başla →</Link>
         </div>
       </section>

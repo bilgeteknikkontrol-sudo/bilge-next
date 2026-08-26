@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HaritaGomulu from "../components/HaritaGomulu";
 import { KURUM, ADRES_TEK_SATIR, EKIP } from "@/lib/site-data";
 
 export const metadata: Metadata = {
@@ -9,8 +10,6 @@ export const metadata: Metadata = {
   description: `${KURUM.kisaAd} iletişim: ${ADRES_TEK_SATIR}. Telefon ${KURUM.telefon}, e-posta ${KURUM.eposta}. TÜRKAK akredite (${KURUM.akreditasyon}) muayene kuruluşu.`,
   alternates: { canonical: "/iletisim" },
 };
-
-const HARITA = `https://www.google.com/maps?q=${KURUM.geo.lat},${KURUM.geo.lng}&output=embed&z=15`;
 
 export default function IletisimPage() {
   const localBusinessLd = {
@@ -144,25 +143,11 @@ export default function IletisimPage() {
             </div>
           </div>
 
-          <div>
-            <div className="overflow-hidden rounded-card border border-line">
-              <iframe
-                src={HARITA}
-                title={`${KURUM.kisaAd} konum haritası`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="h-[420px] w-full border-0"
-              />
-            </div>
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${KURUM.geo.lat},${KURUM.geo.lng}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-block text-sm font-bold text-blue hover:underline"
-            >
-              Yol tarifi al →
-            </a>
-          </div>
+          <HaritaGomulu
+            lat={KURUM.geo.lat}
+            lng={KURUM.geo.lng}
+            baslik={`${KURUM.kisaAd} konum haritası`}
+          />
         </div>
       </section>
       <Footer />

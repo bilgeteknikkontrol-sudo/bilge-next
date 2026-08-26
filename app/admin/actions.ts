@@ -1,0 +1,248 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { verifyPassword, createSession, destroySession, isAuthenticated } from "@/lib/auth";
+import {
+  saveArticle,
+  deleteArticle,
+  saveEquipment,
+  deleteEquipment,
+  saveLocation,
+  deleteLocation,
+  saveSettings,
+  getSettings,
+  setContent,
+  deleteContent,
+  saveMedia,
+  deleteMedia,
+  defaultSettings,
+  type Article,
+  type Equipment,
+  type Location,
+  type SiteSettings,
+} from "@/lib/cms";
+import { slugify } from "@/lib/content";
+
+function num(v: unknown, d = 0): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : d;
+}
+
+async function guard() {
+  if (!(await isAuthenticated())) throw new Error("Yetkisiz erişim");
+}
+
+export async function loginAction(formData: FormData) {
+  const pw = String(formData.get("password") || "");
+  if (!verifyPassword(pw)) {
+    redirect("/admin/login?error=1");
+  }
+  await createSession();
+  redirect("/admin");
+}
+
+export async function logoutAction() {
+  await destroySession();
+  redirect("/admin/login");
+}
+
+// ---------- ARTICLES ----------
+export async function saveArticleAction(formData: FormData) {
+  await guard();
+  const slugRaw = String(formData.get("slug") || "");
+  const title = String(formData.get("title") || "");
+  const slug = slugRaw.trim() ? slugRaw.trim() : slugify(title) || `makale-${Date.now()}`;
+  const article: Article = {
+    slug,
+    title,
+    description: String(formData.get("description") || ""),
+    category: String(formData.get("category") || "Genel"),
+    date: String(formData.get("date") || new Date().toISOString().slice(0, 10)),
+    readMin: num(formData.get("readMin"), 5),
+    keywords: String(formData.get("keywords") || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    lead: String(formData.get("lead") || "") || undefined,
+    body: String(formData.get("body") || ""),
+    faq: parseFaq(String(formData.get("faq") || "")),
+    aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
+    sira: num(formData.get("sira")),
+  };
+  await saveArticle(article);
+  revalidatePath("/");
+  revalidatePath("/yazilar");
+  redirect("/admin/articles");
+}
+
+export async function deleteArticleAction(formData: FormData) {
+  await guard();
+  const slug = String(formData.get("slug") || "");
+  if (slug) await deleteArticle(slug);
+  revalidatePath("/");
+  revalidatePath("/yazilar");
+}
+
+function parseFaq(text: string) {
+  if (!text.trim()) return [];
+  try {
+    const arr = JSON.parse(text);
+    if (Array.isArray(arr)) return arr;
+  } catch {
+    /* satır satır ayrıştır */
+  }
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const out: { q: string; a: string }[] = [];
+  for (let i = 0; i < lines.length; i += 2) {
+    out.push({ q: lines[i], a: lines[i + 1] || "" });
+  }
+  return out;
+}
+
+// ---------- EQUIPMENT ----------
+export async function saveEquipmentAction(formData: FormData) {
+  await guard();
+  const slugRaw = String(formData.get("slug") || "");
+  const ad = String(formData.get("ad") || "");
+  const slug = slugRaw.trim() ? slugRaw.trim() : slugify(ad) || `ekipman-${Date.now()}`;
+  const e: Equipment = {
+    slug,
+    ad,
+    kategori: String(formData.get("kategori") || "Genel"),
+    standart: String(formData.get("standart") || ""),
+    periyot: num(formData.get("periyot"), 12),
+    periyotNot: String(formData.get("periyotNot") || "") || undefined,
+    aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
+    sira: num(formData.get("sira")),
+  };
+  await saveEquipment(e);
+  revalidatePath("/");
+  revalidatePath("/ekipman");
+  redirect("/admin/equipment");
+}
+
+export async function deleteEquipmentAction(formData: FormData) {
+  await guard();
+  const slug = String(formData.get("slug") || "");
+  if (slug) await deleteEquipment(slug);
+  revalidatePath("/");
+  revalidatePath("/ekipman");
+}
+
+// ---------- LOCATIONS ----------
+export async function saveLocationAction(formData: FormData) {
+  await guard();
+  const slugRaw = String(formData.get("slug") || "");
+  const il = String(formData.get("il") || "");
+  const title = String(formData.get("title") || il);
+  const slug = slugRaw.trim() ? slugRaw.trim() : slugify(title) || `bolge-${Date.now()}`;
+  const l: Location = {
+    slug,
+    il,
+    ilce: String(formData.get("ilce") || "") || undefined,
+    title,
+    description: String(formData.get("description") || ""),
+    intro: String(formData.get("intro") || ""),
+    hizmetler: String(formData.get("hizmetler") || "")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
+    sira: num(formData.get("sira")),
+  };
+  await saveLocation(l);
+  revalidatePath("/");
+  revalidatePath("/bolge");
+  redirect("/admin/locations");
+}
+
+export async function deleteLocationAction(formData: FormData) {
+  await guard();
+  const slug = String(formData.get("slug") || "");
+  if (slug) await deleteLocation(slug);
+  revalidatePath("/");
+  revalidatePath("/bolge");
+}
+
+// ---------- SETTINGS ----------
+export async function saveSettingsAction(formData: FormData) {
+  await guard();
+  const cur = await getSettings().catch(() => defaultSettings());
+  const colors = { ...cur.colors };
+  const fonts = { ...cur.fonts };
+  for (const key of Object.keys(colors)) {
+    const v = formData.get(`color_${key}`);
+    if (v !== null && v !== "") colors[key] = String(v);
+  }
+  for (const key of Object.keys(fonts)) {
+    const v = formData.get(`font_${key}`);
+    if (v !== null && v !== "") fonts[key] = String(v);
+  }
+  const s: SiteSettings = {
+    colors,
+    fonts,
+    logo: String(formData.get("logo") || cur.logo),
+    favicon: String(formData.get("favicon") || cur.favicon),
+    phone: String(formData.get("phone") || cur.phone),
+    email: String(formData.get("email") || cur.email),
+    address: String(formData.get("address") || cur.address),
+    sameAs: String(formData.get("sameAs") || "")
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean),
+    heroTitle: String(formData.get("heroTitle") || cur.heroTitle),
+    heroSubtitle: String(formData.get("heroSubtitle") || cur.heroSubtitle),
+    aboutTitle: String(formData.get("aboutTitle") || cur.aboutTitle),
+    aboutText: String(formData.get("aboutText") || cur.aboutText),
+    ctaTitle: String(formData.get("ctaTitle") || cur.ctaTitle),
+    ctaText: String(formData.get("ctaText") || cur.ctaText),
+  };
+  await saveSettings(s);
+  revalidatePath("/");
+  redirect("/admin/settings");
+}
+
+// ---------- CONTENT ----------
+export async function saveContentAction(formData: FormData) {
+  await guard();
+  const key = String(formData.get("key") || "").trim();
+  const value = String(formData.get("value") || "");
+  if (key) await setContent(key, value);
+  revalidatePath("/");
+  redirect("/admin/content");
+}
+
+// ---------- CONTENT DELETE ----------
+export async function deleteContentAction(formData: FormData) {
+  await guard();
+  const key = String(formData.get("key") || "");
+  if (key) await deleteContent(key);
+  revalidatePath("/");
+  redirect("/admin/content");
+}
+
+// ---------- MEDIA ----------
+export async function saveMediaAction(formData: FormData) {
+  await guard();
+  const name = String(formData.get("name") || "gorsel");
+  const alt = String(formData.get("alt") || "");
+  const url = String(formData.get("url") || "").trim();
+  const file = formData.get("file");
+  let dataUrl: string | null = null;
+  let finalUrl = url;
+  if (file && typeof file === "object" && "arrayBuffer" in file) {
+    const buf = Buffer.from(await (file as File).arrayBuffer());
+    const mime = (file as File).type || "image/png";
+    dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
+    finalUrl = dataUrl;
+  }
+  await saveMedia({ name, url: finalUrl, dataUrl, alt });
+  redirect("/admin/media");
+}
+
+export async function deleteMediaAction(formData: FormData) {
+  await guard();
+  const id = num(formData.get("id"));
+  if (id) await deleteMedia(id);
+}

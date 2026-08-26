@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM, ADRES_TEK_SATIR } from "@/lib/site-data";
+import CerezAyarButonu from "./CerezAyarButonu";
 // Koyu zemin varyanti: logonun lacivert bolumleri beyaza cevrilmis, turuncu korunmus.
 import logoLight from "../../public/img/marka/logo-light.png";
 
@@ -75,6 +76,7 @@ export default function Footer() {
           <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1" aria-label="Yasal">
             <Link href="/kvkk" className="transition hover:text-white">KVKK Aydınlatma Metni</Link>
             <Link href="/cerez-politikasi" className="transition hover:text-white">Çerez Politikası</Link>
+            <CerezAyarButonu />
           </nav>
         </div>
       </div>
