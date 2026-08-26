@@ -40,12 +40,23 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     mainEntityOfPage: `https://bilgekontrol.com/yazilar/${a.slug}`,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://bilgekontrol.com/" },
+      { "@type": "ListItem", position: 2, name: "Bilgi Merkezi", item: "https://bilgekontrol.com/yazilar" },
+      { "@type": "ListItem", position: 3, name: a.title, item: `https://bilgekontrol.com/yazilar/${a.slug}` },
+    ],
+  };
+
   const related = ARTICLES.filter((x) => x.slug !== a.slug).slice(0, 3);
 
   return (
     <>
       <Header />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <article className="py-12">
         <div className="mx-auto max-w-[760px] px-5">
           <nav className="mb-4 text-sm text-muted">

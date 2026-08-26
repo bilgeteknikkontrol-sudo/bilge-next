@@ -45,10 +45,21 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
     url: `https://bilgekontrol.com/ekipman/${e.slug}`,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://bilgekontrol.com/" },
+      { "@type": "ListItem", position: 2, name: "Hizmetler", item: "https://bilgekontrol.com/#hizmetler" },
+      { "@type": "ListItem", position: 3, name: `${e.ad} Periyodik Kontrolü`, item: `https://bilgekontrol.com/ekipman/${e.slug}` },
+    ],
+  };
+
   return (
     <>
       <Header />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <section className="bg-gradient-to-br from-navy to-navy2 py-12 text-white">
         <div className="mx-auto max-w-[1200px] px-5">
           <nav className="mb-3 text-sm text-[#c7d6f0]">

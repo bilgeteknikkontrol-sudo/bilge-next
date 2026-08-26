@@ -41,10 +41,20 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
     url: `https://bilgekontrol.com/bolge/${l.slug}`,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://bilgekontrol.com/" },
+      { "@type": "ListItem", position: 2, name: l.title, item: `https://bilgekontrol.com/bolge/${l.slug}` },
+    ],
+  };
+
   return (
     <>
       <Header />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="mx-auto max-w-[1200px] px-5">
           <span className="inline-flex rounded-full bg-white/10 px-4 py-1.5 text-sm font-bold text-[#cfe0ff]">Hizmet Bölgesi</span>
