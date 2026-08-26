@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ARTICLES } from "@/lib/content";
+import { YAZI_GORSEL } from "@/lib/images";
 
 export const dynamicParams = false;
 
@@ -80,6 +82,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <h1 className="mt-2 text-3xl font-black text-navy md:text-4xl">{a.title}</h1>
           <div className="mt-2 text-sm text-muted">{new Date(a.date).toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" })} · {a.readMin} dk okuma</div>
           {a.lead && <p className="mt-4 text-lg font-medium text-ink">{a.lead}</p>}
+          {YAZI_GORSEL[a.slug] && (
+            <Image
+              src={YAZI_GORSEL[a.slug]}
+              alt=""
+              aria-hidden
+              priority
+              sizes="(max-width: 800px) 100vw, 760px"
+              className="mt-6 h-auto w-full rounded-card border border-line object-cover"
+              placeholder="blur"
+            />
+          )}
 
           <div className="mt-6 leading-relaxed text-ink [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-navy [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-accent [&_blockquote]:bg-bgsoft [&_blockquote]:p-4 [&_blockquote]:rounded-r-lg [&_a]:text-blue [&_a]:underline [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-line [&_th]:bg-bgsoft [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-line [&_td]:p-2" dangerouslySetInnerHTML={{ __html: a.body }} />
 

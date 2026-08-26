@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ALL_EKIPMAN, ARTICLES } from "@/lib/content";
 import { EKIPMAN_ICERIK } from "@/lib/ekipman-icerik";
+import { EKIPMAN_GORSEL, EKIPMAN_FOTO } from "@/lib/images";
 
 export const dynamicParams = false;
 
@@ -29,6 +31,8 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
   const e = ALL_EKIPMAN.find((x) => x.slug === slug);
   if (!e) notFound();
   const icerik = EKIPMAN_ICERIK[e.slug];
+  const gorsel = EKIPMAN_GORSEL[e.slug];
+  const foto = EKIPMAN_FOTO[e.slug];
 
   const periyotText = e.periyot === 1 ? "Aylık çalıştırma testi (imalatçı talimatı)" : `Yılda en az 1 kez (${e.periyot} ayda bir)`;
   const related = ALL_EKIPMAN.filter((x) => x.kategori === e.kategori && x.slug !== e.slug);
@@ -89,10 +93,25 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
-      <section className="bg-gradient-to-br from-navy to-navy2 py-12 text-white">
-        <div className="mx-auto max-w-[1200px] px-5">
+      <section className="relative overflow-hidden bg-gradient-to-br from-navy to-navy2 text-white">
+        {gorsel && (
+          <>
+            <Image
+              src={gorsel}
+              alt=""
+              aria-hidden
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover opacity-25"
+              placeholder="blur"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/85 to-navy/40" />
+          </>
+        )}
+        <div className="relative mx-auto max-w-[1200px] px-5 py-12">
           <nav className="mb-3 text-sm text-[#c7d6f0]">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <Link href="/#hizmetler" className="hover:text-white">Hizmetler</Link> / <span>{e.kategori}</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <Link href="/ekipman" className="hover:text-white">Hizmetler</Link> / <span>{e.kategori}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">{e.ad}</h1>
           <p className="mt-2 text-[#c7d6f0]">TÜRKAK akredite (AB-0296-M) · {e.standart}</p>
@@ -105,6 +124,20 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
             {icerik ? (
               <>
                 <p className="text-lg font-medium text-ink">{icerik.lead}</p>
+                {gorsel && (
+                  <figure className="mt-6">
+                    <Image
+                      src={gorsel}
+                      alt={`${e.ad} — yerinde muayene`}
+                      sizes="(max-width: 1024px) 100vw, 700px"
+                      className="h-auto w-full rounded-card border border-line object-cover"
+                      placeholder="blur"
+                    />
+                    <figcaption className="mt-2 text-xs text-muted">
+                      {e.ad} · TÜRKAK akredite (AB-0296-M) muayene kapsamında
+                    </figcaption>
+                  </figure>
+                )}
                 <div
                   className="prose-content mt-6 leading-relaxed text-ink [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-navy [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:my-3 [&_a]:text-blue [&_a]:underline [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-line [&_th]:bg-bgsoft [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-line [&_td]:p-2"
                   dangerouslySetInnerHTML={{ __html: icerik.bodyHtml }}
@@ -178,6 +211,15 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
 
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-card border border-line bg-bgsoft p-6">
+              {foto && (
+                <Image
+                  src={foto}
+                  alt={e.ad}
+                  sizes="160px"
+                  className="mx-auto mb-4 h-40 w-40 rounded-xl border border-line bg-white object-contain p-2"
+                  placeholder="blur"
+                />
+              )}
               <h3 className="text-lg font-bold text-navy">Künye</h3>
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex justify-between gap-3 border-b border-line pb-2">

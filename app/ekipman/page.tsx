@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { KATEGORILER } from "@/lib/data";
 import { ALL_EKIPMAN } from "@/lib/content";
+import { EKIPMAN_GORSEL } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "Periyodik Kontrol Hizmetlerimiz",
@@ -68,20 +70,37 @@ export default function EkipmanIndex() {
                   <p className="text-sm text-muted">{kat.ekipmanlar.length} hizmet</p>
                 </div>
               </div>
-              <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {kat.ekipmanlar.map((e) => (
-                  <li key={e.slug}>
-                    <Link
-                      href={`/ekipman/${e.slug}`}
-                      className="block h-full rounded-xl border border-line bg-white p-4 transition hover:-translate-y-0.5 hover:border-blue"
-                    >
-                      <span className="block font-semibold text-navy">{e.ad}</span>
-                      <span className="mt-1 block text-xs text-muted">
-                        {e.standart} · {e.periyot === 1 ? "aylık test" : `${e.periyot} ayda bir`}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
+              <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {kat.ekipmanlar.map((e) => {
+                  const g = EKIPMAN_GORSEL[e.slug];
+                  return (
+                    <li key={e.slug}>
+                      <Link
+                        href={`/ekipman/${e.slug}`}
+                        className="group block h-full overflow-hidden rounded-xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-blue"
+                      >
+                        {g && (
+                          <span className="block aspect-[16/10] overflow-hidden bg-bgsoft">
+                            <Image
+                              src={g}
+                              alt=""
+                              aria-hidden
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
+                              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                              placeholder="blur"
+                            />
+                          </span>
+                        )}
+                        <span className="block p-4">
+                          <span className="block font-semibold text-navy group-hover:text-blue">{e.ad}</span>
+                          <span className="mt-1 block text-xs text-muted">
+                            {e.standart} · {e.periyot === 1 ? "aylık test" : `${e.periyot} ayda bir`}
+                          </span>
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
