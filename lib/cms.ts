@@ -224,7 +224,7 @@ async function getState(): Promise<CmsState> {
     ]);
     return { equipment, locations, articles, settings, content, media };
   }
-  if (!_state) _state = (readCmsState() as CmsState) ?? seedState();
+  if (!_state) _state = (await readCmsState() as CmsState) ?? seedState();
   return _state;
 }
 
