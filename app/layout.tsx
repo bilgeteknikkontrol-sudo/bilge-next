@@ -36,6 +36,8 @@ const jsonLd = {
   name: "Bilge Teknik Kontrol",
   legalName: "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti.",
   url: "https://bilgekontrol.com",
+  logo: "https://bilgekontrol.com/img/marka/logo.png",
+  image: "https://bilgekontrol.com/img/marka/logo.png",
   telephone: "+902128725204",
   email: "info@bilgeteknikkontrol.com",
   priceRange: "$$",

@@ -1,18 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM, ADRES_TEK_SATIR } from "@/lib/site-data";
+// Koyu zemin varyanti: logonun lacivert bolumleri beyaza cevrilmis, turuncu korunmus.
+import logoLight from "../../public/img/marka/logo-light.png";
 
 export default function Footer() {
   return (
     <footer id="iletisim" className="mt-10 border-t border-line bg-navy text-white/80">
       <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue to-white/20 font-black text-white">
-              B
-            </span>
-            <span className="font-extrabold text-white">Bilge Teknik Kontrol</span>
-          </div>
+          <Link href="/" aria-label={`${KURUM.kisaAd} — ana sayfa`}>
+            <Image src={logoLight} alt={KURUM.kisaAd} sizes="120px" className="h-14 w-auto" />
+          </Link>
           <p className="mt-4 text-sm text-white/70">
             TÜRKAK akredite (AB-0296-M) periyodik teknik kontrol kuruluşu. 2014&apos;ten beri
             iş ekipmanlarınızın yasal kontrollerinde uzmanız.

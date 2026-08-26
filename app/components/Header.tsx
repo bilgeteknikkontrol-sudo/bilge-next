@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { KATEGORILER } from "@/lib/data";
+import { KURUM } from "@/lib/site-data";
+import logo from "../../public/img/marka/logo.png";
 
 const links = [
   { href: "/kurumsal", label: "Kurumsal" },
@@ -20,16 +23,18 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/90 backdrop-blur-md">
       <div className="container-x flex h-[74px] items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue to-navy font-black text-white shadow-lg">
-            B
-          </span>
-          <span className="font-extrabold text-navy leading-tight">
-            Bilge Teknik Kontrol
-            <small className="block text-[.7rem] font-semibold tracking-wide text-muted">
-              TÜRKAK Akredite · AB-0296-M
-            </small>
-          </span>
+        <Link href="/" className="flex items-center gap-3" aria-label={`${KURUM.kisaAd} — ana sayfa`}>
+          <Image
+            src={logo}
+            alt={KURUM.kisaAd}
+            priority
+            sizes="80px"
+            className="h-12 w-auto"
+          />
+          <small className="hidden text-[.7rem] font-semibold leading-tight tracking-wide text-muted sm:block">
+            TÜRKAK Akredite
+            <span className="block text-navy">{KURUM.akreditasyon}</span>
+          </small>
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
