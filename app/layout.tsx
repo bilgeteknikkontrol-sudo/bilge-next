@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     "vinç periyodik kontrol", "elektrik tesisatı kontrolü", "iş ekipmanı muayenesi",
   ],
   authors: [{ name: "Bilge Teknik Kontrol" }],
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "tr_TR",
