@@ -70,9 +70,12 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-x flex flex-col items-center justify-between gap-2 py-5 text-xs text-white/50 md:flex-row">
+        <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-white/50 md:flex-row">
           <span>© {new Date().getFullYear()} {KURUM.ad}</span>
-          <span>İş Sağlığı ve Güvenliği mevzuatına uygun periyodik kontrol hizmeti.</span>
+          <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1" aria-label="Yasal">
+            <Link href="/kvkk" className="transition hover:text-white">KVKK Aydınlatma Metni</Link>
+            <Link href="/cerez-politikasi" className="transition hover:text-white">Çerez Politikası</Link>
+          </nav>
         </div>
       </div>
     </footer>

@@ -117,6 +117,25 @@ export default function TeklifForm() {
             )}
           </div>
 
+          {/* KVKK md. 10 aydinlatma yukumlulugu: veri toplanan noktada bilgilendirme
+              gorunur olmali. Isleme dayanagi sozlesmenin ifasi (md. 5/2-c) oldugu icin
+              acik riza kutusu degil, bilgilendirme baglantisi kullaniliyor. */}
+          <div className="col-span-2">
+            <p className="text-xs leading-relaxed text-muted">
+              Formu göndererek iletmiş olduğunuz kimlik ve iletişim bilgileriniz, yalnızca teklif
+              hazırlanması ve talebinizle ilgili sizinle iletişime geçilmesi amacıyla işlenir.
+              Ayrıntılı bilgi için{" "}
+              <Link href="/kvkk" className="font-semibold text-blue underline">
+                KVKK Aydınlatma Metni
+              </Link>{" "}
+              ve{" "}
+              <Link href="/cerez-politikasi" className="font-semibold text-blue underline">
+                Çerez Politikası
+              </Link>
+              .
+            </p>
+          </div>
+
           <div className="col-span-2">
             <button
               type="submit"
