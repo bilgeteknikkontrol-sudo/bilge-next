@@ -2,16 +2,18 @@ import AdminNav from "./AdminNav";
 import { isDbOn } from "@/lib/cms";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const dbOff = !isDbOn();
+  const noPersist = !isDbOn() && !process.env.VERCEL_API_TOKEN;
 
   return (
     <div className="flex min-h-screen bg-slate-50">
       <AdminNav />
       <main className="flex-1 p-6">
-        {dbOff && (
+        {noPersist && (
           <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            ⚠️ Veritabanı bağlantısı yok. İçerik düzenlemeleri kalıcı olmayabilir. Lütfen Vercel ortam
-            değişkenlerine <code>DATABASE_URL</code> ekleyin.
+            ⚠️ Ne <code>DATABASE_URL</code> ne de <code>VERCEL_API_TOKEN</code> tanımlı. İçerik
+            düzenlemeleri bu oturumla sınırlı kalır ve kalıcı olmaz. CMS verisini kalıcı kılmak için
+            Vercel ortam değişkenlerine <code>VERCEL_API_TOKEN</code> + <code>VERCEL_TEAM_ID</code> ekleyin
+            (veya <code>DATABASE_URL</code>).
           </div>
         )}
         {children}

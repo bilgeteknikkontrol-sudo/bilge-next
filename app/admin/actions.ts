@@ -189,7 +189,7 @@ export async function saveSettingsAction(formData: FormData) {
     address: String(formData.get("address") || cur.address),
     sameAs: String(formData.get("sameAs") || "")
       .split("\n")
-      .map((s) => s.trim())
+      .map((x) => x.trim())
       .filter(Boolean),
     heroTitle: String(formData.get("heroTitle") || cur.heroTitle),
     heroSubtitle: String(formData.get("heroSubtitle") || cur.heroSubtitle),

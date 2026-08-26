@@ -1,6 +1,7 @@
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 import { KATEGORILER } from "./data";
 import { ARTICLES, LOCATIONS } from "./content";
+import { readCmsState, writeCmsState } from "./store";
 
 type Sql = NeonQueryFunction<false, boolean>;
 
@@ -72,15 +73,24 @@ export type SiteSettings = {
   ctaText: string;
 };
 
-let _sql: Sql | null = null;
+type CmsState = {
+  articles: Article[];
+  equipment: Equipment[];
+  locations: Location[];
+  settings: SiteSettings;
+  content: { key: string; value: string }[];
+  media: MediaItem[];
+};
 
-export function dbUrl(): string | undefined {
+function dbUrl(): string | undefined {
   return process.env.DATABASE_URL || process.env.POSTGRES_URL || undefined;
 }
 
 export function isDbOn(): boolean {
   return Boolean(dbUrl());
 }
+
+let _sql: Sql | null = null;
 
 export function sql(): Sql {
   const url = dbUrl();
@@ -91,7 +101,7 @@ export function sql(): Sql {
 
 let _schemaReady: Promise<void> | null = null;
 
-export function ensureSchema(): Promise<void> {
+function ensureSchema(): Promise<void> {
   if (!isDbOn()) return Promise.resolve();
   if (_schemaReady) return _schemaReady;
   _schemaReady = (async () => {
@@ -102,7 +112,7 @@ export function ensureSchema(): Promise<void> {
     await run(s`CREATE TABLE IF NOT EXISTS site_settings (id int PRIMARY KEY, data jsonb)`);
     await run(s`CREATE TABLE IF NOT EXISTS site_content (key text PRIMARY KEY, value text)`);
     await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
-    await run(seedIfEmpty(s));
+    await seedIfEmpty(s);
   })().catch((e) => {
     _schemaReady = null;
     throw e;
@@ -181,44 +191,53 @@ export function defaultSettings(): SiteSettings {
   };
 }
 
-// ---------------- EQUIPMENT ----------------
-export async function getEquipment(): Promise<Equipment[]> {
-  if (!isDbOn()) {
-    const list: Equipment[] = [];
-    let sira = 0;
-    for (const kat of KATEGORILER) {
-      for (const e of kat.ekipmanlar) {
-        list.push({ slug: e.slug, ad: e.ad, kategori: kat.baslik, standart: e.standart, periyot: e.periyot, periyotNot: e.periyotNot, aktif: true, sira: sira++ });
-      }
+// ---------------- STATE (env-var JSON) backend ----------------
+let _state: CmsState | null = null;
+
+function seedState(): CmsState {
+  const equipment: Equipment[] = [];
+  let sira = 0;
+  for (const kat of KATEGORILER) {
+    for (const e of kat.ekipmanlar) {
+      equipment.push({ slug: e.slug, ad: e.ad, kategori: kat.baslik, standart: e.standart, periyot: e.periyot, periyotNot: e.periyotNot, aktif: true, sira: sira++ });
     }
-    return list;
   }
-  await ensureSchema();
-  const s = sql();
-  const rows = await run(s`SELECT * FROM equipment ORDER BY sira, ad`);
-  return rows.map(rowToEquipment);
+  return {
+    equipment,
+    locations: LOCATIONS.map((l, i) => ({ ...l, ilce: l.ilce, hizmetler: l.hizmetler, aktif: true, sira: i })),
+    articles: ARTICLES.map((a, i) => ({ ...a, aktif: true, sira: i })),
+    settings: defaultSettings(),
+    content: [],
+    media: [],
+  };
 }
 
-export async function getEquipmentBySlug(slug: string): Promise<Equipment | null> {
-  if (!isDbOn()) return (await getEquipment()).find((e) => e.slug === slug) ?? null;
-  await ensureSchema();
-  const rows = await run(sql()`SELECT * FROM equipment WHERE slug = ${slug} LIMIT 1`);
-  return rows[0] ? rowToEquipment(rows[0]) : null;
+async function getState(): Promise<CmsState> {
+  if (isDbOn()) {
+    const [equipment, locations, articles, settings, content, media] = await Promise.all([
+      dbGetEquipment(),
+      dbGetLocations(),
+      dbGetArticles(false),
+      dbGetSettings(),
+      dbGetAllContent(),
+      dbGetMedia(),
+    ]);
+    return { equipment, locations, articles, settings, content, media };
+  }
+  if (!_state) _state = (readCmsState() as CmsState) ?? seedState();
+  return _state;
 }
 
-export async function saveEquipment(e: Equipment): Promise<void> {
-  await ensureSchema();
-  const s = sql();
-  await run(s`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
-    VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
-    ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`);
+async function setState(st: CmsState): Promise<void> {
+  if (isDbOn()) {
+    await dbPersist(st);
+    return;
+  }
+  _state = st;
+  await writeCmsState(st);
 }
 
-export async function deleteEquipment(slug: string): Promise<void> {
-  await ensureSchema();
-  await run(sql()`DELETE FROM equipment WHERE slug = ${slug}`);
-}
-
+// ---------------- SQL (Postgres) backend ----------------
 function rowToEquipment(r: Record<string, unknown>): Equipment {
   return {
     slug: String(r.slug),
@@ -230,35 +249,6 @@ function rowToEquipment(r: Record<string, unknown>): Equipment {
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
   };
-}
-
-// ---------------- LOCATIONS ----------------
-export async function getLocations(): Promise<Location[]> {
-  if (!isDbOn()) {
-    return LOCATIONS.map((l, i) => ({ ...l, ilce: l.ilce, hizmetler: l.hizmetler, aktif: true, sira: i }));
-  }
-  await ensureSchema();
-  const rows = await run(sql()`SELECT * FROM locations ORDER BY sira, il`);
-  return rows.map(rowToLocation);
-}
-
-export async function getLocationBySlug(slug: string): Promise<Location | null> {
-  if (!isDbOn()) return (await getLocations()).find((l) => l.slug === slug) ?? null;
-  await ensureSchema();
-  const rows = await run(sql()`SELECT * FROM locations WHERE slug = ${slug} LIMIT 1`);
-  return rows[0] ? rowToLocation(rows[0]) : null;
-}
-
-export async function saveLocation(l: Location): Promise<void> {
-  await ensureSchema();
-  await run(sql()`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
-    VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, ${l.aktif}, ${l.sira})
-    ON CONFLICT (slug) DO UPDATE SET il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}::jsonb, aktif=${l.aktif}, sira=${l.sira}`);
-}
-
-export async function deleteLocation(slug: string): Promise<void> {
-  await ensureSchema();
-  await run(sql()`DELETE FROM locations WHERE slug = ${slug}`);
 }
 
 function rowToLocation(r: Record<string, unknown>): Location {
@@ -273,37 +263,6 @@ function rowToLocation(r: Record<string, unknown>): Location {
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
   };
-}
-
-// ---------------- ARTICLES ----------------
-export async function getArticles(onlyActive = false): Promise<Article[]> {
-  if (!isDbOn()) {
-    return ARTICLES.map((a, i) => ({ ...a, aktif: true, sira: i }));
-  }
-  await ensureSchema();
-  const rows = onlyActive
-    ? await run(sql()`SELECT * FROM articles WHERE aktif = true ORDER BY date DESC`)
-    : await run(sql()`SELECT * FROM articles ORDER BY sira, date DESC`);
-  return rows.map(rowToArticle);
-}
-
-export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  if (!isDbOn()) return (await getArticles()).find((a) => a.slug === slug) ?? null;
-  await ensureSchema();
-  const rows = await run(sql()`SELECT * FROM articles WHERE slug = ${slug} LIMIT 1`);
-  return rows[0] ? rowToArticle(rows[0]) : null;
-}
-
-export async function saveArticle(a: Article): Promise<void> {
-  await ensureSchema();
-  await run(sql()`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira)
-    VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira})
-    ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}`);
-}
-
-export async function deleteArticle(slug: string): Promise<void> {
-  await ensureSchema();
-  await run(sql()`DELETE FROM articles WHERE slug = ${slug}`);
 }
 
 function rowToArticle(r: Record<string, unknown>): Article {
@@ -323,50 +282,37 @@ function rowToArticle(r: Record<string, unknown>): Article {
   };
 }
 
-// ---------------- SETTINGS ----------------
-export async function getSettings(): Promise<SiteSettings> {
-  if (!isDbOn()) return defaultSettings();
-  await ensureSchema();
+async function dbGetEquipment(): Promise<Equipment[]> {
+  const rows = await run(sql()`SELECT * FROM equipment ORDER BY sira, ad`);
+  return rows.map(rowToEquipment);
+}
+
+async function dbGetLocations(): Promise<Location[]> {
+  const rows = await run(sql()`SELECT * FROM locations ORDER BY sira, il`);
+  return rows.map(rowToLocation);
+}
+
+async function dbGetArticles(onlyActive: boolean): Promise<Article[]> {
+  const rows = onlyActive
+    ? await run(sql()`SELECT * FROM articles WHERE aktif = true ORDER BY date DESC`)
+    : await run(sql()`SELECT * FROM articles ORDER BY sira, date DESC`);
+  return rows.map(rowToArticle);
+}
+
+async function dbGetSettings(): Promise<SiteSettings> {
   const rows = await run(sql()`SELECT data FROM site_settings WHERE id = 1 LIMIT 1`);
   if (!rows[0]) return defaultSettings();
   return { ...defaultSettings(), ...(rows[0].data as SiteSettings) };
 }
 
-export async function saveSettings(s: SiteSettings): Promise<void> {
-  await ensureSchema();
-  await run(sql()`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(s)}::jsonb) ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(s)}::jsonb`);
-}
-
-export async function getContent(key: string): Promise<string | null> {
-  if (!isDbOn()) return null;
-  await ensureSchema();
-  const rows = await run(sql()`SELECT value FROM site_content WHERE key = ${key} LIMIT 1`);
-  return rows[0] ? String(rows[0].value) : null;
-}
-
-export async function getAllContent(): Promise<{ key: string; value: string }[]> {
-  if (!isDbOn()) return [];
-  await ensureSchema();
+async function dbGetAllContent(): Promise<{ key: string; value: string }[]> {
   const rows = await run(sql()`SELECT key, value FROM site_content ORDER BY key`);
-  return rows.map((r: Record<string, unknown>) => ({ key: String(r.key), value: String(r.value) }));
+  return rows.map((r) => ({ key: String(r.key), value: String(r.value) }));
 }
 
-export async function setContent(key: string, value: string): Promise<void> {
-  await ensureSchema();
-  await run(sql()`INSERT INTO site_content (key, value) VALUES (${key}, ${value}) ON CONFLICT (key) DO UPDATE SET value = ${value}`);
-}
-
-export async function deleteContent(key: string): Promise<void> {
-  await ensureSchema();
-  await run(sql()`DELETE FROM site_content WHERE key = ${key}`);
-}
-
-// ---------------- MEDIA ----------------
-export async function getMedia(): Promise<MediaItem[]> {
-  if (!isDbOn()) return [];
-  await ensureSchema();
+async function dbGetMedia(): Promise<MediaItem[]> {
   const rows = await run(sql()`SELECT * FROM media ORDER BY created DESC`);
-  return rows.map((r: Record<string, unknown>) => ({
+  return rows.map((r) => ({
     id: Number(r.id),
     name: String(r.name),
     url: String(r.url ?? ""),
@@ -376,12 +322,169 @@ export async function getMedia(): Promise<MediaItem[]> {
   }));
 }
 
-export async function saveMedia(m: Omit<MediaItem, "id" | "created">): Promise<void> {
+async function dbPersist(st: CmsState): Promise<void> {
+  await ensureSchema();
+  for (const e of st.equipment) await dbSaveEquipment(e);
+  for (const l of st.locations) await dbSaveLocation(l);
+  for (const a of st.articles) await dbSaveArticle(a);
+  await dbSaveSettings(st.settings);
+  for (const c of st.content) await dbSetContent(c.key, c.value);
+  for (const m of st.media) await dbSaveMedia(m);
+}
+
+async function dbSaveEquipment(e: Equipment): Promise<void> {
+  await ensureSchema();
+  await run(sql()`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
+    VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
+    ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`);
+}
+
+async function dbSaveLocation(l: Location): Promise<void> {
+  await ensureSchema();
+  await run(sql()`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
+    VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, ${l.aktif}, ${l.sira})
+    ON CONFLICT (slug) DO UPDATE SET il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}::jsonb, aktif=${l.aktif}, sira=${l.sira}`);
+}
+
+async function dbSaveArticle(a: Article): Promise<void> {
+  await ensureSchema();
+  await run(sql()`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira)
+    VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira})
+    ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}`);
+}
+
+async function dbSaveSettings(s: SiteSettings): Promise<void> {
+  await ensureSchema();
+  await run(sql()`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(s)}::jsonb) ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(s)}::jsonb`);
+}
+
+async function dbSetContent(key: string, value: string): Promise<void> {
+  await ensureSchema();
+  await run(sql()`INSERT INTO site_content (key, value) VALUES (${key}, ${value}) ON CONFLICT (key) DO UPDATE SET value = ${value}`);
+}
+
+async function dbSaveMedia(m: Omit<MediaItem, "id" | "created">): Promise<void> {
   await ensureSchema();
   await run(sql()`INSERT INTO media (name, url, data_url, alt) VALUES (${m.name}, ${m.url}, ${m.dataUrl ?? null}, ${m.alt})`);
 }
 
+// ---------------- PUBLIC API (backend-agnostic) ----------------
+export async function getEquipment(): Promise<Equipment[]> {
+  return (await getState()).equipment;
+}
+
+export async function getEquipmentBySlug(slug: string): Promise<Equipment | null> {
+  const s = await getState();
+  return s.equipment.find((e) => e.slug === slug) ?? null;
+}
+
+export async function saveEquipment(e: Equipment): Promise<void> {
+  const s = await getState();
+  const i = s.equipment.findIndex((x) => x.slug === e.slug);
+  if (i >= 0) s.equipment[i] = e;
+  else s.equipment.push(e);
+  await setState(s);
+}
+
+export async function deleteEquipment(slug: string): Promise<void> {
+  const s = await getState();
+  s.equipment = s.equipment.filter((x) => x.slug !== slug);
+  await setState(s);
+}
+
+export async function getLocations(): Promise<Location[]> {
+  return (await getState()).locations;
+}
+
+export async function getLocationBySlug(slug: string): Promise<Location | null> {
+  const s = await getState();
+  return s.locations.find((l) => l.slug === slug) ?? null;
+}
+
+export async function saveLocation(l: Location): Promise<void> {
+  const s = await getState();
+  const i = s.locations.findIndex((x) => x.slug === l.slug);
+  if (i >= 0) s.locations[i] = l;
+  else s.locations.push(l);
+  await setState(s);
+}
+
+export async function deleteLocation(slug: string): Promise<void> {
+  const s = await getState();
+  s.locations = s.locations.filter((x) => x.slug !== slug);
+  await setState(s);
+}
+
+export async function getArticles(onlyActive = false): Promise<Article[]> {
+  const s = await getState();
+  return onlyActive ? s.articles.filter((a) => a.aktif) : s.articles;
+}
+
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  const s = await getState();
+  return s.articles.find((a) => a.slug === slug) ?? null;
+}
+
+export async function saveArticle(a: Article): Promise<void> {
+  const s = await getState();
+  const i = s.articles.findIndex((x) => x.slug === a.slug);
+  if (i >= 0) s.articles[i] = a;
+  else s.articles.push(a);
+  await setState(s);
+}
+
+export async function deleteArticle(slug: string): Promise<void> {
+  const s = await getState();
+  s.articles = s.articles.filter((x) => x.slug !== slug);
+  await setState(s);
+}
+
+export async function getSettings(): Promise<SiteSettings> {
+  return (await getState()).settings;
+}
+
+export async function saveSettings(s: SiteSettings): Promise<void> {
+  const st = await getState();
+  st.settings = s;
+  await setState(st);
+}
+
+export async function getContent(key: string): Promise<string | null> {
+  const s = await getState();
+  return s.content.find((c) => c.key === key)?.value ?? null;
+}
+
+export async function getAllContent(): Promise<{ key: string; value: string }[]> {
+  return (await getState()).content;
+}
+
+export async function setContent(key: string, value: string): Promise<void> {
+  const s = await getState();
+  const i = s.content.findIndex((c) => c.key === key);
+  if (i >= 0) s.content[i].value = value;
+  else s.content.push({ key, value });
+  await setState(s);
+}
+
+export async function deleteContent(key: string): Promise<void> {
+  const s = await getState();
+  s.content = s.content.filter((c) => c.key !== key);
+  await setState(s);
+}
+
+export async function getMedia(): Promise<MediaItem[]> {
+  return (await getState()).media;
+}
+
+export async function saveMedia(m: Omit<MediaItem, "id" | "created">): Promise<void> {
+  const s = await getState();
+  const id = s.media.reduce((mx, x) => Math.max(mx, x.id), 0) + 1;
+  s.media.push({ ...m, id, created: new Date().toISOString() });
+  await setState(s);
+}
+
 export async function deleteMedia(id: number): Promise<void> {
-  await ensureSchema();
-  await run(sql()`DELETE FROM media WHERE id = ${id}`);
+  const s = await getState();
+  s.media = s.media.filter((x) => x.id !== id);
+  await setState(s);
 }
