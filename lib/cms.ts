@@ -228,7 +228,8 @@ async function getState(): Promise<CmsState> {
   }
   const now = Date.now();
   if (!_state || now - _stateTs > STATE_TTL) {
-    _state = (await readCmsState() as CmsState) ?? _state ?? seedState();
+    const fresh = await readCmsState();
+    _state = (fresh as CmsState) ?? seedState();
     _stateTs = now;
   }
   return _state;
