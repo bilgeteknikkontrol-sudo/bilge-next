@@ -1,62 +1,74 @@
 import Link from "next/link";
+import { KATEGORILER } from "@/lib/data";
+import { slugify } from "@/lib/content";
 
 export default function Footer() {
   return (
-    <footer className="bg-navy text-[#c7d6f0]">
-      <div className="mx-auto grid max-w-[1200px] gap-8 px-5 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <footer id="iletisim" className="mt-10 border-t border-line bg-navy text-white/80">
+      <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-3 text-white">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue to-navy font-black text-white">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue to-white/20 font-black text-white">
               B
             </span>
-            <span className="font-extrabold leading-tight">
-              Bilge Teknik Kontrol
-              <small className="block text-[.7rem] font-semibold text-[#93a6c9]">
-                TÜRKAK Akredite · AB-0296-M
-              </small>
-            </span>
+            <span className="font-extrabold text-white">Bilge Teknik Kontrol</span>
           </div>
-          <p className="mt-4 text-sm">
-            TS EN ISO/IEC 17020 standardında akredite bağımsız A Tipi muayene kuruluşu. İş
-            ekipmanlarınızın periyodik kontrolünde kanıtlanmış uzmanlık.
+          <p className="mt-4 text-sm text-white/70">
+            TÜRKAK akredite (AB-0296-M) periyodik teknik kontrol kuruluşu. 2014&apos;ten beri
+            iş ekipmanlarınızın yasal kontrollerinde uzmanız.
           </p>
-          <p className="mt-3 text-sm">📞 0212 872 52 04 · ✉️ info@bilgeteknikkontrol.com</p>
+          <p className="mt-4 text-sm">
+            <span className="font-semibold text-white">Adres:</span> Beylikdüzü / İstanbul
+            <br />
+            <span className="font-semibold text-white">Telefon:</span> 0212 872 52 04
+            <br />
+            <span className="font-semibold text-white">E-posta:</span> info@bilgeteknikkontrol.com
+          </p>
         </div>
 
         <div>
-          <h4 className="font-bold text-white">Hizmetler</h4>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/#hizmetler" className="hover:text-white">Kaldırma Ekipmanları</Link></li>
-            <li><Link href="/#hizmetler" className="hover:text-white">Basınçlı Kaplar</Link></li>
-            <li><Link href="/#hizmetler" className="hover:text-white">Elektrik Tesisatı</Link></li>
-            <li><Link href="/#hizmetler" className="hover:text-white">Yangın Sistemleri</Link></li>
+          <p className="mb-3 text-sm font-bold uppercase tracking-wide text-white/60">Hizmetler</p>
+          <ul className="space-y-2 text-sm">
+            {KATEGORILER.map((k) => (
+              <li key={k.baslik}>
+                <Link href={`/ekipman/${slugify(k.ekipmanlar[0].ad)}`} className="transition hover:text-white">
+                  {k.ikon} {k.baslik}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         <div>
-          <h4 className="font-bold text-white">Araçlar</h4>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/teklif" className="hover:text-white">Online Teklif</Link></li>
-            <li><Link href="/hesapla" className="hover:text-white">Süre Hesaplayıcı</Link></li>
-            <li><Link href="/portal" className="hover:text-white">Rapor Portalı</Link></li>
-            <li><Link href="/yazilar" className="hover:text-white">Bilgi Merkezi</Link></li>
-            <li><Link href="/bolge/istanbul" className="hover:text-white">Hizmet Bölgeleri</Link></li>
+          <p className="mb-3 text-sm font-bold uppercase tracking-wide text-white/60">Kurumsal</p>
+          <ul className="space-y-2 text-sm">
+            <li><Link href="/#hakkinda" className="transition hover:text-white">Hakkımızda</Link></li>
+            <li><Link href="/#neden" className="transition hover:text-white">Neden Biz</Link></li>
+            <li><Link href="/yazilar" className="transition hover:text-white">Bilgi Merkezi</Link></li>
+            <li><Link href="/portal" className="transition hover:text-white">Rapor Portalı</Link></li>
+            <li><Link href="/#referans" className="transition hover:text-white">Referanslarımız</Link></li>
+            <li><Link href="/#akreditasyon" className="transition hover:text-white">Akreditasyon</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="font-bold text-white">Kurumsal</h4>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/" className="hover:text-white">Hakkımızda</Link></li>
-            <li><Link href="/" className="hover:text-white">Referanslar</Link></li>
-            <li><Link href="/" className="hover:text-white">İletişim</Link></li>
+          <p className="mb-3 text-sm font-bold uppercase tracking-wide text-white/60">Hızlı İşlemler</p>
+          <ul className="space-y-2 text-sm">
+            <li><Link href="/teklif" className="transition hover:text-white">Online Teklif Al</Link></li>
+            <li><Link href="/hesapla" className="transition hover:text-white">Yasal Süre Hesapla</Link></li>
+            <li><Link href="/bolge/istanbul" className="transition hover:text-white">Hizmet Bölgeleri</Link></li>
+            <li><Link href="/yazilar" className="transition hover:text-white">Makaleler</Link></li>
           </ul>
+          <p className="mt-4 rounded-xl bg-white/10 p-3 text-xs text-white/70">
+            TÜRKAK Akreditasyon No: <b className="text-white">AB-0296-M</b>
+          </p>
         </div>
       </div>
-      <div className="border-t border-white/10 px-5 py-5 text-[.85rem] text-[#93a6c9]">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap justify-between gap-2">
-          <span>© {new Date().getFullYear()} Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti. Tüm hakları saklıdır.</span>
-          <span>TS EN ISO/IEC 17020 · Akreditasyon No: AB-0296-M</span>
+
+      <div className="border-t border-white/10">
+        <div className="container-x flex flex-col items-center justify-between gap-2 py-5 text-xs text-white/50 md:flex-row">
+          <span>© {new Date().getFullYear()} Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti.</span>
+          <span>İş Sağlığı ve Güvenliği mevzuatına uygun periyodik kontrol hizmeti.</span>
         </div>
       </div>
     </footer>
