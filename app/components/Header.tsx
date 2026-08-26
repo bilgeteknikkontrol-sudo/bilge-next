@@ -1,127 +1,259 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
 import logo from "../../public/img/marka/logo.png";
 
-const links = [
-  { href: "/kurumsal", label: "Kurumsal" },
-  { href: "/yazilar", label: "Bilgi Merkezi" },
-  { href: "/bolge", label: "Hizmet Bölgeleri" },
-  { href: "/hesapla", label: "Süre Hesaplayıcı" },
-  { href: "/portal", label: "Rapor Portalı" },
-  { href: "/iletisim", label: "İletişim" },
+type AltLink = { href: string; label: string; not?: string };
+
+/** Ust seviye menu: en fazla 5 oge. Fazlasi 1024px'de sigmiyor ve
+ *  cok kelimeli etiketler kendi icinde alt satira kayiyordu. */
+const MENU: { label: string; href?: string; alt?: AltLink[] }[] = [
+  { label: "Hizmetler" }, // mega menu, asagida ayrica isleniyor
+  {
+    label: "Kurumsal",
+    alt: [
+      { href: "/kurumsal", label: "Hakkımızda", not: "Akreditasyon ve ekip" },
+      { href: "/bolge", label: "Hizmet Bölgeleri", not: "20 şehirde yerinde muayene" },
+      { href: "/sss", label: "Sık Sorulan Sorular", not: "Süre, kapsam, mevzuat" },
+    ],
+  },
+  { label: "Bilgi Merkezi", href: "/yazilar" },
+  {
+    label: "Araçlar",
+    alt: [
+      { href: "/hesapla", label: "Yasal Süre Hesaplayıcı", not: "Sonraki kontrol tarihiniz" },
+      { href: "/portal", label: "Rapor Portalı", not: "Rapor sorgulama" },
+      { href: "/teklif", label: "Online Teklif", not: "Ekipman seçip talep oluşturun" },
+    ],
+  },
+  { label: "İletişim", href: "/iletisim" },
 ];
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-  const [serv, setServ] = useState(false);
+  const [mobilAcik, setMobilAcik] = useState(false);
+  const [acikMenu, setAcikMenu] = useState<string | null>(null);
+  const kapatmaZamani = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pathname = usePathname();
+
+  // Sayfa degisince acik menuleri kapat
+  useEffect(() => {
+    setMobilAcik(false);
+    setAcikMenu(null);
+  }, [pathname]);
+
+  // ESC ile kapat
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setAcikMenu(null);
+        setMobilAcik(false);
+      }
+    };
+    document.addEventListener("keydown", f);
+    return () => document.removeEventListener("keydown", f);
+  }, []);
+
+  // Fareyle geziniyorken menunun aninda kapanmamasi icin kucuk gecikme
+  function ac(label: string) {
+    if (kapatmaZamani.current) clearTimeout(kapatmaZamani.current);
+    setAcikMenu(label);
+  }
+  function kapat() {
+    if (kapatmaZamani.current) clearTimeout(kapatmaZamani.current);
+    kapatmaZamani.current = setTimeout(() => setAcikMenu(null), 120);
+  }
+
+  const aktif = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-white/90 backdrop-blur-md">
-      <div className="container-x flex h-[74px] items-center justify-between">
-        <Link href="/" className="flex items-center gap-3" aria-label={`${KURUM.kisaAd} — ana sayfa`}>
-          <Image
-            src={logo}
-            alt={KURUM.kisaAd}
-            priority
-            sizes="80px"
-            className="h-12 w-auto"
-          />
-          <small className="hidden text-[.7rem] font-semibold leading-tight tracking-wide text-muted sm:block">
-            TÜRKAK Akredite
-            <span className="block text-navy">{KURUM.akreditasyon}</span>
-          </small>
+    <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur-md">
+      {/* ÜST ŞERİT — iletişim ve güven bilgileri */}
+      <div className="hidden bg-navy text-white/75 md:block">
+        <div className="container-x flex h-9 items-center justify-between text-[.78rem]">
+          <div className="flex items-center gap-5">
+            <a href={`tel:${KURUM.telefonE164}`} className="transition hover:text-white">
+              📞 {KURUM.telefon}
+            </a>
+            <a href={`mailto:${KURUM.eposta}`} className="hidden transition hover:text-white lg:inline">
+              ✉️ {KURUM.eposta}
+            </a>
+            <span className="hidden xl:inline">🕘 {KURUM.calismaSaatleri}</span>
+          </div>
+          <span className="flex items-center gap-2">
+            <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-semibold text-white">
+              TÜRKAK {KURUM.akreditasyon}
+            </span>
+            <span className="hidden lg:inline">A Tipi Muayene Kuruluşu</span>
+          </span>
+        </div>
+      </div>
+
+      {/* ANA ÇUBUK */}
+      <div className="container-x flex h-[72px] items-center justify-between gap-4">
+        <Link href="/" className="shrink-0" aria-label={`${KURUM.kisaAd} — ana sayfa`}>
+          <Image src={logo} alt={KURUM.kisaAd} priority sizes="120px" className="h-11 w-auto" />
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex">
-          <div
-            className="relative"
-            onMouseEnter={() => setServ(true)}
-            onMouseLeave={() => setServ(false)}
-          >
-            <button className="nav-link flex items-center gap-1">
-              Hizmetler <span className="text-xs">▾</span>
-            </button>
-            {serv && (
-              <div className="absolute left-0 top-full w-[720px] rounded-2xl border border-line bg-white p-5 shadow-[0_24px_50px_-20px_rgba(15,23,42,.4)]">
-                <p className="mb-3 text-xs font-bold uppercase tracking-wide text-muted">Periyodik Kontrol Kategorileri</p>
-                <div className="grid grid-cols-2 gap-4">
-                  {KATEGORILER.map((k) => (
-                    <div key={k.baslik}>
-                      <Link
-                        href={`/ekipman/${k.ekipmanlar[0].slug}`}
-                        className="flex items-start gap-2 rounded-xl p-2 transition hover:bg-bgsoft"
-                      >
-                        <span className="text-xl">{k.ikon}</span>
-                        <span className="text-sm font-bold text-navy">{k.baslik}</span>
-                      </Link>
-                      <ul className="mt-0.5 space-y-0.5 pl-9">
-                        {k.ekipmanlar.slice(1, 5).map((e) => (
-                          <li key={e.slug}>
-                            <Link href={`/ekipman/${e.slug}`} className="block truncate text-[.8rem] text-muted transition hover:text-blue">
-                              {e.ad}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-                <Link href="/ekipman" className="mt-4 block rounded-xl bg-bgsoft px-4 py-2.5 text-center text-sm font-bold text-blue transition hover:bg-blue-soft">
-                  Tüm hizmetleri gör →
+        <nav className="hidden items-center lg:flex" aria-label="Ana menü">
+          {MENU.map((m) => {
+            // --- Düz bağlantı ---
+            if (m.href && !m.alt) {
+              return (
+                <Link
+                  key={m.label}
+                  href={m.href}
+                  aria-current={aktif(m.href) ? "page" : undefined}
+                  className={`whitespace-nowrap rounded-lg px-3 py-2 text-[.92rem] font-semibold transition ${
+                    aktif(m.href) ? "text-blue" : "text-ink/80 hover:text-blue"
+                  }`}
+                >
+                  {m.label}
                 </Link>
+              );
+            }
+
+            // --- Açılır menü ---
+            const acik = acikMenu === m.label;
+            const megaMenu = m.label === "Hizmetler";
+            return (
+              <div
+                key={m.label}
+                className="relative"
+                onMouseEnter={() => ac(m.label)}
+                onMouseLeave={kapat}
+              >
+                <button
+                  type="button"
+                  aria-expanded={acik}
+                  aria-haspopup="true"
+                  onClick={() => setAcikMenu(acik ? null : m.label)}
+                  className="flex items-center gap-1 whitespace-nowrap rounded-lg px-3 py-2 text-[.92rem] font-semibold text-ink/80 transition hover:text-blue"
+                >
+                  {m.label}
+                  <span className={`text-[.65rem] transition-transform ${acik ? "rotate-180" : ""}`}>▾</span>
+                </button>
+
+                {acik && (
+                  <div
+                    className={`absolute left-0 top-full pt-2 ${megaMenu ? "w-[680px]" : "w-[300px]"}`}
+                  >
+                    <div className="rounded-2xl border border-line bg-white p-4 shadow-[0_24px_50px_-20px_rgba(15,23,42,.45)]">
+                      {megaMenu ? (
+                        <>
+                          <div className="grid grid-cols-2 gap-1">
+                            {KATEGORILER.map((k) => (
+                              <Link
+                                key={k.baslik}
+                                href={`/ekipman/${k.ekipmanlar[0].slug}`}
+                                className="flex items-start gap-3 rounded-xl p-2.5 transition hover:bg-bgsoft"
+                              >
+                                <span className="text-xl leading-none">{k.ikon}</span>
+                                <span>
+                                  <span className="block text-sm font-bold text-navy">{k.baslik}</span>
+                                  <span className="block text-xs text-muted">
+                                    {k.ekipmanlar.length} hizmet
+                                  </span>
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                          <Link
+                            href="/ekipman"
+                            className="mt-3 block rounded-xl bg-bgsoft px-4 py-2.5 text-center text-sm font-bold text-blue transition hover:bg-blue-soft"
+                          >
+                            Tüm hizmetleri gör →
+                          </Link>
+                        </>
+                      ) : (
+                        <div className="grid gap-1">
+                          {m.alt!.map((a) => (
+                            <Link
+                              key={a.href}
+                              href={a.href}
+                              className="rounded-xl p-2.5 transition hover:bg-bgsoft"
+                            >
+                              <span className="block text-sm font-bold text-navy">{a.label}</span>
+                              {a.not && <span className="block text-xs text-muted">{a.not}</span>}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="nav-link">
-              {l.label}
-            </Link>
-          ))}
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link href="/teklif" className="btn-primary hidden md:inline-flex">
-            Hemen Teklif Al
+        <div className="flex shrink-0 items-center gap-2">
+          <Link href="/teklif" className="btn-primary hidden whitespace-nowrap px-5 py-2.5 text-[.92rem] md:inline-flex">
+            Ücretsiz Teklif Al
           </Link>
           <button
-            className="text-2xl text-navy lg:hidden"
-            aria-label="Menü"
-            onClick={() => setOpen((o) => !o)}
+            className="rounded-lg p-2 text-2xl leading-none text-navy lg:hidden"
+            aria-label={mobilAcik ? "Menüyü kapat" : "Menüyü aç"}
+            aria-expanded={mobilAcik}
+            onClick={() => setMobilAcik((o) => !o)}
           >
-            ☰
+            {mobilAcik ? "✕" : "☰"}
           </button>
         </div>
       </div>
 
-      {open && (
-        <nav className="flex flex-col gap-2 border-t border-line bg-white px-5 py-4 lg:hidden">
-          <span className="px-1 text-xs font-bold uppercase tracking-wide text-muted">Hizmetler</span>
+      {/* MOBİL MENÜ */}
+      {mobilAcik && (
+        <nav className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-line bg-white px-5 py-4 lg:hidden" aria-label="Mobil menü">
+          <p className="px-1 pb-1 text-xs font-bold uppercase tracking-wide text-muted">Hizmetler</p>
           {KATEGORILER.map((k) => (
             <Link
               key={k.baslik}
               href={`/ekipman/${k.ekipmanlar[0].slug}`}
-              className="rounded-lg px-1 py-1.5 font-semibold text-ink"
-              onClick={() => setOpen(false)}
+              className="block rounded-lg px-1 py-2 font-semibold text-ink"
             >
               {k.ikon} {k.baslik}
             </Link>
           ))}
-          <Link href="/ekipman" className="rounded-lg px-1 py-1.5 font-bold text-blue" onClick={() => setOpen(false)}>
+          <Link href="/ekipman" className="block rounded-lg px-1 py-2 font-bold text-blue">
             Tüm hizmetleri gör →
           </Link>
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="font-semibold text-ink" onClick={() => setOpen(false)}>
-              {l.label}
-            </Link>
+
+          {MENU.filter((m) => m.label !== "Hizmetler").map((m) => (
+            <div key={m.label} className="mt-3 border-t border-line pt-3">
+              {m.href && !m.alt ? (
+                <Link href={m.href} className="block rounded-lg px-1 py-2 font-semibold text-ink">
+                  {m.label}
+                </Link>
+              ) : (
+                <>
+                  <p className="px-1 pb-1 text-xs font-bold uppercase tracking-wide text-muted">{m.label}</p>
+                  {m.alt!.map((a) => (
+                    <Link key={a.href} href={a.href} className="block rounded-lg px-1 py-2 font-semibold text-ink">
+                      {a.label}
+                    </Link>
+                  ))}
+                </>
+              )}
+            </div>
           ))}
-          <Link href="/teklif" className="btn-primary mt-2" onClick={() => setOpen(false)}>
-            Hemen Teklif Al
-          </Link>
+
+          <div className="mt-4 border-t border-line pt-4">
+            <a href={`tel:${KURUM.telefonE164}`} className="block px-1 py-1 text-sm font-bold text-blue">
+              📞 {KURUM.telefon}
+            </a>
+            <a href={`mailto:${KURUM.eposta}`} className="block px-1 py-1 text-sm text-muted">
+              ✉️ {KURUM.eposta}
+            </a>
+            <Link href="/teklif" className="btn-primary mt-3 w-full">
+              Ücretsiz Teklif Al
+            </Link>
+          </div>
         </nav>
       )}
     </header>
