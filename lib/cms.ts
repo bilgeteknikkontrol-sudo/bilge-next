@@ -191,8 +191,10 @@ export function defaultSettings(): SiteSettings {
   };
 }
 
-// ---------------- STATE (env-var JSON) backend ----------------
+// ---------------- STATE (Vercel Blob JSON) backend ----------------
 let _state: CmsState | null = null;
+let _stateTs = 0;
+const STATE_TTL = 15000;
 
 function seedState(): CmsState {
   const equipment: Equipment[] = [];
@@ -224,7 +226,11 @@ async function getState(): Promise<CmsState> {
     ]);
     return { equipment, locations, articles, settings, content, media };
   }
-  if (!_state) _state = (await readCmsState() as CmsState) ?? seedState();
+  const now = Date.now();
+  if (!_state || now - _stateTs > STATE_TTL) {
+    _state = (await readCmsState() as CmsState) ?? _state ?? seedState();
+    _stateTs = now;
+  }
   return _state;
 }
 
@@ -234,6 +240,7 @@ async function setState(st: CmsState): Promise<void> {
     return;
   }
   _state = st;
+  _stateTs = Date.now();
   await writeCmsState(st);
 }
 

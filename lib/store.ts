@@ -10,7 +10,7 @@ async function readBlob(pathname: string): Promise<string | null> {
     const res = await list({ prefix: pathname, token: BLOB_TOKEN });
     const found = res.blobs.find((b) => b.pathname === pathname);
     if (!found) return null;
-    const g = await get(found.url, { access: "private", token: BLOB_TOKEN });
+    const g = await get(found.url, { access: "private", token: BLOB_TOKEN, useCache: false });
     if (!g || g.statusCode !== 200) return null;
     return await new Response(g.stream).text();
   } catch {
