@@ -5,7 +5,7 @@ const TEAM = process.env.VERCEL_TEAM_ID;
 const PROJECT = process.env.VERCEL_PROJECT_ID || "prj_GuwENTTkYUfZouhURsI7oDLRGVS7";
 const REPO_ID = "1346231192";
 const TARGETS = ["production", "preview", "development"];
-const CHUNK = 50000;
+const CHUNK = 45000;
 
 function gzip(str: string): string {
   return zlib.gzipSync(Buffer.from(str, "utf8")).toString("base64");
@@ -35,26 +35,46 @@ async function listEnvIds(): Promise<Record<string, string>> {
   }
 }
 
+async function apiCall(url: string, method: string, body?: unknown): Promise<Response> {
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      if (res.status === 429 || res.status >= 500) {
+        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+        lastErr = new Error("status " + res.status);
+        continue;
+      }
+      return res;
+    } catch (e) {
+      lastErr = e;
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("apiCall failed");
+}
+
 async function writeEnvValue(key: string, value: string): Promise<void> {
   if (!TOKEN || !TEAM) return;
   const ids = await listEnvIds();
   const id = ids[key] || null;
-  try {
-    if (id) {
-      await fetch(`https://api.vercel.com/v10/projects/${PROJECT}/env/${id}?teamId=${TEAM}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ value, type: "encrypted", target: TARGETS }),
-      });
-    } else {
-      await fetch(`https://api.vercel.com/v10/projects/${PROJECT}/env?teamId=${TEAM}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ key, value, type: "encrypted", target: TARGETS }),
-      });
-    }
-  } catch {
-    /* yok say */
+  if (id) {
+    await apiCall(`https://api.vercel.com/v10/projects/${PROJECT}/env/${id}?teamId=${TEAM}`, "PATCH", {
+      value,
+      type: "encrypted",
+      target: TARGETS,
+    });
+  } else {
+    await apiCall(`https://api.vercel.com/v10/projects/${PROJECT}/env?teamId=${TEAM}`, "POST", {
+      key,
+      value,
+      type: "encrypted",
+      target: TARGETS,
+    });
   }
 }
 
@@ -63,14 +83,7 @@ async function deleteEnvValue(key: string): Promise<void> {
   const ids = await listEnvIds();
   const id = ids[key];
   if (!id) return;
-  try {
-    await fetch(`https://api.vercel.com/v10/projects/${PROJECT}/env/${id}?teamId=${TEAM}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${TOKEN}` },
-    });
-  } catch {
-    /* yok say */
-  }
+  await apiCall(`https://api.vercel.com/v10/projects/${PROJECT}/env/${id}?teamId=${TEAM}`, "DELETE");
 }
 
 async function triggerRedeploy(): Promise<void> {
