@@ -50,6 +50,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     ],
   };
 
+  const faqLd =
+    a.faq && a.faq.length
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: a.faq.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
+
   const related = ARTICLES.filter((x) => x.slug !== a.slug).slice(0, 3);
 
   return (
@@ -57,6 +70,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <Header />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
       <article className="py-12">
         <div className="mx-auto max-w-[760px] px-5">
           <nav className="mb-4 text-sm text-muted">
@@ -65,8 +79,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <span className="text-sm font-bold text-blue">{a.category}</span>
           <h1 className="mt-2 text-3xl font-black text-navy md:text-4xl">{a.title}</h1>
           <div className="mt-2 text-sm text-muted">{new Date(a.date).toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" })} · {a.readMin} dk okuma</div>
+          {a.lead && <p className="mt-4 text-lg font-medium text-ink">{a.lead}</p>}
 
-          <div className="mt-6 leading-relaxed text-ink [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-navy [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-accent [&_blockquote]:bg-bgsoft [&_blockquote]:p-4 [&_blockquote]:rounded-r-lg [&_a]:text-blue [&_a]:underline" dangerouslySetInnerHTML={{ __html: a.body }} />
+          <div className="mt-6 leading-relaxed text-ink [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-navy [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_blockquote]:my-5 [&_blockquote]:border-l-4 [&_blockquote]:border-accent [&_blockquote]:bg-bgsoft [&_blockquote]:p-4 [&_blockquote]:rounded-r-lg [&_a]:text-blue [&_a]:underline [&_table]:w-full [&_table]:border-collapse [&_th]:border [&_th]:border-line [&_th]:bg-bgsoft [&_th]:p-2 [&_th]:text-left [&_td]:border [&_td]:border-line [&_td]:p-2" dangerouslySetInnerHTML={{ __html: a.body }} />
+
+          {a.faq && a.faq.length > 0 && (
+            <div className="mt-10">
+              <h3 className="text-xl font-bold text-navy">Sık Sorulan Sorular</h3>
+              <div className="mt-3 space-y-2">
+                {a.faq.map((f, i) => (
+                  <details key={i} className="group rounded-xl border border-line bg-white p-4 open:border-blue">
+                    <summary className="cursor-pointer list-none font-semibold text-navy marker:content-none">
+                      <span className="mr-2 text-blue">+</span>{f.q}
+                    </summary>
+                    <p className="mt-2 pl-5 text-sm text-muted">{f.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="mt-8 rounded-card bg-gradient-to-br from-navy to-navy2 p-6 text-center text-white">
             <h3 className="text-white">Hemen harekete geçin</h3>

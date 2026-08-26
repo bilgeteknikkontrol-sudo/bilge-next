@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base + "/hesapla", lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: base + "/portal", lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
     { url: base + "/yazilar", lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 },
+    { url: base + "/ekipman", lastModified: now, changeFrequency: "weekly" as const, priority: 0.9 },
   ];
   const articles = ARTICLES.map((a) => ({
     url: `${base}/yazilar/${a.slug}`,

@@ -2,7 +2,6 @@ import Link from "next/link";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { KATEGORILER } from "@/lib/data";
-import { slugify } from "@/lib/content";
 
 const AVANTAJLAR = [
   ["📝", "Online Teklif Sistemi", "Ekipmanınızı seçin, saniyeler içinde ön bilgi ve randevu talebi oluşturun."],
@@ -101,7 +100,7 @@ export default function Home() {
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {KATEGORILER.map((kat) => (
-              <Link key={kat.baslik} href={`/ekipman/${slugify(kat.ekipmanlar[0].ad)}`} className="group card flex flex-col p-6 transition hover:-translate-y-1">
+              <Link key={kat.baslik} href={`/ekipman/${kat.ekipmanlar[0].slug}`} className="group card flex flex-col p-6 transition hover:-translate-y-1">
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl text-blue">{kat.ikon}</div>
                 <h3 className="text-xl text-navy group-hover:text-blue">{kat.baslik}</h3>
                 <p className="mt-1 text-sm text-muted">{kat.ekipmanlar.length} ekipman türü · {kat.ekipmanlar[0].standart} ve ilgili standartlar</p>

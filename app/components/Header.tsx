@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { KATEGORILER } from "@/lib/data";
-import { slugify } from "@/lib/content";
 
 const links = [
   { href: "/yazilar", label: "Bilgi Merkezi" },
@@ -42,20 +41,33 @@ export default function Header() {
               Hizmetler <span className="text-xs">▾</span>
             </button>
             {serv && (
-              <div className="absolute left-0 top-full w-[640px] rounded-2xl border border-line bg-white p-5 shadow-[0_24px_50px_-20px_rgba(15,23,42,.4)]">
+              <div className="absolute left-0 top-full w-[720px] rounded-2xl border border-line bg-white p-5 shadow-[0_24px_50px_-20px_rgba(15,23,42,.4)]">
                 <p className="mb-3 text-xs font-bold uppercase tracking-wide text-muted">Periyodik Kontrol Kategorileri</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-4">
                   {KATEGORILER.map((k) => (
-                    <Link
-                      key={k.baslik}
-                      href={`/ekipman/${slugify(k.ekipmanlar[0].ad)}`}
-                      className="flex items-start gap-2 rounded-xl p-2.5 transition hover:bg-bgsoft"
-                    >
-                      <span className="text-xl">{k.ikon}</span>
-                      <span className="text-sm font-semibold text-navy">{k.baslik}</span>
-                    </Link>
+                    <div key={k.baslik}>
+                      <Link
+                        href={`/ekipman/${k.ekipmanlar[0].slug}`}
+                        className="flex items-start gap-2 rounded-xl p-2 transition hover:bg-bgsoft"
+                      >
+                        <span className="text-xl">{k.ikon}</span>
+                        <span className="text-sm font-bold text-navy">{k.baslik}</span>
+                      </Link>
+                      <ul className="mt-0.5 space-y-0.5 pl-9">
+                        {k.ekipmanlar.slice(1, 5).map((e) => (
+                          <li key={e.slug}>
+                            <Link href={`/ekipman/${e.slug}`} className="block truncate text-[.8rem] text-muted transition hover:text-blue">
+                              {e.ad}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
                 </div>
+                <Link href="/ekipman" className="mt-4 block rounded-xl bg-bgsoft px-4 py-2.5 text-center text-sm font-bold text-blue transition hover:bg-blue-soft">
+                  Tüm hizmetleri gör →
+                </Link>
               </div>
             )}
           </div>
@@ -86,13 +98,16 @@ export default function Header() {
           {KATEGORILER.map((k) => (
             <Link
               key={k.baslik}
-              href={`/ekipman/${slugify(k.ekipmanlar[0].ad)}`}
+              href={`/ekipman/${k.ekipmanlar[0].slug}`}
               className="rounded-lg px-1 py-1.5 font-semibold text-ink"
               onClick={() => setOpen(false)}
             >
               {k.ikon} {k.baslik}
             </Link>
           ))}
+          <Link href="/ekipman" className="rounded-lg px-1 py-1.5 font-bold text-blue" onClick={() => setOpen(false)}>
+            Tüm hizmetleri gör →
+          </Link>
           {links.map((l) => (
             <Link key={l.href} href={l.href} className="font-semibold text-ink" onClick={() => setOpen(false)}>
               {l.label}

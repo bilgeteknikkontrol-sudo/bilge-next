@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { KATEGORILER } from "@/lib/data";
-import { slugify } from "@/lib/content";
 
 export default function Footer() {
   return (
@@ -31,7 +30,7 @@ export default function Footer() {
           <ul className="space-y-2 text-sm">
             {KATEGORILER.map((k) => (
               <li key={k.baslik}>
-                <Link href={`/ekipman/${slugify(k.ekipmanlar[0].ad)}`} className="transition hover:text-white">
+                <Link href={`/ekipman/${k.ekipmanlar[0].slug}`} className="transition hover:text-white">
                   {k.ikon} {k.baslik}
                 </Link>
               </li>
