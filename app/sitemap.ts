@@ -11,6 +11,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base + "/portal", lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
     { url: base + "/yazilar", lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 },
     { url: base + "/ekipman", lastModified: now, changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: base + "/kurumsal", lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: base + "/iletisim", lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: base + "/sss", lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
+    { url: base + "/bolge", lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
   ];
   const articles = ARTICLES.map((a) => ({
     url: `${base}/yazilar/${a.slug}`,

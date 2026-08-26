@@ -5,11 +5,12 @@ import Link from "next/link";
 import { KATEGORILER } from "@/lib/data";
 
 const links = [
+  { href: "/kurumsal", label: "Kurumsal" },
   { href: "/yazilar", label: "Bilgi Merkezi" },
-  { href: "/bolge/istanbul", label: "Hizmet Bölgeleri" },
+  { href: "/bolge", label: "Hizmet Bölgeleri" },
   { href: "/hesapla", label: "Süre Hesaplayıcı" },
   { href: "/portal", label: "Rapor Portalı" },
-  { href: "/#iletisim", label: "İletişim" },
+  { href: "/iletisim", label: "İletişim" },
 ];
 
 export default function Header() {

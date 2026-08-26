@@ -1,4 +1,5 @@
-// OTOMATIK URETILDI: scratchpad (PHP inc/site-data.php kaynagindan).
+// Ilk hali PHP inc/site-data.php'den uretildi; artik ELLE bakim yapiliyor.
+// Kurum kunyesi bilgileri sitenin onceki surumunun canli iletisim sayfasindan alindi.
 import type { StaticImageData } from "next/image";
 import logo_gondol_jpg from "../public/img/referanslar/gondol.jpg";
 import logo_checkpoint_png from "../public/img/referanslar/checkpoint.png";
@@ -107,11 +108,19 @@ export const KURUM = {
   ad: "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti.",
   kisaAd: "Bilge Teknik Kontrol",
   akreditasyon: "AB-0296-M",
+  standart: "TS EN ISO/IEC 17020",
   telefon: "0212 872 52 04",
   telefonE164: "+902128725204",
   eposta: "info@bilgeteknikkontrol.com",
+  adres: "Yakuplu Mah. 65. Sk. No: 35 İç Kapı No: 4",
   ilce: "Beylikdüzü",
   il: "İstanbul",
   ulke: "TR",
   kurulus: "2014",
+  geo: { lat: 41.0027, lng: 28.675 },
+  calismaSaatleri: "Pazartesi – Cuma, 09:00 – 18:00",
+  calismaSaatleriSchema: { acilis: "09:00", kapanis: "18:00" },
 };
+
+/** Tam posta adresi, tek satir. */
+export const ADRES_TEK_SATIR = `${KURUM.adres}, ${KURUM.ilce} / ${KURUM.il}`;
