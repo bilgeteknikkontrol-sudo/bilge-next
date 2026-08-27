@@ -118,8 +118,10 @@ export const KURUM = {
   ulke: "TR",
   kurulus: "2014",
   geo: { lat: 41.0027, lng: 28.675 },
-  calismaSaatleri: "Pazartesi – Cuma, 09:00 – 18:00",
-  calismaSaatleriSchema: { acilis: "09:00", kapanis: "18:00" },
+  // Kullanici 2026-08-27'de dogruladi: acilis 08:00.
+  // (Eski PHP sitesinde iki farkli yerde 09:00 ve 08:00 yaziyordu, celiski cozuldu.)
+  calismaSaatleri: "Pazartesi – Cuma, 08:00 – 18:00",
+  calismaSaatleriSchema: { acilis: "08:00", kapanis: "18:00" },
 };
 
 /** Tam posta adresi, tek satir. */
