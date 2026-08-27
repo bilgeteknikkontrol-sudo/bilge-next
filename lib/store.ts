@@ -34,7 +34,7 @@ function parseState<T>(raw: string | null): T | null {
 
 // ---------------- CMS state ----------------
 export async function readCmsState(): Promise<unknown | null> {
-  return parseState<any>(await readBlob(CMS_PATH));
+  return parseState<unknown>(await readBlob(CMS_PATH));
 }
 
 export async function writeCmsState(state: unknown): Promise<void> {

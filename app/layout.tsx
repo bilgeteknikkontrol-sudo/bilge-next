@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Bilge Teknik Kontrol",
   },
   description:
-    "TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu. Basınçlı kap, vinç, kaldırma, elektrik, yangın ve iş makineleri periyodik kontrolü. Online teklif, yasal süre hesaplama ve rapor portalı.",
+    "TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu. Basınçlı kap, vinç, kaldırma, elektrik, yangın ve iş makineleri periyodik kontrolü. Online teklif ve yasal süre hesaplama.",
   keywords: [
     "periyodik teknik kontrol", "periyodik muayene", "TÜRKAK akredite", "basınçlı kap muayenesi",
     "vinç periyodik kontrol", "elektrik tesisatı kontrolü", "iş ekipmanı muayenesi",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Bilge Teknik Kontrol",
     title: "Periyodik Teknik Kontrol & Muayene | Bilge Teknik Kontrol",
     description:
-      "TÜRKAK akredite A Tipi muayene kuruluşu. Online teklif, yasal süre hesaplama ve rapor portalı ile işinizi güvence altına alın.",
+      "TÜRKAK akredite A Tipi muayene kuruluşu. Online teklif, yasal süre hesaplama ve periyodik kontrol süreleri tablosu ile işinizi güvence altına alın.",
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },

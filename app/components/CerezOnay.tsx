@@ -4,37 +4,31 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   type CerezTercihi,
-  tercihiOku,
   tercihiYaz,
-  tercihiDinle,
+  useCerezTercihi,
+  useCerezHazir,
   CEREZ_AC_OLAYI,
 } from "@/lib/cerez";
 
 export default function CerezOnay() {
-  // null = henuz okunmadi (sunucu ile istemci ayni seyi ciziyor: hicbir sey)
-  const [tercih, setTercih] = useState<CerezTercihi | null>(null);
-  const [hazir, setHazir] = useState(false);
+  const tercih = useCerezTercihi();
+  const hazir = useCerezHazir();
+  // Footer'daki "Çerez Tercihleri" düğmesi banner'ı yeniden açar.
   const [zorlaAc, setZorlaAc] = useState(false);
 
   useEffect(() => {
-    setTercih(tercihiOku());
-    setHazir(true);
-    const birak = tercihiDinle((t) => {
-      setTercih(t);
-      if (t) setZorlaAc(false);
-    });
     const ac = () => setZorlaAc(true);
     window.addEventListener(CEREZ_AC_OLAYI, ac);
-    return () => {
-      birak();
-      window.removeEventListener(CEREZ_AC_OLAYI, ac);
-    };
+    return () => window.removeEventListener(CEREZ_AC_OLAYI, ac);
   }, []);
 
-  // Hidrasyon uyusmazligi olmamasi icin okunana kadar hicbir sey cizilmez.
+  // Not: tercih kaydedilince banner'ı kapatan yer sec(); ayrıca bir effect
+  // gerekmiyor. (Başka bir sekmede tercih değişirse burada açık kalır —
+  // kullanıcı yine seçim yapabildiği için sorun değil.)
+
+  // Sunucuda ve hidrasyon öncesinde hiçbir şey çizilmez (uyuşmazlık olmasın).
   if (!hazir) return null;
-  const gorunur = zorlaAc || tercih === null;
-  if (!gorunur) return null;
+  if (!zorlaAc && tercih !== null) return null;
 
   function sec(t: CerezTercihi) {
     tercihiYaz(t);

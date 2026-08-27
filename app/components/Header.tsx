@@ -27,7 +27,7 @@ const MENU: { label: string; href?: string; alt?: AltLink[] }[] = [
     label: "Araçlar",
     alt: [
       { href: "/hesapla", label: "Yasal Süre Hesaplayıcı", not: "Sonraki kontrol tarihiniz" },
-      { href: "/portal", label: "Rapor Portalı", not: "Rapor sorgulama" },
+      { href: "/periyodik-kontrol-sureleri", label: "Periyodik Kontrol Süreleri", not: "Hangi ekipman ne sıklıkla" },
       { href: "/teklif", label: "Online Teklif", not: "Ekipman seçip talep oluşturun" },
     ],
   },
@@ -40,11 +40,17 @@ export default function Header() {
   const kapatmaZamani = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
-  // Sayfa degisince acik menuleri kapat
-  useEffect(() => {
+  // Sayfa degisince acik menuleri kapat.
+  // Effect + setState yerine "onceki degeri sakla, cizim sirasinda ayarla"
+  // deseni: effect icinde setState cagirmak cascading render'a yol aciyor
+  // (react-hooks/set-state-in-effect). React bu durum icin cizim sirasinda
+  // setState'e izin veriyor ve ek bir tur cizimle hemen duzeltiyor.
+  const [oncekiYol, setOncekiYol] = useState(pathname);
+  if (oncekiYol !== pathname) {
+    setOncekiYol(pathname);
     setMobilAcik(false);
     setAcikMenu(null);
-  }, [pathname]);
+  }
 
   // ESC ile kapat
   useEffect(() => {

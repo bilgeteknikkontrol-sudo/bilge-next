@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { tercihiOku, tercihiDinle } from "@/lib/cerez";
+import { useCerezTercihi } from "@/lib/cerez";
 
 type Props = { lat: number; lng: number; baslik: string };
 
@@ -11,18 +11,14 @@ type Props = { lat: number; lng: number; baslik: string };
  * cerezi yerlestirebilir. Bu nedenle iframe SAYFA ACILIR ACILMAZ YUKLENMEZ:
  *  - Cerez tercihi "tumu" ise otomatik yuklenir,
  *  - degilse kullanici tiklayana kadar yalnizca bir yer tutucu gosterilir.
+ *
+ * Tek seferlik "haritayi yukle" tiklamasi genel cerez tercihini DEGISTIRMEZ;
+ * yalnizca bu ziyarette bu haritayi acar.
  */
 export default function HaritaGomulu({ lat, lng, baslik }: Props) {
-  const [yukle, setYukle] = useState(false);
-  const [hazir, setHazir] = useState(false);
-
-  useEffect(() => {
-    if (tercihiOku() === "tumu") setYukle(true);
-    setHazir(true);
-    return tercihiDinle((t) => {
-      if (t === "tumu") setYukle(true);
-    });
-  }, []);
+  const tercih = useCerezTercihi();
+  const [elleAcildi, setElleAcildi] = useState(false);
+  const goster = tercih === "tumu" || elleAcildi;
 
   const src = `https://www.google.com/maps?q=${lat},${lng}&output=embed&z=15`;
   const yolTarifi = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
@@ -30,7 +26,7 @@ export default function HaritaGomulu({ lat, lng, baslik }: Props) {
   return (
     <div>
       <div className="overflow-hidden rounded-card border border-line">
-        {hazir && yukle ? (
+        {goster ? (
           <iframe
             src={src}
             title={baslik}
@@ -52,8 +48,8 @@ export default function HaritaGomulu({ lat, lng, baslik }: Props) {
             </div>
             <button
               type="button"
-              onClick={() => setYukle(true)}
-              className="rounded-full bg-blue px-6 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5"
+              onClick={() => setElleAcildi(true)}
+              className="rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5"
             >
               Haritayı yükle
             </button>

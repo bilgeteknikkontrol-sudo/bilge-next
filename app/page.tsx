@@ -6,7 +6,7 @@ import ReferansSeridi from "./components/ReferansSeridi";
 import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
 // CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
 import { EKIPMAN_GORSEL } from "@/lib/images";
-import { REFERANSLAR, EKIP, KURUM } from "@/lib/site-data";
+import { EKIP, KURUM } from "@/lib/site-data";
 import { KATEGORILER } from "@/lib/data";
 // Hero arka plani: saha fotografi. Genis (1000x486) oldugu icin tam genislikte net kaliyor.
 import heroGorsel from "../public/img/yangin-kontrolu.webp";
@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 const AVANTAJLAR = [
   ["📝", "Online Teklif Sistemi", "Ekipmanınızı seçin, saniyeler içinde ön bilgi ve randevu talebi oluşturun."],
   ["📅", "Yasal Süre Hesaplayıcı", "Son kontrol tarihini girin; bir sonraki yasal tarihi ve gecikme riskini anında görün."],
-  ["🔎", "Müşteri Rapor Portalı", "Rapor numaranızla geçmişinizi, geçerliliği ve yenileme hatırlatmasını görüntüleyin."],
+  ["📊", "Kontrol Süreleri Tablosu", "Hangi ekipmanın hangi standarda göre ne sıklıkla kontrol edileceğini tek tabloda görün."],
   ["🛡️", "Bağımsız Akreditasyon", "TÜRKAK AB-0296-M ile tarafsız, denetimlerde sorunsuz kabul gören raporlar."],
 ];
 
@@ -30,7 +30,7 @@ const SUREC = [
   ["Talep ve Sözleşme", "İSG-KATİP üzerinden hizmet sözleşmesi oluşturulur, ekipman envanteri alınır."],
   ["Yerinde Muayene", "Uzman mühendis kadro ile ekipmanınızda test, deney ve görsel muayene yapılır."],
   ["Akredite Rapor", "TS EN ISO/IEC 17020 kapsamında e-imzalı, uluslararası geçerli rapor düzenlenir."],
-  ["Takip ve Hatırlatma", "Rapor portalı ile bir sonraki kontrol tarihinizde size hatırlatma yapılır."],
+  ["Takip ve Hatırlatma", "Bir sonraki yasal kontrol tarihiniz kayda alınır, süre dolmadan size hatırlatılır."],
 ];
 
 function groupByKategori(items: Equipment[]) {
@@ -402,10 +402,10 @@ export default async function Home() {
               },
               {
                 "@type": "Question",
-                name: "Raporlarımı nasıl takip edebilirim?",
+                name: "Bir sonraki kontrol tarihimi nasıl takip ederim?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Müşteri Rapor Portalı ile rapor numaranızı girerek kontrol geçmişinizi, geçerlilik tarihini ve yenileme hatırlatmasını görüntüleyebilirsiniz.",
+                  text: "Muayene sonrası bir sonraki yasal kontrol tarihiniz kayda alınır ve süre dolmadan tarafınıza hatırlatma yapılır. Ayrıca sitemizdeki yasal süre hesaplayıcı ile son kontrol tarihinizi girerek bir sonraki tarihi kendiniz de görebilirsiniz.",
                 },
               },
             ],

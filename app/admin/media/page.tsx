@@ -10,7 +10,7 @@ export default async function MediaAdmin() {
       <h1 className="text-2xl font-black text-slate-800">Medya Kütüphanesi</h1>
       <p className="mt-1 text-sm text-slate-500">
         Görselleri yükleyin veya harici URL ekleyin. Yüklenen görsel base64 olarak saklanır,
-        kopyalayıp makale/içerik HTML'ine yapıştırabilirsiniz.
+        kopyalayıp makale/içerik HTML&apos;ine yapıştırabilirsiniz.
       </p>
 
       <div className="mt-6 rounded-2xl bg-white p-5 shadow-sm">

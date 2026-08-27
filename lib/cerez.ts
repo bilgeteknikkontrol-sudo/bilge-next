@@ -10,6 +10,8 @@
  * ozel bir event ile, diger sekmelere tarayicinin "storage" event'i ile duyurulur.
  */
 
+import { useSyncExternalStore } from "react";
+
 export type CerezTercihi = "zorunlu" | "tumu";
 
 export const CEREZ_ANAHTARI = "btk-cerez-tercihi";
@@ -59,4 +61,35 @@ export function tercihiDinle(f: (t: CerezTercihi | null) => void): () => void {
     window.removeEventListener(CEREZ_OLAYI, yerel);
     window.removeEventListener("storage", digerSekme);
   };
+}
+
+/* ---------------------------------------------------------------------------
+   React baglayicisi
+
+   localStorage bir DIS DEPO; React state'i degil. Bu yuzden useEffect + setState
+   yerine useSyncExternalStore kullaniyoruz:
+     - Sunucuda ve ilk cizimde daima null doner  -> hidrasyon uyusmazligi olmaz,
+     - Degisiklikler abonelik uzerinden gelir    -> effect icinde setState yok
+       (cascading render'a yol acan react-hooks/set-state-in-effect sorunu).
+--------------------------------------------------------------------------- */
+
+/** Sunucu anligi: SSR sirasinda tercih bilinemez. Sabit referans dondurulmeli. */
+function sunucuAnlik(): CerezTercihi | null {
+  return null;
+}
+
+export function useCerezTercihi(): CerezTercihi | null {
+  return useSyncExternalStore(tercihiDinle, tercihiOku, sunucuAnlik);
+}
+
+/**
+ * Tercih okundu mu? Ilk cizimde (ve sunucuda) false, hidrasyondan sonra true.
+ * "Henuz bilmiyorum" ile "tercih yok" durumlarini ayirmak icin kullanilir.
+ */
+export function useCerezHazir(): boolean {
+  return useSyncExternalStore(
+    tercihiDinle,
+    () => true,
+    () => false
+  );
 }

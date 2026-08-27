@@ -149,8 +149,9 @@ export default function TeklifForm() {
 
         {sent && (
           <div className="mt-4 rounded-xl border border-[#f3d29a] bg-[#fff4e0] p-4 text-sm text-[#8a5a10]">
-            ✅ Talebiniz alındı! Ekibimiz en kısa sürede dönüş yapacak. (Sunucu tarafı API & e-posta
-            entegrasyonu için <Link href="/portal" className="underline">portal</Link> altyapısı hazır.)
+            ✅ Talebiniz alındı! Ekibimiz kapsam ve fiyat için en kısa sürede size dönüş yapacak.
+            Acil durumlar için <a href="tel:+902128725204" className="font-bold underline">0212 872 52 04</a>{" "}
+            numaralı hattımızdan bize ulaşabilirsiniz.
           </div>
         )}
       </div>
