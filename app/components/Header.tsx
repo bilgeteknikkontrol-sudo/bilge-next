@@ -77,7 +77,8 @@ export default function Header() {
       <div className="hidden bg-navy text-white/75 md:block">
         <div className="container-x flex h-9 items-center justify-between text-[.78rem]">
           <div className="flex items-center gap-5">
-            <a href={`tel:${KURUM.telefonE164}`} className="transition hover:text-white">
+            {/* xl'de telefon ana cubukta gorunuyor, burada tekrar etmesin */}
+            <a href={`tel:${KURUM.telefonE164}`} className="transition hover:text-white xl:hidden">
               📞 {KURUM.telefon}
             </a>
             <a href={`mailto:${KURUM.eposta}`} className="hidden transition hover:text-white lg:inline">
@@ -95,9 +96,9 @@ export default function Header() {
       </div>
 
       {/* ANA ÇUBUK */}
-      <div className="container-x flex h-[72px] items-center justify-between gap-4">
+      <div className="container-x flex h-[92px] items-center justify-between gap-4">
         <Link href="/" className="shrink-0" aria-label={`${KURUM.kisaAd} — ana sayfa`}>
-          <Image src={logo} alt={KURUM.kisaAd} priority sizes="120px" className="h-11 w-auto" />
+          <Image src={logo} alt={KURUM.kisaAd} priority sizes="180px" className="h-[62px] w-auto md:h-[68px]" />
         </Link>
 
         <nav className="hidden items-center lg:flex" aria-label="Ana menü">
@@ -192,8 +193,19 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <Link href="/teklif" className="btn-primary hidden whitespace-nowrap px-5 py-2.5 text-[.92rem] md:inline-flex">
+        <div className="flex shrink-0 items-center gap-3">
+          {/* Telefon: kurumsal sitelerde birincil donusum yolu, CTA'nin yaninda durmali */}
+          <a
+            href={`tel:${KURUM.telefonE164}`}
+            className="hidden items-center gap-2.5 rounded-xl border border-line px-3.5 py-2 transition hover:border-blue xl:flex"
+          >
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-soft text-base">📞</span>
+            <span className="leading-tight">
+              <span className="block text-[.68rem] font-semibold uppercase tracking-wide text-muted">Hemen arayın</span>
+              <span className="block text-[.92rem] font-bold text-navy">{KURUM.telefon}</span>
+            </span>
+          </a>
+          <Link href="/teklif" className="btn-primary hidden whitespace-nowrap px-6 py-3 text-[.92rem] md:inline-flex">
             Ücretsiz Teklif Al
           </Link>
           <button

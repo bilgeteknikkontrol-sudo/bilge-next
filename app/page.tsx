@@ -5,8 +5,10 @@ import Footer from "./components/Footer";
 import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
 // CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
 import { EKIPMAN_GORSEL } from "@/lib/images";
-import { REFERANSLAR, EKIP } from "@/lib/site-data";
+import { REFERANSLAR, EKIP, KURUM } from "@/lib/site-data";
 import { KATEGORILER } from "@/lib/data";
+// Hero arka plani: saha fotografi. Genis (1000x486) oldugu icin tam genislikte net kaliyor.
+import heroGorsel from "../public/img/yangin-kontrolu.webp";
 
 /** Kategori adi -> ikon. CMS kategori adi dondururken ikonu tasimadigi icin
  *  ikonlar statik veriden ad eslesmesiyle bulunur; bulunamazsa genel ikon kullanilir. */
@@ -62,33 +64,88 @@ export default async function Home() {
       <Header />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy via-navy2 to-navy text-white">
-        <div className="container-x grid items-center gap-10 py-16 lg:grid-cols-[1.1fr_.9fr] lg:py-24">
+      <section className="relative isolate overflow-hidden bg-navy text-white">
+        {/* Katman 1: gercek saha fotografi, koyu zeminle harmanlanmis */}
+        <Image
+          src={heroGorsel}
+          alt=""
+          aria-hidden
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-[.22]"
+          placeholder="blur"
+        />
+        {/* Katman 2: metnin okunurlugunu garantileyen yonlu gradyan */}
+        <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/95 to-navy/70" />
+        {/* Katman 3: sag ustte yumusak isik — duz zeminin monotonlugunu kiriyor */}
+        <div
+          aria-hidden
+          className="absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full opacity-40 blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(45,110,235,.55), transparent 70%)" }}
+        />
+
+        <div className="container-x relative grid items-center gap-12 py-16 lg:grid-cols-[1.15fr_.85fr] lg:py-24">
           <div>
-            <span className="chip bg-white/10 text-[#cfe0ff]">🛡️ TÜRKAK Akredite A Tipi Muayene Kuruluşu · AB-0296-M</span>
-            <h1 className="mt-5 font-black tracking-tight md:text-5xl" style={{ fontSize: "var(--fs-hero)", lineHeight: 1.1 }}>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-[#cfe0ff] backdrop-blur-sm">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent2 text-[.7rem] text-navy">✓</span>
+              TÜRKAK Akredite A Tipi Muayene Kuruluşu · {KURUM.akreditasyon}
+            </span>
+
+            <h1 className="mt-6 font-black tracking-tight md:text-5xl" style={{ fontSize: "var(--fs-hero)", lineHeight: 1.08 }}>
               {heroTitle}
             </h1>
-            <p className="mt-4 text-lg text-[#c7d6f0]">{heroSubtitle}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/teklif" className="btn-primary">Ücretsiz Teklif Al →</Link>
-              <Link href="/hesapla" className="btn-ghost border-white/40 text-white hover:bg-white/10 hover:text-white">Süremi Hesapla</Link>
+
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#c7d6f0]">{heroSubtitle}</p>
+
+            {/* Guven isaretleri: iddiadan once dogrulanabilir olgular */}
+            <ul className="mt-7 flex flex-wrap gap-x-7 gap-y-3">
+              {[
+                ["🛡️", "Bağımsız ve tarafsız"],
+                ["📋", "TS EN ISO/IEC 17020"],
+                ["🇹🇷", "Türkiye geneli yerinde muayene"],
+              ].map(([i, t]) => (
+                <li key={t} className="flex items-center gap-2 text-sm font-medium text-[#c7d6f0]">
+                  <span aria-hidden>{i}</span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/teklif" className="btn-primary px-7 py-3.5">Ücretsiz Teklif Al →</Link>
+              <Link href="/hesapla" className="btn-ghost border-white/40 px-7 py-3.5 text-white hover:bg-white/10 hover:text-white">
+                Yasal Sürenizi Hesaplayın
+              </Link>
             </div>
           </div>
 
-          <aside className="card border-white/15 bg-white/10 p-6 text-white backdrop-blur-md">
-            <h3 className="text-lg font-bold">Haydi başlayalım</h3>
-            <p className="text-sm text-[#c7d6f0]">Aşağıdaki araçlardan biriyle 2 dakikada ilerleyin:</p>
-            <div className="mt-3 grid gap-2.5">
-              <Link href="/teklif" className="rounded-xl bg-blue px-5 py-3 font-bold text-white">📝 Online Teklif &amp; Randevu</Link>
-              <Link href="/hesapla" className="rounded-xl border border-white/40 px-5 py-3 font-bold text-white">📅 Yasal Süre Hesaplayıcı</Link>
-              <Link href="/portal" className="rounded-xl border border-white/40 px-5 py-3 font-bold text-white">🔎 Rapor Sorgulama</Link>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[["2014", "Yılından beri"], ["10.000+", "Tamamlanan muayene"], ["500+", "Müşteri firma"], ["AB-0296-M", "Akreditasyon no"]].map(([b, s]) => (
-                <div key={s} className="rounded-xl bg-white/10 p-4">
-                  <b className="block text-xl">{b}</b>
-                  <span className="text-[.8rem] text-[#b9cae8]">{s}</span>
+          {/* Sag kart: uc arac yerine tek net eylem + kanit */}
+          <aside className="rounded-card border border-white/15 bg-white/[.07] p-7 backdrop-blur-md">
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#9db4de]">Kontrol zamanı geldi mi?</p>
+            <h2 className="mt-2 text-2xl font-black leading-snug text-white">
+              Ekipmanınızı seçin, kapsam ve fiyatı size dönelim
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#c7d6f0]">
+              92 ekipman türünde akredite periyodik kontrol. Formu doldurmanız 2 dakika sürüyor.
+            </p>
+            <Link
+              href="/teklif"
+              className="mt-5 block rounded-xl bg-accent px-5 py-3.5 text-center font-bold text-navy transition hover:-translate-y-0.5"
+            >
+              Teklif Formunu Aç →
+            </Link>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-white/15 pt-6">
+              {[
+                ["2014", "Yılından beri"],
+                ["500+", "Müşteri firma"],
+                ["92", "Ekipman türü"],
+                [KURUM.akreditasyon, "Akreditasyon no"],
+              ].map(([b, s]) => (
+                <div key={s}>
+                  <b className="block text-xl leading-tight text-white">{b}</b>
+                  <span className="text-[.78rem] text-[#9db4de]">{s}</span>
                 </div>
               ))}
             </div>
@@ -124,12 +181,13 @@ export default async function Home() {
       <section id="hizmetler" className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
-            <span className="chip">Zorunlu Periyodik Muayeneler</span>
+            <span className="chip">Hizmetlerimiz</span>
             <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>Tüm İş Ekipmanınız Tek Çatı Altında</h2>
             <p className="mt-3 text-muted">TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.</p>
           </div>
+          {/* Ana sayfada en fazla 9 hizmet gosterilir; tamami /ekipman sayfasinda. */}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {kategoriler.map(([kat, items]) => {
+            {kategoriler.slice(0, 9).map(([kat, items]) => {
               const g = EKIPMAN_GORSEL[items[0].slug];
               return (
                 <Link key={kat} href={`/ekipman/${items[0].slug}`} className="group card flex flex-col overflow-hidden transition hover:-translate-y-1">
