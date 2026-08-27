@@ -1,6 +1,7 @@
 import { getSettings } from "@/lib/cms";
 import { saveSettingsAction } from "../actions";
 import { guard } from "@/lib/auth";
+import RenkPaneli from "./RenkPaneli";
 
 export default async function SettingsAdmin() {
   await guard();
@@ -21,13 +22,8 @@ export default async function SettingsAdmin() {
       </p>
 
       <form action={saveSettingsAction} className="mt-6 space-y-8">
-        <Section title="Renkler (CSS değişkenleri)">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {Object.entries(s.colors).map(([key, val]) => (
-              <ColorField key={key} name={`color_${key}`} label={key} value={val} />
-            ))}
-          </div>
-        </Section>
+        {/* Renkler: gruplu, aciklamali ve canli onizlemeli panel (istemci bileseni) */}
+        <RenkPaneli colors={s.colors} />
 
         <Section title="Yazı Boyutları">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -90,19 +86,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div className="rounded-2xl bg-white p-5 shadow-sm">
       <h2 className="mb-3 font-bold text-slate-700">{title}</h2>
       {children}
-    </div>
-  );
-}
-
-function ColorField({ name, label, value }: { name: string; label: string; value: string }) {
-  return (
-    <div>
-      <label className="text-xs font-semibold text-slate-600">{label}</label>
-      <div className="mt-1 flex items-center gap-2">
-        <input type="color" name={name} defaultValue={value} className="h-9 w-12 rounded border border-slate-300" />
-        <input name={`${name}_hex`} defaultValue={value} className="hidden" />
-        <input defaultValue={value} className="w-full rounded-lg border border-slate-300 p-1.5 text-sm" readOnly />
-      </div>
     </div>
   );
 }

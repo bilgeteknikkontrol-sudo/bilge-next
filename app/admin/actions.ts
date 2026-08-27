@@ -183,9 +183,15 @@ export async function saveSettingsAction(formData: FormData) {
   const cur = await getSettings().catch(() => defaultSettings());
   const colors = { ...cur.colors };
   const fonts = { ...cur.fonts };
-  for (const key of Object.keys(colors)) {
-    const v = formData.get(`color_${key}`);
-    if (v !== null && v !== "") colors[key] = String(v);
+  // Formdaki TUM color_* alanlari okunur. Kayitli ayarin anahtarlari uzerinden
+  // donmek yetmiyordu: yeni eklenen renkler (headerBg, footerBg ...) kayitli
+  // veride bulunmadigi icin panelden degistirilse de kaydedilmiyordu.
+  for (const [alan, deger] of formData.entries()) {
+    if (!alan.startsWith("color_")) continue;
+    const key = alan.slice("color_".length);
+    const v = String(deger).trim();
+    // Yalnizca gecerli hex kabul edilir; bozuk deger tum siteyi bozabilir.
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) colors[key] = v;
   }
   for (const key of Object.keys(fonts)) {
     const v = formData.get(`font_${key}`);

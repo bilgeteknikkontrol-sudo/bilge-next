@@ -28,7 +28,8 @@ export default function Footer() {
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
 
   return (
-    <footer id="iletisim" className="mt-10 bg-navy text-white/75">
+    // bg-footer: zemin rengi panelden yonetiliyor (Admin > Site Ayarlari > Renkler)
+    <footer id="iletisim" className="mt-10 bg-footer text-white/75">
       {/* ÜST ŞERİT — kapanış çağrısı */}
       <div className="border-b border-white/10 bg-white/[.03]">
         <div className="container-x flex flex-col items-center justify-between gap-4 py-8 md:flex-row">

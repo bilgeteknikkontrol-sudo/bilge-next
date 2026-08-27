@@ -80,11 +80,15 @@ export default async function Home() {
           Sol sutun: hizmetin ne oldugunu anlatan metin + kanit + eylem.
           Sag sutun: saha fotografi (panelden slayt) ve uzerine binen teklif karti. */}
       <section className="relative isolate overflow-hidden bg-white text-ink">
-        {/* Zemin: beyazdan sicak kreme yumusak gecis */}
+        {/* Zemin: beyazdan sicak kreme yumusak gecis.
+            Iki ucu da panelden yonetiliyor (Admin > Site Ayarlari > Renkler). */}
         <div
           aria-hidden
           className="absolute inset-0 -z-10"
-          style={{ background: "linear-gradient(160deg, #FFFFFF 0%, #FFF8F2 55%, #FFF1E4 100%)" }}
+          style={{
+            background:
+              "linear-gradient(160deg, var(--color-herofrom) 0%, var(--color-bgsoft) 55%, var(--color-heroto) 100%)",
+          }}
         />
         {/* Sol ustte ve sag altta yumusak turuncu isik — duz zeminin monotonlugunu kiriyor */}
         <div
@@ -98,7 +102,10 @@ export default async function Home() {
           style={{ background: "radial-gradient(circle, rgba(255,205,160,.45), transparent 70%)" }}
         />
 
-        <div className="container-x relative grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_.95fr] lg:py-20">
+        {/* items-center YOK: sutunlar esnesin (grid varsayilani stretch). Boylece
+            sagdaki gorsel sol sutunun tepesinden basliyor ve ayni hizada bitiyor;
+            ortalanmis halinde 150px kadar asagi kayip asimetrik duruyordu. */}
+        <div className="container-x relative grid gap-12 py-14 lg:grid-cols-[1.05fr_.95fr] lg:py-20">
           {/* --- SOL: anlatim --- */}
           <div className="min-w-0">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_rgba(194,94,8,.6)]">
@@ -163,8 +170,9 @@ export default async function Home() {
               min-w-0: grid sutunlarinin varsayilan min-width:auto degeri, kartin
               icindeki buton+metin satirini "en dar hali" sayip sutunu kabindan
               tasiriyordu. */}
-          <div className="relative min-w-0 lg:pb-14">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_rgba(88,67,52,.55)]">
+          <div className="relative flex min-w-0 flex-col lg:pb-14">
+            {/* Mobilde sabit oran, lg'de sol sutunun boyuna uzayan esnek yukseklik */}
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_rgba(88,67,52,.55)] lg:aspect-auto lg:min-h-[420px] lg:flex-1">
               {/* Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
                   varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
               {heroSlaytlari.length > 0 ? (

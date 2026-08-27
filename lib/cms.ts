@@ -177,6 +177,13 @@ export function defaultSettings(): SiteSettings {
       muted: "#6B5F57",
       line: "#EFE3D8",
       white: "#ffffff",
+      // Bolge renkleri: genel paletten bagimsiz, panelden tek tek ayarlanir.
+      headerBg: "#FFFFFF",
+      headerTopBg: "#3A2C22",
+      footerBg: "#3A2C22",
+      buttonBg: "#C25E08",
+      heroFrom: "#FFFFFF",
+      heroTo: "#FFF1E4",
     },
     fonts: {
       hero: "3.5rem",
@@ -520,8 +527,13 @@ const YENI_PALET: Record<string, string> = {
 };
 
 function paletiGuncelle(s: SiteSettings): SiteSettings {
-  let degisti = false;
-  const colors = { ...s.colors };
+  // Kayitli ayar eski surumden kaldigi icin YENI eklenen renk anahtarlarini
+  // (headerBg, footerBg, buttonBg ...) icermeyebilir; eksikler varsayilanla
+  // tamamlanir, kayitli olanlara dokunulmaz.
+  const varsayilan = defaultSettings().colors;
+  const eksikVar = Object.keys(varsayilan).some((k) => !s.colors[k]);
+  let degisti = eksikVar;
+  const colors = { ...varsayilan, ...s.colors };
   for (const [k, yeni] of Object.entries(YENI_PALET)) {
     const kayitli = colors[k]?.toLowerCase();
     if (!kayitli) continue;

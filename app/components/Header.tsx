@@ -80,10 +80,12 @@ export default function Header() {
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur-md">
+    // Zemin renkleri panelden yonetiliyor (Admin > Site Ayarlari > Renkler):
+    // bg-header = ana cubuk, bg-headertop = ustteki iletisim seridi.
+    <header className="sticky top-0 z-50 border-b border-line bg-header/95 backdrop-blur-md">
       {/* ÜST ŞERİT — iletişim ve güven bilgileri.
           Sag tarafta akreditasyon rozeti sertifika sayfasina baglaniyor. */}
-      <div className="hidden bg-gradient-to-r from-navy via-navy2 to-navy text-white/80 md:block">
+      <div className="hidden bg-headertop text-white/80 md:block">
         <div className="container-x flex h-10 items-center justify-between text-[.78rem]">
           <div className="flex items-center gap-6">
             {/* xl'de telefon ana cubukta gorunuyor, burada tekrar etmesin */}

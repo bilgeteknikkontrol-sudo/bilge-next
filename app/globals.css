@@ -25,6 +25,16 @@
   --color-line: #EFE3D8;
   --color-bgsoft: #FFF8F2;
 
+  /* Bolge renkleri — panelden ayri ayri yonetilir (Admin > Site Ayarlari > Renkler).
+     Genel paletten bagimsizdirlar ki "header beyaz kalsin ama footer koyu olsun"
+     gibi istekler tek tek yapilabilsin. */
+  --color-header: #FFFFFF;      /* ust menu cubugu zemini */
+  --color-headertop: #3A2C22;   /* menunun ustundeki ince iletisim seridi */
+  --color-footer: #3A2C22;      /* footer zemini */
+  --color-btn: #C25E08;         /* birincil buton (Teklif Al vb.) */
+  --color-herofrom: #FFFFFF;    /* hero zemin gradyaninin basi */
+  --color-heroto: #FFF1E4;      /* hero zemin gradyaninin sonu */
+
   --radius-card: 20px;
   --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
@@ -44,7 +54,9 @@ body {
 /* Ortak yardımcılar */
 .container-x { @apply mx-auto w-full max-w-[1200px] px-5; }
 .nav-link { @apply font-semibold text-ink/80 transition-colors hover:text-blue; }
-.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue px-6 py-3 font-bold text-white shadow-[0_14px_30px_-12px_rgba(194,94,8,.55)] transition hover:-translate-y-0.5 hover:bg-blue-dark; }
+/* Buton rengi panelden ayri yonetildigi icin bg-btn; hover'da sabit bir renk
+   yerine parlaklik degisiyor ki hangi renk secilirse secilsin uyumlu kalsin. */
+.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-btn px-6 py-3 font-bold text-white shadow-[0_14px_30px_-12px_rgba(194,94,8,.55)] transition hover:-translate-y-0.5 hover:brightness-110; }
 .btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3 font-bold text-navy transition hover:border-blue hover:text-blue; }
 .section { @apply py-16 md:py-20; }
 .chip { @apply inline-flex items-center gap-1.5 rounded-full bg-blue-soft px-3 py-1 text-sm font-bold text-blue; }

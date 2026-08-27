@@ -48,6 +48,13 @@ const COLOR_VAR: Record<string, string> = {
   muted: "--color-muted",
   line: "--color-line",
   bgsoft: "--color-bgsoft",
+  // Bolge renkleri (Admin > Site Ayarlari > Renkler > Bolgeler)
+  headerBg: "--color-header",
+  headerTopBg: "--color-headertop",
+  footerBg: "--color-footer",
+  buttonBg: "--color-btn",
+  heroFrom: "--color-herofrom",
+  heroTo: "--color-heroto",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
