@@ -22,6 +22,12 @@ export type Article = {
   faq?: { q: string; a: string }[];
   aktif: boolean;
   sira: number;
+  /**
+   * Yazi gorseli. Panelden yonetilir; Medya Kutuphanesi'ndeki bir gorselin
+   * adresi, base64 data URL'i veya harici bir URL olabilir.
+   * Bos birakilirsa lib/images.ts icindeki slug eslesmeli varsayilan kullanilir.
+   */
+  image?: string;
 };
 
 export type Equipment = {
@@ -108,7 +114,9 @@ function ensureSchema(): Promise<void> {
     const s = sql();
     await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
     await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
-    await run(s`CREATE TABLE IF NOT EXISTS articles (slug text PRIMARY KEY, title text, description text, category text, date text, readmin int, keywords jsonb, lead text, body text, faq jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
+    await run(s`CREATE TABLE IF NOT EXISTS articles (slug text PRIMARY KEY, title text, description text, category text, date text, readmin int, keywords jsonb, lead text, body text, faq jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0, image text)`);
+    // Onceden olusturulmus kurulumlarda sutun yoksa ekle
+    await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS image text`);
     await run(s`CREATE TABLE IF NOT EXISTS site_settings (id int PRIMARY KEY, data jsonb)`);
     await run(s`CREATE TABLE IF NOT EXISTS site_content (key text PRIMARY KEY, value text)`);
     await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
@@ -141,7 +149,8 @@ async function seedIfEmpty(s: Sql) {
   if (Number(aq[0].c) === 0) {
     let sira = 0;
     for (const a of ARTICLES) {
-      await run(s`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira) VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, true, ${sira++}) ON CONFLICT (slug) DO NOTHING`);
+      // image: tohum verisinde gorsel yok; slug eslesmeli varsayilan kullanilir.
+      await run(s`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image) VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, true, ${sira++}, ${null}) ON CONFLICT (slug) DO NOTHING`);
     }
   }
   const sq = await run(s`SELECT count(*)::int AS c FROM site_settings`);
@@ -289,6 +298,7 @@ function rowToArticle(r: Record<string, unknown>): Article {
     faq: Array.isArray(r.faq) ? (r.faq as { q: string; a: string }[]) : [],
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
+    image: r.image ? String(r.image) : undefined,
   };
 }
 
@@ -359,8 +369,8 @@ async function dbSaveLocation(l: Location): Promise<void> {
 async function dbSaveArticle(a: Article): Promise<void> {
   await ensureSchema();
   await run(sql()`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira)
-    VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira})
-    ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}`);
+    VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null})
+    ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`);
 }
 
 async function dbSaveSettings(s: SiteSettings): Promise<void> {

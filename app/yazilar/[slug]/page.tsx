@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import YaziGorseli from "../../components/YaziGorseli";
 import { getArticleBySlug, getArticles } from "@/lib/cms";
-// CMS Article tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
-import { YAZI_GORSEL } from "@/lib/images";
 
 export const dynamic = "force-dynamic";
 
@@ -62,17 +60,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         <h1 className="mt-3 text-3xl font-black text-navy md:text-4xl">{a.title}</h1>
         {a.date && <p className="mt-2 text-sm text-muted">{a.date}</p>}
         {a.lead && <p className="mt-4 text-lg text-muted">{a.lead}</p>}
-        {YAZI_GORSEL[a.slug] && (
-          <Image
-            src={YAZI_GORSEL[a.slug]}
-            alt=""
-            aria-hidden
-            priority
-            sizes="(max-width: 860px) 100vw, 780px"
-            className="mt-6 h-auto w-full rounded-card border border-line object-cover"
-            placeholder="blur"
-          />
-        )}
+        <YaziGorseli slug={a.slug} cmsImage={a.image} bicim="makale" oncelikli />
         <div className="prose mt-6 max-w-none text-ink" dangerouslySetInnerHTML={{ __html: a.body }} />
         <div className="mt-10 rounded-card border border-line bg-bgsoft p-6">
           <h3 className="text-lg font-bold text-navy">Periyodik kontrolünüzü erteleyeyim mi?</h3>

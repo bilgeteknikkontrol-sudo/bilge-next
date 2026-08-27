@@ -67,6 +67,31 @@ export default async function ArticlesAdmin({
               <Field label="Okuma dk" name="readMin" value={item?.readMin} />
             </div>
             <Field label="Anahtar kelimeler (virgülle)" name="keywords" value={item?.keywords?.join(", ")} />
+
+            {/* Yazi gorseli — bos birakilirsa slug'a gore varsayilan gorsel kullanilir */}
+            <div>
+              <label className="text-xs font-semibold text-slate-600">Görsel adresi</label>
+              <input
+                name="image"
+                defaultValue={item?.image || ""}
+                placeholder="/img/ornek.webp  ·  https://…  ·  Medya Kütüphanesi'nden kopyalanan adres"
+                className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm"
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                Boş bırakırsanız yazının kendi varsayılan görseli kullanılır. Görsel yüklemek için{" "}
+                <a href="/admin/media" className="font-semibold text-blue-600 underline">
+                  Medya Kütüphanesi
+                </a>
+                &apos;ni kullanıp adresi buraya yapıştırın.
+              </p>
+              {item?.image && (
+                <div className="mt-2 h-24 w-40 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.image} alt="" className="h-full w-full object-cover" />
+                </div>
+              )}
+            </div>
+
             <Field label="Giriş (lead)" name="lead" value={item?.lead} textarea />
             <div>
               <label className="text-xs font-semibold text-slate-600">İçerik (HTML)</label>

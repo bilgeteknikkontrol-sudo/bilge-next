@@ -69,10 +69,13 @@ export async function saveArticleAction(formData: FormData) {
     faq: parseFaq(String(formData.get("faq") || "")),
     aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
     sira: num(formData.get("sira")),
+    // Bos birakilirsa undefined -> sayfada slug eslesmeli varsayilan gorsel kullanilir
+    image: String(formData.get("image") || "").trim() || undefined,
   };
   await saveArticle(article);
   revalidatePath("/");
   revalidatePath("/yazilar");
+  revalidatePath(`/yazilar/${slug}`);
   redirect("/admin/articles");
 }
 
