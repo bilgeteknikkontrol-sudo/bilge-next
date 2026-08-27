@@ -50,9 +50,8 @@ export default function CerezOnay() {
     >
       <div className="container-x flex flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between md:gap-6">
         <p className="text-sm leading-relaxed text-muted">
-          Sitemizin çalışması için gerekli çerezleri kullanıyoruz. İzin verirseniz, siteyi
-          geliştirmek amacıyla anonim kullanım istatistiği topluyor ve iletişim sayfasındaki
-          haritayı otomatik yüklüyoruz.{" "}
+          Sitenin çalışması için gerekli çerezleri kullanıyoruz. İzin verirseniz anonim kullanım
+          istatistiği topluyor ve haritayı otomatik yüklüyoruz.{" "}
           <Link href="/cerez-politikasi" className="font-semibold text-blue underline">
             Çerez Politikası
           </Link>
@@ -61,14 +60,14 @@ export default function CerezOnay() {
           <button
             type="button"
             onClick={() => sec("zorunlu")}
-            className="flex-1 whitespace-nowrap rounded-full border border-line px-5 py-2.5 text-sm font-bold text-navy transition hover:border-blue hover:text-blue md:flex-none"
+            className="flex-1 whitespace-nowrap rounded-full border border-line px-5 py-3 text-sm font-bold text-navy transition hover:border-blue hover:text-blue md:flex-none"
           >
             Sadece zorunlu
           </button>
           <button
             type="button"
             onClick={() => sec("tumu")}
-            className="flex-1 whitespace-nowrap rounded-full bg-blue px-5 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5 md:flex-none"
+            className="flex-1 whitespace-nowrap rounded-full bg-blue px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 md:flex-none"
           >
             Tümünü kabul et
           </button>

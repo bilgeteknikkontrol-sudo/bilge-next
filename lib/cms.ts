@@ -173,8 +173,10 @@ export function defaultSettings(): SiteSettings {
       body: "1rem",
       nav: "0.95rem",
     },
-    logo: "/icon.svg",
-    favicon: "/icon.svg",
+    // app/icon.svg (yer tutucu "B") marka logosu eklenirken silindi.
+    // Gercek marka dosyalari: public/img/marka/logo.png ve app/favicon.ico
+    logo: "/img/marka/logo.png",
+    favicon: "/favicon.ico",
     phone: "0212 872 52 04",
     email: "info@bilgeteknikkontrol.com",
     address: "Yakuplu Mah. 65. Sk. No:35 İç Kapı No:4, Beylikdüzü / İstanbul",

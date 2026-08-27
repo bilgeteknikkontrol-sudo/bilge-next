@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
+// Analytics dogrudan degil, cerez onayina bagli sarmalayici uzerinden yuklenir.
+import AnalyticsOnayli from "./components/AnalyticsOnayli";
+import CerezOnay from "./components/CerezOnay";
 import "./globals.css";
 import { getSettings } from "@/lib/cms";
 
@@ -114,7 +116,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         {children}
-        <Analytics />
+        <CerezOnay />
+        <AnalyticsOnayli />
       </body>
     </html>
   );
