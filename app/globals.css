@@ -123,6 +123,32 @@ body {
   border: 1px solid var(--color-line);
 }
 
+/* ---------------------------------------------------------------------------
+   Referans logo seridi (JS'siz sonsuz kayma)
+   Liste iki kez basildigi icin -50% noktasinda basa doner; dikis gorunmez.
+--------------------------------------------------------------------------- */
+.referans-serit {
+  overflow: hidden;
+  /* Kenarlarda yumusak silinme: logolar aniden kesilmiyor */
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.referans-serit-ic {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: referans-kay 38s linear infinite;
+}
+.referans-serit:hover .referans-serit-ic { animation-play-state: paused; }
+
+@keyframes referans-kay {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
+  /* Animasyon yerine elle kaydirilabilir serit */
+  .referans-serit { overflow-x: auto; }
+  .referans-serit-ic { animation: none; }
 }

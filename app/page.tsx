@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ReferansSeridi from "./components/ReferansSeridi";
 import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
 // CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
 import { EKIPMAN_GORSEL } from "@/lib/images";
@@ -271,18 +272,58 @@ export default async function Home() {
             akreditasyon raporlarıyla iş ortaklarımızın yasal yükümlülüklerini güvence altına alıyoruz.
           </p>
 
-          <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {REFERANSLAR.map((r) => (
-              <li key={r.name} className="flex h-24 items-center justify-center rounded-xl border border-line bg-white p-4">
-                <Image
-                  src={r.logo}
-                  alt={r.name}
-                  sizes="200px"
-                  className="max-h-14 w-auto object-contain opacity-80 transition hover:opacity-100"
-                />
-              </li>
-            ))}
-          </ul>
+        </div>
+
+        {/* Kayan logo seridi — container disinda, ekran genisligince */}
+        <div className="mt-10">
+          <ReferansSeridi />
+        </div>
+
+        <div className="container-x mt-8 text-center">
+          <Link href="/referanslar" className="btn-ghost">Tüm Referanslarımız →</Link>
+        </div>
+      </section>
+
+      {/* KATALOG */}
+      <section className="section bg-bgsoft">
+        <div className="container-x">
+          <div className="card grid items-center gap-8 overflow-hidden p-8 md:grid-cols-[1fr_auto] md:p-10">
+            <div>
+              <span className="chip">Kurumsal Katalog</span>
+              <h2 className="mt-4 font-black text-navy md:text-3xl" style={{ fontSize: "var(--fs-h2)" }}>
+                Hizmet kataloğumuzu indirin
+              </h2>
+              <p className="mt-3 max-w-xl text-muted">
+                Akreditasyon kapsamımız, muayene ettiğimiz ekipman grupları, uyguladığımız
+                standartlar ve çalışma sürecimiz tek dosyada. Satın alma ve İSG birimlerinizle
+                paylaşabileceğiniz kurumsal tanıtım dokümanı.
+              </p>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-muted">
+                <li>📄 6 sayfa</li>
+                <li>🛡️ TÜRKAK {KURUM.akreditasyon}</li>
+                <li>📋 TS EN ISO/IEC 17020</li>
+              </ul>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a
+                  href="/dosya/bilge-teknik-kontrol-katalog.pdf"
+                  target="_blank"
+                  rel="noopener"
+                  className="btn-primary"
+                >
+                  Kataloğu Aç (PDF) →
+                </a>
+                <Link href="/teklif" className="btn-ghost">Teklif İste</Link>
+              </div>
+            </div>
+
+            <div className="mx-auto flex h-52 w-40 shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-navy to-navy2 text-white shadow-[0_20px_40px_-20px_rgba(15,23,42,.6)]">
+              <span className="text-5xl" aria-hidden>📕</span>
+              <span className="mt-3 px-3 text-center text-xs font-bold leading-tight">
+                Bilge Teknik Kontrol
+                <span className="mt-1 block font-normal text-[#c7d6f0]">Hizmet Kataloğu</span>
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
