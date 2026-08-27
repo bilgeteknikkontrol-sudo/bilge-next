@@ -1,7 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getArticles } from "@/lib/cms";
+// CMS Article tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
+// Panelden eklenen yeni bir yazinin slug'i haritada yoksa kart gorselsiz cizilir.
+import { YAZI_GORSEL } from "@/lib/images";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +33,18 @@ export default async function YazilarPage() {
         <div className="mx-auto grid max-w-[1200px] gap-6 px-5 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((a) => (
             <Link key={a.slug} href={`/yazilar/${a.slug}`} className="group flex flex-col overflow-hidden rounded-card border border-line bg-white shadow-[0_10px_30px_-12px_rgba(11,31,58,.25)] transition hover:-translate-y-1">
+              {YAZI_GORSEL[a.slug] && (
+                <span className="block aspect-[16/9] overflow-hidden bg-bgsoft">
+                  <Image
+                    src={YAZI_GORSEL[a.slug]}
+                    alt=""
+                    aria-hidden
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    placeholder="blur"
+                  />
+                </span>
+              )}
               <span className="flex flex-1 flex-col p-6">
                 <span className="text-xs font-bold text-blue">{a.category}</span>
                 <h2 className="mt-2 text-xl font-bold text-navy group-hover:text-blue">{a.title}</h2>

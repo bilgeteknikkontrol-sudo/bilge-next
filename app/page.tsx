@@ -1,7 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
+// CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
+import { EKIPMAN_GORSEL } from "@/lib/images";
+import { REFERANSLAR, EKIP } from "@/lib/site-data";
+import { KATEGORILER } from "@/lib/data";
+
+/** Kategori adi -> ikon. CMS kategori adi dondururken ikonu tasimadigi icin
+ *  ikonlar statik veriden ad eslesmesiyle bulunur; bulunamazsa genel ikon kullanilir. */
+const KATEGORI_IKON: Record<string, string> = Object.fromEntries(
+  KATEGORILER.map((k) => [k.baslik, k.ikon])
+);
 
 export const dynamic = "force-dynamic";
 
@@ -118,15 +129,35 @@ export default async function Home() {
             <p className="mt-3 text-muted">TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.</p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {kategoriler.map(([kat, items]) => (
-              <Link key={kat} href={`/ekipman/${items[0].slug}`} className="group card flex flex-col p-6 transition hover:-translate-y-1">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl text-blue">🛠️</div>
-                <h3 className="text-xl text-navy group-hover:text-blue">{kat}</h3>
-                <p className="mt-1 text-sm text-muted">{items.length} ekipman türü · {items[0].standart} ve ilgili standartlar</p>
-              </Link>
-            ))}
+            {kategoriler.map(([kat, items]) => {
+              const g = EKIPMAN_GORSEL[items[0].slug];
+              return (
+                <Link key={kat} href={`/ekipman/${items[0].slug}`} className="group card flex flex-col overflow-hidden transition hover:-translate-y-1">
+                  {g && (
+                    <span className="relative block aspect-[16/9] overflow-hidden bg-bgsoft">
+                      <Image
+                        src={g}
+                        alt=""
+                        aria-hidden
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        placeholder="blur"
+                      />
+                      <span className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/95 text-xl shadow">
+                        {KATEGORI_IKON[kat] || "🛠️"}
+                      </span>
+                    </span>
+                  )}
+                  <span className="flex flex-1 flex-col p-6">
+                    <h3 className="text-xl text-navy group-hover:text-blue">{kat}</h3>
+                    <span className="mt-1 block text-sm text-muted">{items.length} ekipman türü · {items[0].standart} ve ilgili standartlar</span>
+                  </span>
+                </Link>
+              );
+            })}
           </div>
-          <div className="mt-9 text-center">
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <Link href="/ekipman" className="btn-ghost">Tüm Hizmetleri Gör ({equipment.length})</Link>
             <Link href="/teklif" className="btn-primary">Ekipmanınızı Seçip Teklif Alın</Link>
           </div>
         </div>
@@ -181,6 +212,44 @@ export default async function Home() {
             Üretimden lojistiğe, enerjiden kamuya kadar birçok sektörde; periyodik kontrol ve
             akreditasyon raporlarıyla iş ortaklarımızın yasal yükümlülüklerini güvence altına alıyoruz.
           </p>
+
+          <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {REFERANSLAR.map((r) => (
+              <li key={r.name} className="flex h-24 items-center justify-center rounded-xl border border-line bg-white p-4">
+                <Image
+                  src={r.logo}
+                  alt={r.name}
+                  sizes="200px"
+                  className="max-h-14 w-auto object-contain opacity-80 transition hover:opacity-100"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* EKİP */}
+      <section className="section bg-bgsoft">
+        <div className="container-x">
+          <div className="mx-auto mb-10 max-w-[720px] text-center">
+            <span className="chip">Uzman Kadro</span>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>
+              Raporunuzun arkasında gerçek mühendisler var
+            </h2>
+            <p className="mt-3 text-muted">
+              Muayeneleriniz, kendi alanında yetkili mühendis kadromuz tarafından yerinde yapılır;
+              rapor bu kişilerin teknik değerlendirmesine dayanır.
+            </p>
+          </div>
+          <div className="mx-auto grid max-w-[820px] gap-5 sm:grid-cols-3">
+            {EKIP.map((u) => (
+              <div key={u.name} className="card p-6 text-center">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-soft text-2xl">👷</div>
+                <h3 className="text-lg text-navy">{u.name}</h3>
+                <p className="mt-1 text-sm text-muted">{u.title}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

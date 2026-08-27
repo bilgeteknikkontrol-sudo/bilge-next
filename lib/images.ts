@@ -171,16 +171,20 @@ export const EKIPMAN_FOTO: Record<string, StaticImageData> = {
 
 /** Yazi slug -> gorsel */
 export const YAZI_GORSEL: Record<string, StaticImageData> = {
+  "basincli-kap-hidrostatik-test": img_basincli_kaplarin_periyodik_kontrolu,
   "celik-halat-ne-zaman-degistirilir": img_kaldirma_araclari_teknik_kontrolu,
   "ekipnet-nedir": img_egitim,
   "elektrik-tesisat-projesi-zorunlu-mu": img_elektirik_olcumleri,
+  "forklift-periyodik-kontrolu": img_kaldirma_araclari_teknik_kontrolu,
   "havalandirma-projesi-zorunlu-mu": img_havalandirma_sistemleri,
   "hidrostatik-test-nedir": img_basincli_kaplarin_periyodik_kontrolu,
   "isg-denetiminde-istenen-belgeler": img_raf_sistemleri_kontrolu1,
   "isg-katip-periyodik-kontrol-sozlesmesi": img_egitim,
+  "iso-iec-17020-2026-yenilikleri": img_egitim,
   "kazan-dairesi-guvenlik-sartlari": img_basincli_kaplarin_periyodik_kontrolu,
   "kompresor-periyodik-kontrol": img_basincli_kaplarin_periyodik_kontrolu,
   "operator-belgesi-mi-periyodik-kontrol-mu": img_egitim,
+  "periyodik-kontrol-cezasi-2026": img_egitim,
   "periyodik-kontrol-nedir": img_makina_tezgah,
   "periyodik-kontrol-raporu-nasil-okunur": img_is_makineleri_kontrolleri,
   "periyodik-kontrol-sureleri": img_is_makineleri_kontrolleri,
