@@ -7,6 +7,8 @@ type Props = {
   gorseller: string[];
   /** Slayt başına saniye */
   saniye?: number;
+  /** Aktif karenin opaklığı. Koyu zemine gömülü kullanımda düşürülür. */
+  opaklik?: number;
 };
 
 /**
@@ -16,7 +18,7 @@ type Props = {
  * animasyonu, layout hesabi yapilmadigi icin akici). Tek gorsel varsa zamanlayici
  * hic kurulmuyor. "Hareketi azalt" tercihinde gecis yapilmaz, ilk gorsel sabit kalir.
  */
-export default function HeroSlayt({ gorseller, saniye = 6 }: Props) {
+export default function HeroSlayt({ gorseller, saniye = 6, opaklik = 0.22 }: Props) {
   const [aktif, setAktif] = useState(0);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function HeroSlayt({ gorseller, saniye = 6 }: Props) {
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
           style={{
             backgroundImage: `url(${JSON.stringify(src)})`,
-            opacity: i === aktif ? 0.22 : 0,
+            opacity: i === aktif ? opaklik : 0,
           }}
         />
       ))}

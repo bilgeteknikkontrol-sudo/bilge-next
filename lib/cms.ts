@@ -161,19 +161,21 @@ async function seedIfEmpty(s: Sql) {
 
 export function defaultSettings(): SiteSettings {
   return {
+    // Beyaz + turuncu (acik) palet. Degerler app/globals.css @theme ile aynidir;
+    // birini degistirirken digerini de guncelle.
     colors: {
-      navy: "#241E4E",
-      navy2: "#3A3170",
-      blue: "#2E5BE8",
-      blueSoft: "#dbeafe",
-      accent: "#EF7F2D",
-      accent2: "#10b981",
-      amberSoft: "#ffedd5",
-      emeraldSoft: "#d1fae5",
-      bgsoft: "#f8fafc",
-      ink: "#241F3D",
-      muted: "#5B5675",
-      line: "#e2e8f0",
+      navy: "#3A2C22",
+      navy2: "#584334",
+      blue: "#C25E08",
+      blueSoft: "#FFEBD8",
+      accent: "#F79A47",
+      accent2: "#E08A2C",
+      amberSoft: "#FFF3E6",
+      emeraldSoft: "#FFF0DF",
+      bgsoft: "#FFF8F2",
+      ink: "#2E2620",
+      muted: "#6B5F57",
+      line: "#EFE3D8",
       white: "#ffffff",
     },
     fonts: {
@@ -460,43 +462,72 @@ export async function deleteArticle(slug: string): Promise<void> {
 }
 
 /**
- * Marka paletine gecis.
+ * Palet gecisleri.
  *
- * Ilk palet slate tonlariydi (navy #0f172a = neredeyse siyah) ve logonun kendi
- * laciverti (#31285d) ile hic uyusmuyordu. Palet logodan turetilen indigo
- * tonlariyla degistirildi.
+ * v1 slate tonlariydi (navy #0f172a = neredeyse siyah), v2 logodan turetilen
+ * indigo/mavi paletti, v3 ise sitenin bugunku kimligi: BEYAZ + TURUNCU, acik ton.
  *
  * Ayarlar CMS'te KALICI saklandigi icin defaultSettings()'i degistirmek yeterli
- * degil; kayitli deger onu eziyor. Bu yuzden: kayitli renk ESKI VARSAYILANLA
- * birebir ayniysa (yani kullanici hic elle degistirmemisse) yenisi uygulanir.
- * Kullanici panelden kendi rengini secmisse ona dokunulmaz.
+ * degil; kayitli deger onu eziyor. Bu yuzden: kayitli renk ESKI VARSAYILANLARDAN
+ * biriyle birebir ayniysa (yani kullanici o rengi hic elle degistirmemisse)
+ * yenisi uygulanir. Kullanici panelden kendi rengini secmisse ona dokunulmaz.
+ *
+ * Not: gecis yalnizca okuma sirasinda uygulanir, veritabanina yazilmaz.
  */
-/** Ilk surumun slate paleti. Bu degerler TARIHSEL sabittir — asla guncellenmez;
+/** Onceki surumlerin paletleri. Bu degerler TARIHSEL sabittir — asla guncellenmez;
  *  yalnizca "kullanici bu rengi hic degistirmemis" tespiti icin kullanilir. */
-const ESKI_PALET: Record<string, string> = {
-  navy: "#0f172a",
-  navy2: "#1e293b",
-  ink: "#0f172a",
-  accent: "#ea580c",
-  blue: "#1d4ed8",
-  muted: "#475569",
-};
+const PALET_GECMISI: Record<string, string>[] = [
+  // v1 — slate
+  {
+    navy: "#0f172a",
+    navy2: "#1e293b",
+    ink: "#0f172a",
+    accent: "#ea580c",
+    blue: "#1d4ed8",
+    muted: "#475569",
+  },
+  // v2 — logo indigosu + mavi eylem rengi
+  {
+    navy: "#241E4E",
+    navy2: "#3A3170",
+    ink: "#241F3D",
+    accent: "#EF7F2D",
+    accent2: "#10b981",
+    blue: "#2E5BE8",
+    blueSoft: "#dbeafe",
+    amberSoft: "#ffedd5",
+    emeraldSoft: "#d1fae5",
+    muted: "#5B5675",
+    line: "#e2e8f0",
+    bgsoft: "#f8fafc",
+  },
+];
 
+/** v3 — beyaz + turuncu, acik ton. app/globals.css icindeki @theme ile ayni. */
 const YENI_PALET: Record<string, string> = {
-  navy: "#241E4E",   // logo laciverti (#31285d) ailesinden, koyu indigo
-  navy2: "#3A3170",
-  ink: "#241F3D",
-  accent: "#EF7F2D", // logonun turuncusu, birebir
-  blue: "#2E5BE8",   // eylem rengi; indigo zeminden ayrilsin diye bir tik acildi
-  muted: "#5B5675",
+  navy: "#3A2C22",       // sicak koyu kahve: basliklar ve koyu bolumler
+  navy2: "#584334",
+  ink: "#2E2620",
+  accent: "#F79A47",     // koyu zemin uzerinde acik turuncu
+  accent2: "#E08A2C",    // onay/dogrulama isaretleri
+  blue: "#C25E08",       // birincil turuncu; beyaz uzerinde AA (>=4.5:1)
+  blueSoft: "#FFEBD8",
+  amberSoft: "#FFF3E6",
+  emeraldSoft: "#FFF0DF",
+  muted: "#6B5F57",
+  line: "#EFE3D8",
+  bgsoft: "#FFF8F2",
 };
 
 function paletiGuncelle(s: SiteSettings): SiteSettings {
   let degisti = false;
   const colors = { ...s.colors };
-  for (const [k, eski] of Object.entries(ESKI_PALET)) {
-    if (colors[k]?.toLowerCase() === eski.toLowerCase()) {
-      colors[k] = YENI_PALET[k];
+  for (const [k, yeni] of Object.entries(YENI_PALET)) {
+    const kayitli = colors[k]?.toLowerCase();
+    if (!kayitli) continue;
+    const varsayilanKalmis = PALET_GECMISI.some((p) => p[k]?.toLowerCase() === kayitli);
+    if (varsayilanKalmis) {
+      colors[k] = yeni;
       degisti = true;
     }
   }

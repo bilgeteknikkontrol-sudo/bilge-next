@@ -76,86 +76,75 @@ export default async function Home() {
     <>
       <Header />
 
-      {/* HERO */}
-      <section className="relative isolate overflow-hidden bg-navy text-white">
-        {/* Katman 1: arka plan gorseli.
-            Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
-            varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
-        {heroSlaytlari.length > 0 ? (
-          <HeroSlayt gorseller={heroSlaytlari} />
-        ) : (
-          <Image
-            src={heroGorsel}
-            alt=""
-            aria-hidden
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-[.22]"
-            placeholder="blur"
-          />
-        )}
-        {/* Katman 2: metnin okunurlugunu garantileyen yonlu gradyan */}
-        <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/95 to-navy/70" />
-        {/* Katman 3: sag ustte yumusak isik — duz zeminin monotonlugunu kiriyor */}
+      {/* HERO — beyaz/turuncu, acik tema.
+          Sol sutun: hizmetin ne oldugunu anlatan metin + kanit + eylem.
+          Sag sutun: saha fotografi (panelden slayt) ve uzerine binen teklif karti. */}
+      <section className="relative isolate overflow-hidden bg-white text-ink">
+        {/* Zemin: beyazdan sicak kreme yumusak gecis */}
         <div
           aria-hidden
-          className="absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full opacity-40 blur-3xl"
-          style={{ background: "radial-gradient(circle, rgba(45,110,235,.55), transparent 70%)" }}
+          className="absolute inset-0 -z-10"
+          style={{ background: "linear-gradient(160deg, #FFFFFF 0%, #FFF8F2 55%, #FFF1E4 100%)" }}
+        />
+        {/* Sol ustte ve sag altta yumusak turuncu isik — duz zeminin monotonlugunu kiriyor */}
+        <div
+          aria-hidden
+          className="absolute -left-40 -top-48 -z-10 h-[520px] w-[520px] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(247,154,71,.30), transparent 70%)" }}
+        />
+        <div
+          aria-hidden
+          className="absolute -bottom-56 right-[-10rem] -z-10 h-[560px] w-[560px] rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(255,205,160,.45), transparent 70%)" }}
         />
 
-        <div className="container-x relative grid items-center gap-12 py-16 lg:grid-cols-[1.15fr_.85fr] lg:py-24">
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-[#cfe0ff] backdrop-blur-sm">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent2 text-[.7rem] text-navy">✓</span>
+        <div className="container-x relative grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_.95fr] lg:py-20">
+          {/* --- SOL: anlatim --- */}
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_rgba(194,94,8,.6)]">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue text-[.7rem] text-white">✓</span>
               TÜRKAK Akredite A Tipi Muayene Kuruluşu · {KURUM.akreditasyon}
             </span>
 
-            <h1 className="mt-6 font-black tracking-tight md:text-5xl" style={{ fontSize: "var(--fs-hero)", lineHeight: 1.08 }}>
+            <h1
+              className="mt-6 font-black tracking-tight text-navy md:text-5xl"
+              style={{ fontSize: "var(--fs-hero)", lineHeight: 1.08 }}
+            >
               {heroTitle}
             </h1>
 
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-[#c7d6f0]">{heroSubtitle}</p>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">{heroSubtitle}</p>
 
-            {/* Guven isaretleri: iddiadan once dogrulanabilir olgular */}
-            <ul className="mt-7 flex flex-wrap gap-x-7 gap-y-3">
+            {/* Hizmetin ne oldugunu somutlastiran uc madde:
+                iddia degil, dogrulanabilir olgu. */}
+            <ul className="mt-7 grid gap-3 sm:max-w-lg">
               {[
-                ["🛡️", "Bağımsız ve tarafsız"],
-                ["📋", "TS EN ISO/IEC 17020"],
-                ["🇹🇷", "Türkiye geneli yerinde muayene"],
-              ].map(([i, t]) => (
-                <li key={t} className="flex items-center gap-2 text-sm font-medium text-[#c7d6f0]">
-                  <span aria-hidden>{i}</span>
-                  {t}
+                ["🛡️", "Bağımsız ve tarafsız muayene", "A Tipi kuruluş; rapor satış kaygısı olmadan düzenlenir."],
+                ["📋", "TS EN ISO/IEC 17020", "Akredite kapsam; denetim ve ihalelerde sorunsuz kabul."],
+                ["🇹🇷", "Türkiye geneli yerinde hizmet", "Mühendis kadro sahaya gelir, üretiminizi durdurmadan test eder."],
+              ].map(([i, t, d]) => (
+                <li key={t} className="flex items-start gap-3">
+                  <span
+                    aria-hidden
+                    className="mt-0.5 flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-blue-soft text-lg"
+                  >
+                    {i}
+                  </span>
+                  <span>
+                    <b className="block text-[.95rem] font-bold text-navy">{t}</b>
+                    <span className="block text-sm text-muted">{d}</span>
+                  </span>
                 </li>
               ))}
             </ul>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/teklif" className="btn-primary px-7 py-3.5">Ücretsiz Teklif Al →</Link>
-              <Link href="/hesapla" className="btn-ghost border-white/40 px-7 py-3.5 text-white hover:bg-white/10 hover:text-white">
-                Yasal Sürenizi Hesaplayın
-              </Link>
+              <Link href="/hesapla" className="btn-ghost px-7 py-3.5">Yasal Sürenizi Hesaplayın</Link>
             </div>
-          </div>
 
-          {/* Sag kart: uc arac yerine tek net eylem + kanit */}
-          <aside className="rounded-card border border-white/15 bg-white/[.07] p-7 backdrop-blur-md">
-            <p className="text-sm font-semibold uppercase tracking-wide text-[#9db4de]">Kontrol zamanı geldi mi?</p>
-            <h2 className="mt-2 text-2xl font-black leading-snug text-white">
-              Ekipmanınızı seçin, kapsam ve fiyatı size dönelim
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-[#c7d6f0]">
-              92 ekipman türünde akredite periyodik kontrol. Formu doldurmanız 2 dakika sürüyor.
-            </p>
-            <Link
-              href="/teklif"
-              className="mt-5 block rounded-xl bg-accent px-5 py-3.5 text-center font-bold text-navy transition hover:-translate-y-0.5"
-            >
-              Teklif Formunu Aç →
-            </Link>
-
-            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-white/15 pt-6">
+            {/* Rakamlar: metnin altinda ince bir serit, karta gerek yok */}
+            <dl className="mt-9 grid max-w-lg grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-6 sm:grid-cols-4">
               {[
                 ["2014", "Yılından beri"],
                 ["500+", "Müşteri firma"],
@@ -163,12 +152,62 @@ export default async function Home() {
                 [KURUM.akreditasyon, "Akreditasyon no"],
               ].map(([b, s]) => (
                 <div key={s}>
-                  <b className="block text-xl leading-tight text-white">{b}</b>
-                  <span className="text-[.78rem] text-[#9db4de]">{s}</span>
+                  <dt className="text-xl font-black leading-tight text-blue">{b}</dt>
+                  <dd className="text-[.78rem] text-muted">{s}</dd>
                 </div>
               ))}
+            </dl>
+          </div>
+
+          {/* --- SAG: saha gorseli + teklif karti ---
+              min-w-0: grid sutunlarinin varsayilan min-width:auto degeri, kartin
+              icindeki buton+metin satirini "en dar hali" sayip sutunu kabindan
+              tasiriyordu. */}
+          <div className="relative min-w-0 lg:pb-14">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_rgba(88,67,52,.55)]">
+              {/* Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
+                  varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
+              {heroSlaytlari.length > 0 ? (
+                <HeroSlayt gorseller={heroSlaytlari} opaklik={1} />
+              ) : (
+                <Image
+                  src={heroGorsel}
+                  alt="Sahada yangın söndürme sistemi üzerinde periyodik kontrol yapan mühendis"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 520px"
+                  className="object-cover"
+                  placeholder="blur"
+                />
+              )}
+              {/* Ust kenarda yumusak koyulma: beyaz rozet ve metin fotograftan ayrilsin.
+                  Alt bolge bos birakildi; oraya teklif karti biniyor. */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-navy/60 to-transparent"
+              />
+              <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3.5 py-1.5 text-[.78rem] font-bold text-navy shadow-sm backdrop-blur">
+                <span className="h-2 w-2 rounded-full bg-blue" aria-hidden />
+                Yerinde muayene · TÜRKAK {KURUM.akreditasyon}
+              </span>
+              <p className="absolute left-4 right-4 top-16 text-sm font-semibold leading-snug text-white drop-shadow">
+                Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri —
+                tek ekipten akredite periyodik kontrol.
+              </p>
             </div>
-          </aside>
+
+            {/* Donusum karti: gorselin uzerine binerek eylemi one cikarir */}
+            <aside className="card relative z-10 mx-4 -mt-10 p-6 sm:mx-8 lg:absolute lg:inset-x-6 lg:bottom-0 lg:mx-0 lg:mt-0">
+              <p className="text-xs font-bold uppercase tracking-wide text-blue">Kontrol zamanı geldi mi?</p>
+              <h2 className="mt-1.5 text-lg font-black leading-snug text-navy">
+                Ekipmanınızı seçin, kapsam ve fiyatı size dönelim
+              </h2>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <Link href="/teklif" className="btn-primary px-5 py-3 text-[.92rem]">Teklif Formunu Aç →</Link>
+                <span className="text-xs text-muted">2 dakika sürer · 92 ekipman türü</span>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
 
