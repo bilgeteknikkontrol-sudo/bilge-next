@@ -471,13 +471,15 @@ export async function deleteArticle(slug: string): Promise<void> {
  * birebir ayniysa (yani kullanici hic elle degistirmemisse) yenisi uygulanir.
  * Kullanici panelden kendi rengini secmisse ona dokunulmaz.
  */
+/** Ilk surumun slate paleti. Bu degerler TARIHSEL sabittir — asla guncellenmez;
+ *  yalnizca "kullanici bu rengi hic degistirmemis" tespiti icin kullanilir. */
 const ESKI_PALET: Record<string, string> = {
-  navy: "#241E4E",
-  navy2: "#3A3170",
-  ink: "#241F3D",
-  accent: "#EF7F2D",
-  blue: "#2E5BE8",
-  muted: "#5B5675",
+  navy: "#0f172a",
+  navy2: "#1e293b",
+  ink: "#0f172a",
+  accent: "#ea580c",
+  blue: "#1d4ed8",
+  muted: "#475569",
 };
 
 const YENI_PALET: Record<string, string> = {
