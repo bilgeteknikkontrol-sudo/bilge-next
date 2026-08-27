@@ -103,7 +103,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="tr" className={inter.variable}>
       <head>
-        <link rel="icon" href={settings?.favicon || "/icon.svg"} />
+        {/*
+          Favicon'u normalde Next.js kendisi uretiyor (app/favicon.ico + app/icon.png,
+          ikisi de marka logosu). Buradaki <link> yalnizca panelden OZEL bir favicon
+          secildiginde gerekli ve o zaman digerlerini ezer.
+          "/icon.svg" eski yer tutucu ikondu; marka logosu eklenirken silindi ama
+          CMS'in kayitli ayarinda deger olarak kalmisti ve 404'e giden bir link
+          basiliyordu. Kayitli bu eski deger yok sayilir; panelden gercek bir dosya
+          secilirse otomatik olarak devreye girer.
+        */}
+        {settings?.favicon && settings.favicon !== "/icon.svg" && (
+          <link rel="icon" href={settings.favicon} />
+        )}
         <style dangerouslySetInnerHTML={{ __html: `:root{${cssVars}}` }} />
       </head>
       <body style={{ fontSize: "var(--fs-body)" }}>
