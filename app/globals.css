@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0f172a;
-  --color-navy2: #1e293b;
-  --color-blue: #1d4ed8;
+  --color-navy: #241E4E;
+  --color-navy2: #3A3170;
+  --color-blue: #2E5BE8;
   --color-blue-dark: #1e40af;
   --color-blue-soft: #dbeafe;
-  --color-accent: #ea580c;
+  --color-accent: #EF7F2D;
   --color-accent2: #10b981;
   --color-emerald-soft: #d1fae5;
   --color-amber-soft: #ffedd5;
-  --color-ink: #1e293b;
-  --color-muted: #64748b;
+  --color-ink: #241F3D;
+  --color-muted: #5B5675;
   --color-line: #e2e8f0;
   --color-bgsoft: #f8fafc;
 
@@ -34,11 +34,11 @@ body {
 /* Ortak yardımcılar */
 .container-x { @apply mx-auto w-full max-w-[1200px] px-5; }
 .nav-link { @apply font-semibold text-ink/80 transition-colors hover:text-blue; }
-.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue px-6 py-3 font-bold text-white shadow-[0_14px_30px_-12px_rgba(29,78,216,.7)] transition hover:-translate-y-0.5; }
+.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue px-6 py-3 font-bold text-white shadow-[0_14px_30px_-12px_rgba(46,91,232,.55)] transition hover:-translate-y-0.5; }
 .btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3 font-bold text-navy transition hover:border-blue hover:text-blue; }
 .section { @apply py-16 md:py-20; }
 .chip { @apply inline-flex items-center gap-1.5 rounded-full bg-blue-soft px-3 py-1 text-sm font-bold text-blue; }
-.card { @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[0_18px_40px_-22px_rgba(15,23,42,.35)]; }
+.card { @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[0_18px_40px_-22px_rgba(36,30,78,.35)]; }
 
 /* ---------------------------------------------------------------------------
    Uzun metin tipografisi (.prose)

@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base + "/sss", lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
     { url: base + "/bolge", lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: base + "/referanslar", lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
+    { url: base + "/sertifikalar", lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: base + "/periyodik-kontrol-sureleri", lastModified: now, changeFrequency: "monthly" as const, priority: 0.9 },
     { url: base + "/kvkk", lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },
     { url: base + "/cerez-politikasi", lastModified: now, changeFrequency: "yearly" as const, priority: 0.3 },

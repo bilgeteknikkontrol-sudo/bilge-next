@@ -18,6 +18,8 @@ const MENU: { label: string; href?: string; alt?: AltLink[] }[] = [
     label: "Kurumsal",
     alt: [
       { href: "/kurumsal", label: "Hakkımızda", not: "Akreditasyon ve ekip" },
+      { href: "/sertifikalar", label: "Akreditasyon & Sertifikalar", not: "TÜRKAK AB-0296-M" },
+      { href: "/referanslar", label: "Referanslarımız", not: "Çalıştığımız firmalar" },
       { href: "/bolge", label: "Hizmet Bölgeleri", not: "20 şehirde yerinde muayene" },
       { href: "/sss", label: "Sık Sorulan Sorular", not: "Süre, kapsam, mevzuat" },
     ],
@@ -79,25 +81,31 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur-md">
-      {/* ÜST ŞERİT — iletişim ve güven bilgileri */}
-      <div className="hidden bg-navy text-white/75 md:block">
-        <div className="container-x flex h-9 items-center justify-between text-[.78rem]">
-          <div className="flex items-center gap-5">
+      {/* ÜST ŞERİT — iletişim ve güven bilgileri.
+          Sag tarafta akreditasyon rozeti sertifika sayfasina baglaniyor. */}
+      <div className="hidden bg-gradient-to-r from-navy via-navy2 to-navy text-white/80 md:block">
+        <div className="container-x flex h-10 items-center justify-between text-[.78rem]">
+          <div className="flex items-center gap-6">
             {/* xl'de telefon ana cubukta gorunuyor, burada tekrar etmesin */}
-            <a href={`tel:${KURUM.telefonE164}`} className="transition hover:text-white xl:hidden">
-              📞 {KURUM.telefon}
+            <a href={`tel:${KURUM.telefonE164}`} className="flex items-center gap-1.5 transition hover:text-white xl:hidden">
+              <span aria-hidden>📞</span> {KURUM.telefon}
             </a>
-            <a href={`mailto:${KURUM.eposta}`} className="hidden transition hover:text-white lg:inline">
-              ✉️ {KURUM.eposta}
+            <a href={`mailto:${KURUM.eposta}`} className="hidden items-center gap-1.5 transition hover:text-white lg:flex">
+              <span aria-hidden>✉️</span> {KURUM.eposta}
             </a>
-            <span className="hidden xl:inline">🕘 {KURUM.calismaSaatleri}</span>
+            <span className="hidden items-center gap-1.5 xl:flex">
+              <span aria-hidden>🕘</span> {KURUM.calismaSaatleri}
+            </span>
           </div>
-          <span className="flex items-center gap-2">
-            <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-semibold text-white">
-              TÜRKAK {KURUM.akreditasyon}
+          <Link
+            href="/sertifikalar"
+            className="flex items-center gap-2 transition hover:text-white"
+          >
+            <span className="flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 font-bold text-navy">
+              <span aria-hidden>✓</span> TÜRKAK {KURUM.akreditasyon}
             </span>
             <span className="hidden lg:inline">A Tipi Muayene Kuruluşu</span>
-          </span>
+          </Link>
         </div>
       </div>
 
@@ -116,8 +124,10 @@ export default function Header() {
                   key={m.label}
                   href={m.href}
                   aria-current={aktif(m.href) ? "page" : undefined}
-                  className={`whitespace-nowrap rounded-lg px-3 py-2 text-[.92rem] font-semibold transition ${
-                    aktif(m.href) ? "text-blue" : "text-ink/80 hover:text-blue"
+                  className={`relative whitespace-nowrap px-3.5 py-2 text-[.93rem] font-semibold transition after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-accent after:transition-transform ${
+                    aktif(m.href)
+                      ? "text-navy after:scale-x-100"
+                      : "text-ink/75 after:scale-x-0 hover:text-navy hover:after:scale-x-100"
                   }`}
                 >
                   {m.label}
@@ -140,7 +150,9 @@ export default function Header() {
                   aria-expanded={acik}
                   aria-haspopup="true"
                   onClick={() => setAcikMenu(acik ? null : m.label)}
-                  className="flex items-center gap-1 whitespace-nowrap rounded-lg px-3 py-2 text-[.92rem] font-semibold text-ink/80 transition hover:text-blue"
+                  className={`relative flex items-center gap-1 whitespace-nowrap px-3.5 py-2 text-[.93rem] font-semibold transition after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-accent after:transition-transform ${
+                    acik ? "text-navy after:scale-x-100" : "text-ink/75 after:scale-x-0 hover:text-navy hover:after:scale-x-100"
+                  }`}
                 >
                   {m.label}
                   <span className={`text-[.65rem] transition-transform ${acik ? "rotate-180" : ""}`}>▾</span>

@@ -162,17 +162,17 @@ async function seedIfEmpty(s: Sql) {
 export function defaultSettings(): SiteSettings {
   return {
     colors: {
-      navy: "#0f172a",
-      navy2: "#1e293b",
-      blue: "#1d4ed8",
+      navy: "#241E4E",
+      navy2: "#3A3170",
+      blue: "#2E5BE8",
       blueSoft: "#dbeafe",
-      accent: "#ea580c",
+      accent: "#EF7F2D",
       accent2: "#10b981",
       amberSoft: "#ffedd5",
       emeraldSoft: "#d1fae5",
       bgsoft: "#f8fafc",
-      ink: "#0f172a",
-      muted: "#475569",
+      ink: "#241F3D",
+      muted: "#5B5675",
       line: "#e2e8f0",
       white: "#ffffff",
     },
@@ -459,8 +459,50 @@ export async function deleteArticle(slug: string): Promise<void> {
   await setState(s);
 }
 
+/**
+ * Marka paletine gecis.
+ *
+ * Ilk palet slate tonlariydi (navy #0f172a = neredeyse siyah) ve logonun kendi
+ * laciverti (#31285d) ile hic uyusmuyordu. Palet logodan turetilen indigo
+ * tonlariyla degistirildi.
+ *
+ * Ayarlar CMS'te KALICI saklandigi icin defaultSettings()'i degistirmek yeterli
+ * degil; kayitli deger onu eziyor. Bu yuzden: kayitli renk ESKI VARSAYILANLA
+ * birebir ayniysa (yani kullanici hic elle degistirmemisse) yenisi uygulanir.
+ * Kullanici panelden kendi rengini secmisse ona dokunulmaz.
+ */
+const ESKI_PALET: Record<string, string> = {
+  navy: "#241E4E",
+  navy2: "#3A3170",
+  ink: "#241F3D",
+  accent: "#EF7F2D",
+  blue: "#2E5BE8",
+  muted: "#5B5675",
+};
+
+const YENI_PALET: Record<string, string> = {
+  navy: "#241E4E",   // logo laciverti (#31285d) ailesinden, koyu indigo
+  navy2: "#3A3170",
+  ink: "#241F3D",
+  accent: "#EF7F2D", // logonun turuncusu, birebir
+  blue: "#2E5BE8",   // eylem rengi; indigo zeminden ayrilsin diye bir tik acildi
+  muted: "#5B5675",
+};
+
+function paletiGuncelle(s: SiteSettings): SiteSettings {
+  let degisti = false;
+  const colors = { ...s.colors };
+  for (const [k, eski] of Object.entries(ESKI_PALET)) {
+    if (colors[k]?.toLowerCase() === eski.toLowerCase()) {
+      colors[k] = YENI_PALET[k];
+      degisti = true;
+    }
+  }
+  return degisti ? { ...s, colors } : s;
+}
+
 export async function getSettings(): Promise<SiteSettings> {
-  return (await getState()).settings;
+  return paletiGuncelle((await getState()).settings);
 }
 
 export async function saveSettings(s: SiteSettings): Promise<void> {

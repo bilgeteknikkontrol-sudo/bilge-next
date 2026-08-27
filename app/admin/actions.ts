@@ -23,6 +23,15 @@ import {
   type SiteSettings,
 } from "@/lib/cms";
 import { slugify } from "@/lib/content";
+import {
+  blokKaydet,
+  blokSil,
+  blokDurumDegistir,
+  yeniId,
+  BLOK_TURLERI,
+  type Blok,
+  type BlokTuru,
+} from "@/lib/bloklar";
 
 function num(v: unknown, d = 0): number {
   const n = Number(v);
@@ -248,4 +257,49 @@ export async function deleteMediaAction(formData: FormData) {
   await guard();
   const id = num(formData.get("id"));
   if (id) await deleteMedia(id);
+}
+
+// ---------------- Bloklar (referans / ekip / sertifika / hero / sss) ----------------
+
+export async function saveBlokAction(formData: FormData) {
+  await guard();
+  const tur = String(formData.get("tur") || "referans") as BlokTuru;
+  const blok: Blok = {
+    id: String(formData.get("id") || "") || yeniId(),
+    tur: BLOK_TURLERI.includes(tur) ? tur : "referans",
+    baslik: String(formData.get("baslik") || "").trim(),
+    metin: String(formData.get("metin") || "").trim(),
+    gorsel: String(formData.get("gorsel") || "").trim(),
+    url: String(formData.get("url") || "").trim(),
+    sira: num(formData.get("sira")),
+    aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
+  };
+  await blokKaydet(blok);
+  revalidateBloklar();
+  redirect(`/admin/bloklar?tur=${blok.tur}`);
+}
+
+export async function deleteBlokAction(formData: FormData) {
+  await guard();
+  const id = String(formData.get("id") || "");
+  const tur = String(formData.get("tur") || "referans");
+  if (id) await blokSil(id);
+  revalidateBloklar();
+  redirect(`/admin/bloklar?tur=${tur}`);
+}
+
+export async function toggleBlokAction(formData: FormData) {
+  await guard();
+  const id = String(formData.get("id") || "");
+  const tur = String(formData.get("tur") || "referans");
+  if (id) await blokDurumDegistir(id);
+  revalidateBloklar();
+  redirect(`/admin/bloklar?tur=${tur}`);
+}
+
+/** Bloklar birden fazla sayfada kullanildigi icin hepsi tazeleniyor. */
+function revalidateBloklar() {
+  for (const p of ["/", "/referanslar", "/kurumsal", "/sertifikalar", "/sss", "/iletisim"]) {
+    revalidatePath(p);
+  }
 }

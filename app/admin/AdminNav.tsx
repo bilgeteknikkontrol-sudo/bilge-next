@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/admin/locations", label: "Bölgeler" },
   { href: "/admin/settings", label: "Ayarlar" },
   { href: "/admin/content", label: "Metinler" },
+  { href: "/admin/bloklar", label: "İçerik Blokları" },
   { href: "/admin/media", label: "Medya" },
 ];
 

@@ -9,6 +9,7 @@ import logoLight from "../../public/img/marka/logo-light.png";
 const KURUMSAL = [
   { href: "/kurumsal", label: "Hakkımızda" },
   { href: "/referanslar", label: "Referanslarımız" },
+  { href: "/sertifikalar", label: "Akreditasyon & Sertifikalar" },
   { href: "/bolge", label: "Hizmet Bölgeleri" },
   { href: "/sss", label: "Sık Sorulan Sorular" },
   { href: "/yazilar", label: "Bilgi Merkezi" },

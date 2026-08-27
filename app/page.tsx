@@ -3,7 +3,9 @@ import Image from "next/image";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ReferansSeridi from "./components/ReferansSeridi";
+import HeroSlayt from "./components/HeroSlayt";
 import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
+import { bloklar } from "@/lib/bloklar";
 // CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
 import { EKIPMAN_GORSEL } from "@/lib/images";
 import { EKIP, KURUM } from "@/lib/site-data";
@@ -47,6 +49,16 @@ export default async function Home() {
   const equipment = await getEquipment().catch(() => []);
   const kategoriler = groupByKategori(equipment.filter((e) => e.aktif));
 
+  // Panelden yonetilen bloklar. Bos ise ilgili bolum statik varsayilanini kullanir.
+  const [heroBloklari, ekipBloklari] = await Promise.all([
+    bloklar("hero").catch(() => []),
+    bloklar("ekip").catch(() => []),
+  ]);
+  const heroSlaytlari = heroBloklari.map((b) => b.gorsel).filter(Boolean);
+  const ekipListesi = ekipBloklari.length
+    ? ekipBloklari.map((b) => ({ name: b.baslik, title: b.metin, gorsel: b.gorsel }))
+    : EKIP.map((u) => ({ name: u.name, title: u.title, gorsel: "" }));
+
   const heroTitle = settings?.heroTitle || "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla";
   const heroSubtitle =
     settings?.heroSubtitle ||
@@ -66,17 +78,23 @@ export default async function Home() {
 
       {/* HERO */}
       <section className="relative isolate overflow-hidden bg-navy text-white">
-        {/* Katman 1: gercek saha fotografi, koyu zeminle harmanlanmis */}
-        <Image
-          src={heroGorsel}
-          alt=""
-          aria-hidden
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-[.22]"
-          placeholder="blur"
-        />
+        {/* Katman 1: arka plan gorseli.
+            Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
+            varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
+        {heroSlaytlari.length > 0 ? (
+          <HeroSlayt gorseller={heroSlaytlari} />
+        ) : (
+          <Image
+            src={heroGorsel}
+            alt=""
+            aria-hidden
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-[.22]"
+            placeholder="blur"
+          />
+        )}
         {/* Katman 2: metnin okunurlugunu garantileyen yonlu gradyan */}
         <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/95 to-navy/70" />
         {/* Katman 3: sag ustte yumusak isik — duz zeminin monotonlugunu kiriyor */}
@@ -341,9 +359,18 @@ export default async function Home() {
             </p>
           </div>
           <div className="mx-auto grid max-w-[820px] gap-5 sm:grid-cols-3">
-            {EKIP.map((u) => (
+            {ekipListesi.map((u) => (
               <div key={u.name} className="card p-6 text-center">
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-soft text-2xl">👷</div>
+                {u.gorsel ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={u.gorsel}
+                    alt={u.name}
+                    className="mx-auto mb-3 h-16 w-16 rounded-2xl object-cover"
+                  />
+                ) : (
+                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-soft text-2xl">👷</div>
+                )}
                 <h3 className="text-lg text-navy">{u.name}</h3>
                 <p className="mt-1 text-sm text-muted">{u.title}</p>
               </div>
