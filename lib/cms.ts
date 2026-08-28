@@ -272,6 +272,16 @@ function seedState(): CmsState {
 
 async function getState(): Promise<CmsState> {
   if (isDbOn()) {
+    /**
+     * ⚠️ OKUMADAN ONCE SEMA.
+     *
+     * `ensureSchema()` yalnizca YAZMA yolunda (dbPersist) cagriliyordu. Bos bir
+     * veritabaniyla ilk acilista okuma once geldigi icin site
+     * "Table '...equipment' doesn't exist" ile duser — Hostinger'da ilk derleme
+     * tam olarak boyle patladi. Sema kurulumu tek seferlik ve sonucu
+     * onbellekleniyor, bu yuzden her okumada maliyeti yok.
+     */
+    await ensureSchema();
     const [equipment, locations, articles, settings, content, media] = await Promise.all([
       dbGetEquipment(),
       dbGetLocations(),
@@ -392,7 +402,15 @@ async function dbGetSettings(): Promise<SiteSettings> {
 }
 
 async function dbGetAllContent(): Promise<{ key: string; value: string }[]> {
-  const rows = await run(sql()`SELECT key, value FROM site_content ORDER BY key`);
+  /**
+   * ⚠️ `key` MySQL'de AYRILMIS KELIME — ters tirnaksiz yazilirsa sozdizimi
+   * hatasi verir. Sema ve yazma sorgularinda bu zaten dusunulmustu, okuma
+   * sorgusunda atlanmisti. Postgres'te ters tirnak gecersiz oldugu icin iki
+   * surum ayri duruyor.
+   */
+  const rows = isMysql()
+    ? await run(sql()`SELECT \`key\`, value FROM site_content ORDER BY \`key\``)
+    : await run(sql()`SELECT key, value FROM site_content ORDER BY key`);
   return rows.map((r) => ({ key: String(r.key), value: String(r.value) }));
 }
 

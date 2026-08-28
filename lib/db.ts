@@ -89,8 +89,17 @@ function mysqlSurucu(url: string): Sql {
       const mysql = await import("mysql2/promise");
       _mysqlHavuz = mysql.createPool({
         uri: url,
-        connectionLimit: 5,
-        // Paylasimli hostingde baglanti sayisi sinirli; bosta kalanlar birakilsin.
+        /**
+         * ⚠️ Paylasimli hostingde eszamanli baglanti sayisi sinirli ve bu sinir
+         * SUREC BASINA degil HESAP BASINA. Derleme sirasinda Next sayfalari
+         * ayri sureclerde uretiyor; her surec kendi havuzunu aciyor ve
+         * `getState()` alti sorguyu ayni anda calistirdigi icin havuz
+         * limitine kadar baglanti aciliyor. 5 x isci sayisi kolayca
+         * "too many connections" demek. 2'de sorgular surec icinde biraz
+         * siraya giriyor, karsiliginda derleme ayakta kaliyor.
+         */
+        connectionLimit: 2,
+        // Bosta kalan baglantilar birakilsin.
         idleTimeout: 30_000,
         enableKeepAlive: true,
       });

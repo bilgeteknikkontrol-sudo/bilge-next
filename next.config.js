@@ -19,6 +19,24 @@
 const nextConfig = {
   // Standalone çıktısı yalnızca Docker/self-host için. Vercel kendi runtime'ını kullanır.
   output: process.env.STANDALONE === "1" ? "standalone" : undefined,
+
+  /**
+   * ⚠️ DERLEMEDE İŞÇİ SAYISINI SINIRLA.
+   *
+   * Next varsayilan olarak sayfalari cok sayida ayri surecte uretiyor
+   * (Hostinger'da "using 41 workers" yaziyordu). Her surec kendi MySQL
+   * baglantisini aciyor; paylasimli hostingde eszamanli baglanti sayisi
+   * sinirli oldugu icin bu, derlemenin ortasinda "too many connections"
+   * ile dusme riski demek.
+   *
+   * `staticGenerationMinPagesPerWorker` denendi, isci sayisini DEGISTIRMEDI
+   * (yerelde 200'e cekildiginde bile 11 isci acildi). Isci sayisini gercekten
+   * belirleyen ayar `experimental.cpus` — next/dist/build/index.js icindeki
+   * getNumberOfWorkers() once ona bakiyor.
+   */
+  experimental: {
+    cpus: 2,
+  },
   async redirects() {
     return [
       // /portal (sahte demo verisiyle calisan rapor sorgulama sayfasi) kaldirildi.
