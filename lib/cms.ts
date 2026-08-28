@@ -188,33 +188,49 @@ function ensureSchema(): Promise<void> {
 }
 
 async function seedIfEmpty(s: Sql) {
-  const eq = await run(s`SELECT count(*)::int AS c FROM equipment`);
+  const eq = await run(s`SELECT count(*) AS c FROM equipment`);
   if (Number(eq[0].c) === 0) {
     let sira = 0;
     for (const kat of KATEGORILER) {
       for (const e of kat.ekipmanlar) {
-        await run(s`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira) VALUES (${e.slug}, ${e.ad}, ${kat.baslik}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, true, ${sira++}) ON CONFLICT (slug) DO NOTHING`);
+        await run(
+          isMysql()
+            ? s`INSERT IGNORE INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira) VALUES (${e.slug}, ${e.ad}, ${kat.baslik}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, 1, ${sira++})`
+            : s`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira) VALUES (${e.slug}, ${e.ad}, ${kat.baslik}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, true, ${sira++}) ON CONFLICT (slug) DO NOTHING`
+        );
       }
     }
   }
-  const lq = await run(s`SELECT count(*)::int AS c FROM locations`);
+  const lq = await run(s`SELECT count(*) AS c FROM locations`);
   if (Number(lq[0].c) === 0) {
     let sira = 0;
     for (const l of LOCATIONS) {
-      await run(s`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira) VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, true, ${sira++}) ON CONFLICT (slug) DO NOTHING`);
+      await run(
+        isMysql()
+          ? s`INSERT IGNORE INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira) VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}, 1, ${sira++})`
+          : s`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira) VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, true, ${sira++}) ON CONFLICT (slug) DO NOTHING`
+      );
     }
   }
-  const aq = await run(s`SELECT count(*)::int AS c FROM articles`);
+  const aq = await run(s`SELECT count(*) AS c FROM articles`);
   if (Number(aq[0].c) === 0) {
     let sira = 0;
     for (const a of ARTICLES) {
       // image: tohum verisinde gorsel yok; slug eslesmeli varsayilan kullanilir.
-      await run(s`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image) VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, true, ${sira++}, ${null}) ON CONFLICT (slug) DO NOTHING`);
+      await run(
+        isMysql()
+          ? s`INSERT IGNORE INTO articles (slug, title, description, category, date, readmin, keywords, \`lead\`, body, faq, aktif, sira, image) VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}, 1, ${sira++}, ${null})`
+          : s`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image) VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, true, ${sira++}, ${null}) ON CONFLICT (slug) DO NOTHING`
+      );
     }
   }
-  const sq = await run(s`SELECT count(*)::int AS c FROM site_settings`);
+  const sq = await run(s`SELECT count(*) AS c FROM site_settings`);
   if (Number(sq[0].c) === 0) {
-    await run(s`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(defaultSettings())}::jsonb) ON CONFLICT (id) DO NOTHING`);
+    await run(
+      isMysql()
+        ? s`INSERT IGNORE INTO site_settings (id, data) VALUES (1, ${JSON.stringify(defaultSettings())})`
+        : s`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(defaultSettings())}::jsonb) ON CONFLICT (id) DO NOTHING`
+    );
   }
 }
 
@@ -346,6 +362,27 @@ async function setState(st: CmsState): Promise<void> {
 }
 
 // ---------------- SQL (Postgres) backend ----------------
+/**
+ * JSON sutununu diziye cevirir.
+ *
+ * Surucuye gore JSON sutunu ya cozulmus nesne ya da dize olarak geliyor
+ * (mysql2 vs neon, sutun tipi JSON vs TEXT). Onceki kod yalnizca
+ * Array.isArray kontrol ediyordu; dize gelen durumda sessizce BOS DIZI
+ * donuyordu — yani anahtar kelimeler, SSS ve hizmet listeleri kaybolurdu.
+ */
+function jsonDizi<T>(v: unknown): T[] {
+  if (Array.isArray(v)) return v as T[];
+  if (typeof v === "string" && v.trim()) {
+    try {
+      const c = JSON.parse(v);
+      return Array.isArray(c) ? (c as T[]) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 function rowToEquipment(r: Record<string, unknown>): Equipment {
   return {
     slug: String(r.slug),
@@ -367,7 +404,7 @@ function rowToLocation(r: Record<string, unknown>): Location {
     title: String(r.title),
     description: String(r.description),
     intro: String(r.intro),
-    hizmetler: Array.isArray(r.hizmetler) ? (r.hizmetler as string[]) : [],
+    hizmetler: jsonDizi<string>(r.hizmetler),
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
   };
@@ -381,10 +418,10 @@ function rowToArticle(r: Record<string, unknown>): Article {
     category: String(r.category),
     date: String(r.date),
     readMin: Number(r.readmin ?? r.readMin ?? 0),
-    keywords: Array.isArray(r.keywords) ? (r.keywords as string[]) : [],
+    keywords: jsonDizi<string>(r.keywords),
     lead: r.lead ? String(r.lead) : undefined,
     body: String(r.body ?? ""),
-    faq: Array.isArray(r.faq) ? (r.faq as { q: string; a: string }[]) : [],
+    faq: jsonDizi<{ q: string; a: string }>(r.faq),
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
     image: r.image ? String(r.image) : undefined,
@@ -443,33 +480,64 @@ async function dbPersist(st: CmsState): Promise<void> {
 
 async function dbSaveEquipment(e: Equipment): Promise<void> {
   await ensureSchema();
-  await run(sql()`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
-    VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
-    ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`);
+  const q = sql();
+  await run(
+    isMysql()
+      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
+          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`
+      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
+          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`
+  );
 }
 
 async function dbSaveLocation(l: Location): Promise<void> {
   await ensureSchema();
-  await run(sql()`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
-    VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, ${l.aktif}, ${l.sira})
-    ON CONFLICT (slug) DO UPDATE SET il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}::jsonb, aktif=${l.aktif}, sira=${l.sira}`);
+  const q = sql();
+  await run(
+    isMysql()
+      ? q`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
+          VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}, ${l.aktif}, ${l.sira})
+          ON DUPLICATE KEY UPDATE il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}, aktif=${l.aktif}, sira=${l.sira}`
+      : q`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
+          VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, ${l.aktif}, ${l.sira})
+          ON CONFLICT (slug) DO UPDATE SET il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}::jsonb, aktif=${l.aktif}, sira=${l.sira}`
+  );
 }
 
 async function dbSaveArticle(a: Article): Promise<void> {
   await ensureSchema();
-  await run(sql()`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira)
-    VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null})
-    ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`);
+  const q = sql();
+  await run(
+    isMysql()
+      ? q`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, \`lead\`, body, faq, aktif, sira, image)
+          VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}, ${a.aktif}, ${a.sira}, ${a.image ?? null})
+          ON DUPLICATE KEY UPDATE title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}, \`lead\`=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
+      : q`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image)
+          VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null})
+          ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
+  );
 }
 
 async function dbSaveSettings(s: SiteSettings): Promise<void> {
   await ensureSchema();
-  await run(sql()`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(s)}::jsonb) ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(s)}::jsonb`);
+  const q = sql();
+  await run(
+    isMysql()
+      ? q`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(s)}) ON DUPLICATE KEY UPDATE data = ${JSON.stringify(s)}`
+      : q`INSERT INTO site_settings (id, data) VALUES (1, ${JSON.stringify(s)}::jsonb) ON CONFLICT (id) DO UPDATE SET data = ${JSON.stringify(s)}::jsonb`
+  );
 }
 
 async function dbSetContent(key: string, value: string): Promise<void> {
   await ensureSchema();
-  await run(sql()`INSERT INTO site_content (key, value) VALUES (${key}, ${value}) ON CONFLICT (key) DO UPDATE SET value = ${value}`);
+  const q = sql();
+  await run(
+    isMysql()
+      ? q`INSERT INTO site_content (\`key\`, value) VALUES (${key}, ${value}) ON DUPLICATE KEY UPDATE value = ${value}`
+      : q`INSERT INTO site_content (key, value) VALUES (${key}, ${value}) ON CONFLICT (key) DO UPDATE SET value = ${value}`
+  );
 }
 
 async function dbSaveMedia(m: Omit<MediaItem, "id" | "created">): Promise<void> {
