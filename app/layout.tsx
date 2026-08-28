@@ -6,6 +6,7 @@ import CerezOnay from "./components/CerezOnay";
 import WhatsappButon from "./components/WhatsappButon";
 import "./globals.css";
 import { getSettings } from "@/lib/cms";
+import { KURUM, BOLGELER } from "@/lib/site-data";
 
 export const dynamic = "force-dynamic";
 
@@ -92,7 +93,41 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       addressRegion: "İstanbul",
       addressCountry: "TR",
     },
-    areaServed: "TR",
+    // Konum: yerel aramalarda ("periyodik kontrol Beylikduzu") isletmeyi
+    // haritaya baglar. Koordinatlar lib/site-data.ts KURUM.geo'dan.
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: KURUM.geo.lat,
+      longitude: KURUM.geo.lng,
+    },
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: KURUM.calismaSaatleriSchema.acilis,
+      closes: KURUM.calismaSaatleriSchema.kapanis,
+    },
+    // ⚠️ Onceden yalnizca "TR" yaziyordu. Sehir bazli aramalarda hangi ile
+    // hizmet verildigi bilgisi hic verilmiyordu; artik hizmet verilen iller
+    // tek tek listeleniyor (lib/site-data.ts BOLGELER tek kaynak).
+    areaServed: [
+      { "@type": "Country", name: "Türkiye" },
+      ...BOLGELER.flatMap((b) => b.iller.map((i) => ({ "@type": "City", name: i.il }))),
+    ],
+    // Akreditasyon kapsamindaki hizmetler — arama motoruna "bu firma tam
+    // olarak neyi yapiyor" bilgisini veriyor.
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Periyodik kontrol hizmetleri",
+      itemListElement: [
+        "Kaldırma ve iletme makineleri periyodik kontrolü",
+        "Basınçlı kap periyodik kontrolü",
+        "Kazan periyodik kontrolü",
+        "Yangından korunma sistemleri periyodik kontrolü",
+      ].map((ad) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: ad },
+      })),
+    },
     hasCredential: {
       "@type": "EducationalOccupationalCredential",
       name: "TÜRKAK Akredite Muayene Kuruluşu",

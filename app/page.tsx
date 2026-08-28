@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Header from "./components/Header";
@@ -21,6 +22,17 @@ const KATEGORI_IKON: Record<string, string> = Object.fromEntries(
 );
 
 export const dynamic = "force-dynamic";
+
+/**
+ * Ana sayfanin kendi metadata'si yoktu; kok layout'takini miras aliyordu ve
+ * en onemlisi CANONICAL adresi hic basilmiyordu. Ana sayfaya birden fazla
+ * adresten ulasilabildigi icin (/, /?utm=..., /index) Google bunlari ayri
+ * sayfa sanabiliyor ve siralama gucu bolunuyordu.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/", type: "website" },
+};
 
 const AVANTAJLAR = [
   ["📝", "Online Teklif Sistemi", "Ekipmanınızı seçin, saniyeler içinde ön bilgi ve randevu talebi oluşturun."],
