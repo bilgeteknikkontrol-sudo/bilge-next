@@ -48,15 +48,22 @@ export async function POST(req: Request) {
     ek: String(data.not || ""),
   };
 
+  /**
+   * ⚠️ Kayit ve bildirim BIRBIRINDEN BAGIMSIZ denenir.
+   *
+   * 2026-08-28'de uretimde Vercel Blob deposunun askiya alindigi ("This store
+   * has been suspended") gorulду; kayit adimi hata firlatiyordu. Kayit ile
+   * bildirim birbirine baglanirsa depo bir sorun yasadiginda musteri talebi
+   * TAMAMEN kaybolur. Bu yuzden: kayit basarisiz olsa bile e-posta yine
+   * gonderilir ve talep sahibine basari doner. Ikisi birden basarisizsa
+   * musteriye dogru soylenir ve telefon numarasi verilir.
+   */
+  let kaydedildi = true;
   try {
     await saveTeklif(kayit);
   } catch (e) {
-    // Kayit basarisizsa musteriye dogruyu soyle; sessizce "alindi" deme.
+    kaydedildi = false;
     console.error("[TEKLIF] Kayit hatasi:", e);
-    return NextResponse.json(
-      { error: "Talebiniz kaydedilemedi. Lütfen telefonla ulaşın: 0212 872 52 04" },
-      { status: 500 }
-    );
   }
 
   const epostaVerisi = {
@@ -82,11 +89,25 @@ export async function POST(req: Request) {
     console.warn("[TEKLIF] Bildirim e-postasi gonderilemedi:", bildirim.hata, "| ref:", ref);
   }
 
+  // Ne kaydedilebildi ne de bildirilebildi -> talep gercekten kayboldu.
+  // Musteriye bunu soyle ve telefon ver; sessizce "alindi" demek en kotusu.
+  if (!kaydedildi && !bildirim.gonderildi) {
+    console.error("[TEKLIF] TALEP KAYBEDILDI — ne kayit ne bildirim:", JSON.stringify(kayit));
+    return NextResponse.json(
+      {
+        error:
+          "Teknik bir sorun nedeniyle talebiniz iletilemedi. Lütfen 0212 872 52 04 numarasından bize ulaşın.",
+      },
+      { status: 503 }
+    );
+  }
+
   return NextResponse.json({
     ok: true,
     mesaj: "Talebiniz alındı.",
     referans: ref,
     raporNo,
     bildirim: bildirim.gonderildi,
+    kaydedildi,
   });
 }

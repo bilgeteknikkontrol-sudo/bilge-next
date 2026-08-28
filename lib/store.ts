@@ -73,3 +73,26 @@ export async function tumTeklifler(): Promise<TeklifKayit[]> {
   const arr = parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || [];
   return [...arr].reverse();
 }
+
+/**
+ * Deponun yazilabilir olup olmadigini kontrol eder.
+ *
+ * 2026-08-28'de uretimde Vercel Blob deposu ASKIYA ALINMISTI ve bu hicbir
+ * yerde gorunmuyordu: okuma hatalari try/catch icinde yutuluyor, site kod
+ * icindeki varsayilanlarla calismaya devam ediyordu. Yani panelden yapilan
+ * her degisiklik kayboluyor ama kullanici bunu anlamiyordu.
+ *
+ * Panel bu kontrolu yapip durumu ekranin tepesinde gosteriyor.
+ */
+export async function depoDurumu(): Promise<{ calisiyor: boolean; mesaj: string }> {
+  if (!BLOB_TOKEN) {
+    return { calisiyor: false, mesaj: "BLOB_READ_WRITE_TOKEN tanımlı değil." };
+  }
+  try {
+    await list({ prefix: CMS_PATH, token: BLOB_TOKEN, limit: 1 });
+    return { calisiyor: true, mesaj: "" };
+  } catch (e) {
+    const m = e instanceof Error ? e.message : String(e);
+    return { calisiyor: false, mesaj: m };
+  }
+}
