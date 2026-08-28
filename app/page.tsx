@@ -105,7 +105,7 @@ export default async function Home() {
         {/* items-center YOK: sutunlar esnesin (grid varsayilani stretch). Boylece
             sagdaki gorsel sol sutunun tepesinden basliyor ve ayni hizada bitiyor;
             ortalanmis halinde 150px kadar asagi kayip asimetrik duruyordu. */}
-        <div className="container-x relative grid gap-12 py-14 lg:grid-cols-[1.05fr_.95fr] lg:py-20">
+        <div className="container-x relative grid gap-10 py-10 lg:grid-cols-[1.05fr_.95fr] lg:py-14">
           {/* --- SOL: anlatim --- */}
           <div className="min-w-0">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_rgba(194,94,8,.6)]">
@@ -113,18 +113,21 @@ export default async function Home() {
               TÜRKAK Akredite A Tipi Muayene Kuruluşu · {KURUM.akreditasyon}
             </span>
 
+            {/* Panelden gelen --fs-hero (3.5rem) sabit uygulaniyordu; hero sutunu
+                ~600px oldugu icin baslik 4 satira sariyor, bolum ekrani asiyordu.
+                clamp: panel degeri artik ust sinir, dar ekranda olcekleniyor. */}
             <h1
-              className="mt-6 font-black tracking-tight text-navy md:text-5xl"
-              style={{ fontSize: "var(--fs-hero)", lineHeight: 1.08 }}
+              className="mt-5 font-black tracking-tight text-navy"
+              style={{ fontSize: "clamp(1.9rem, 3.4vw, var(--fs-hero))", lineHeight: 1.1 }}
             >
               {heroTitle}
             </h1>
 
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">{heroSubtitle}</p>
+            <p className="mt-4 max-w-xl leading-relaxed text-muted">{heroSubtitle}</p>
 
             {/* Hizmetin ne oldugunu somutlastiran uc madde:
                 iddia degil, dogrulanabilir olgu. */}
-            <ul className="mt-7 grid gap-3 sm:max-w-lg">
+            <ul className="mt-6 grid gap-2.5 sm:max-w-lg">
               {[
                 ["🛡️", "Bağımsız ve tarafsız muayene", "A Tipi kuruluş; rapor satış kaygısı olmadan düzenlenir."],
                 ["📋", "TS EN ISO/IEC 17020", "Akredite kapsam; denetim ve ihalelerde sorunsuz kabul."],
@@ -133,7 +136,7 @@ export default async function Home() {
                 <li key={t} className="flex items-start gap-3">
                   <span
                     aria-hidden
-                    className="mt-0.5 flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-blue-soft text-lg"
+                    className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-xl bg-blue-soft"
                   >
                     {i}
                   </span>
@@ -145,13 +148,13 @@ export default async function Home() {
               ))}
             </ul>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/teklif" className="btn-primary px-7 py-3.5">Ücretsiz Teklif Al →</Link>
-              <Link href="/hesapla" className="btn-ghost px-7 py-3.5">Yasal Sürenizi Hesaplayın</Link>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/teklif" className="btn-primary px-7 py-3">Ücretsiz Teklif Al →</Link>
+              <Link href="/hesapla" className="btn-ghost px-7 py-3">Yasal Sürenizi Hesaplayın</Link>
             </div>
 
             {/* Rakamlar: metnin altinda ince bir serit, karta gerek yok */}
-            <dl className="mt-9 grid max-w-lg grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-6 sm:grid-cols-4">
+            <dl className="mt-7 grid max-w-lg grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-5 sm:grid-cols-4">
               {[
                 ["2014", "Yılından beri"],
                 ["500+", "Müşteri firma"],
@@ -170,9 +173,10 @@ export default async function Home() {
               min-w-0: grid sutunlarinin varsayilan min-width:auto degeri, kartin
               icindeki buton+metin satirini "en dar hali" sayip sutunu kabindan
               tasiriyordu. */}
-          <div className="relative flex min-w-0 flex-col lg:pb-14">
-            {/* Mobilde sabit oran, lg'de sol sutunun boyuna uzayan esnek yukseklik */}
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_rgba(88,67,52,.55)] lg:aspect-auto lg:min-h-[420px] lg:flex-1">
+          <div className="relative flex min-w-0 flex-col lg:pb-12">
+            {/* Mobilde sabit oran (16/10 — 4/3 telefonda ekranin yarisini yiyordu),
+                lg'de sol sutunun boyuna uzayan esnek yukseklik */}
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_rgba(88,67,52,.55)] lg:aspect-auto lg:min-h-[340px] lg:flex-1">
               {/* Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
                   varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
               {heroSlaytlari.length > 0 ? (
