@@ -8,7 +8,20 @@ import "./globals.css";
 import { getSettings } from "@/lib/cms";
 import { KURUM, BOLGELER } from "@/lib/site-data";
 
-export const dynamic = "force-dynamic";
+/**
+ * Kok duzen onbellekleniyor (ISR).
+ *
+ * ⚠️ Onceden `force-dynamic` idi: HER ziyarette sayfa sifirdan uretiliyor,
+ * hicbir sey onbelleklenmiyordu. Turkiye den olculen ilk bayt suresi
+ * 285-750 ms idi; bunun ~220 ms si zaten ag, gerisi her istekte tekrar
+ * yapilan uretim ve CMS okumasiydi. Sayfa hizi Google icin bir siralama
+ * faktoru oldugundan bu dogrudan SEO kaybiydi.
+ *
+ * Bayatlik riski yok: paneldeki her kaydetme eylemi revalidatePath cagirip
+ * ilgili sayfalari aninda tazeliyor (bkz. app/admin/actions.ts). Sure yalnizca
+ * hicbir degisiklik olmadiginda ust sinir olarak devrede.
+ */
+export const revalidate = 300;
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
 

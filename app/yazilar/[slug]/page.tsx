@@ -6,7 +6,20 @@ import Footer from "../../components/Footer";
 import YaziGorseli from "../../components/YaziGorseli";
 import { getArticleBySlug, getArticles } from "@/lib/cms";
 
-export const dynamic = "force-dynamic";
+/**
+ * Sayfa onbellekleniyor (ISR).
+ *
+ * ⚠️ Onceden `force-dynamic` idi: HER ziyarette sayfa sifirdan uretiliyor,
+ * hicbir sey onbelleklenmiyordu. Turkiye den olculen ilk bayt suresi
+ * 285-750 ms idi; bunun ~220 ms si zaten ag, gerisi her istekte tekrar
+ * yapilan uretim ve CMS okumasiydi. Sayfa hizi Google icin bir siralama
+ * faktoru oldugundan bu dogrudan SEO kaybiydi.
+ *
+ * Bayatlik riski yok: paneldeki her kaydetme eylemi revalidatePath cagirip
+ * ilgili sayfalari aninda tazeliyor (bkz. app/admin/actions.ts). Sure yalnizca
+ * hicbir degisiklik olmadiginda ust sinir olarak devrede.
+ */
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

@@ -21,7 +21,20 @@ const KATEGORI_IKON: Record<string, string> = Object.fromEntries(
   KATEGORILER.map((k) => [k.baslik, k.ikon])
 );
 
-export const dynamic = "force-dynamic";
+/**
+ * Sayfa onbellekleniyor (ISR).
+ *
+ * ⚠️ Onceden `force-dynamic` idi: HER ziyarette sayfa sifirdan uretiliyor,
+ * hicbir sey onbelleklenmiyordu. Turkiye den olculen ilk bayt suresi
+ * 285-750 ms idi; bunun ~220 ms si zaten ag, gerisi her istekte tekrar
+ * yapilan uretim ve CMS okumasiydi. Sayfa hizi Google icin bir siralama
+ * faktoru oldugundan bu dogrudan SEO kaybiydi.
+ *
+ * Bayatlik riski yok: paneldeki her kaydetme eylemi revalidatePath cagirip
+ * ilgili sayfalari aninda tazeliyor (bkz. app/admin/actions.ts). Sure yalnizca
+ * hicbir degisiklik olmadiginda ust sinir olarak devrede.
+ */
+export const revalidate = 300;
 
 /**
  * Ana sayfanin kendi metadata'si yoktu; kok layout'takini miras aliyordu ve
