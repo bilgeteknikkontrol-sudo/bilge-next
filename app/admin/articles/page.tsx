@@ -18,8 +18,8 @@ export default async function ArticlesAdmin({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-black text-slate-800">Makaleler</h1>
-        <Link href="/admin/articles?new=1" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+        <h1 className="text-2xl font-black tracking-tight text-navy">Makaleler</h1>
+        <Link href="/admin/articles?new=1" className="rounded-lg bg-blue px-4 py-2 text-sm font-semibold text-white hover:brightness-110">
           + Yeni
         </Link>
       </div>
@@ -55,14 +55,33 @@ export default async function ArticlesAdmin({
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <h2 className="font-bold text-slate-700">{item || isNew ? "Düzenle" : "Yeni Makale"}</h2>
           <form action={saveArticleAction} className="mt-4 space-y-3">
-            <input type="hidden" name="slug" defaultValue={item?.slug || ""} />
+            {/* ⚠️ Adres alani onceden "slug2" adiyla gonderiliyordu ama
+                saveArticleAction "slug" okuyor; yani yazilan adres SESSIZCE
+                yok sayiliyor, her zaman baslikten uretiliyordu.
+                Yeni kayitta alan artik gercekten "slug".
+                Duzenlemede adres degistirilmiyor: eski adres 404'e duser ve
+                arama motorundaki siralamasi kaybolur. Mevcut adres salt
+                okunur gosteriliyor ve gizli alanla gonderiliyor. */}
+            {item ? (
+              <>
+                <input type="hidden" name="slug" defaultValue={item.slug} />
+                <div>
+                  <label className="text-xs font-semibold text-slate-600">Adres (değiştirilemez)</label>
+                  <p className="mt-1 rounded-lg border border-slate-200 bg-slate-50 p-2 font-mono text-xs text-slate-500">
+                    /yazilar/{item.slug}
+                  </p>
+                </div>
+              </>
+            ) : null}
             <div className="grid grid-cols-2 gap-3">
               <Field label="Başlık" name="title" value={item?.title} required />
               <Field label="Kategori" name="category" value={item?.category} />
             </div>
             <Field label="Kısa Açıklama (SEO)" name="description" value={item?.description} textarea />
             <div className="grid grid-cols-3 gap-3">
-              <Field label="Slug (boş=otomatik)" name="slug2" value="" placeholder="otomatik" />
+              {!item && (
+                <Field label="Adres (boş=otomatik)" name="slug" value="" placeholder="baslikten-uretilir" />
+              )}
               <Field label="Tarih" name="date" value={item?.date} />
               <Field label="Okuma dk" name="readMin" value={item?.readMin} />
             </div>
@@ -79,7 +98,7 @@ export default async function ArticlesAdmin({
               />
               <p className="mt-1 text-xs text-slate-500">
                 Boş bırakırsanız yazının kendi varsayılan görseli kullanılır. Görsel yüklemek için{" "}
-                <a href="/admin/media" className="font-semibold text-blue-600 underline">
+                <a href="/admin/media" className="font-semibold text-blue underline">
                   Medya Kütüphanesi
                 </a>
                 &apos;ni kullanıp adresi buraya yapıştırın.
@@ -107,7 +126,7 @@ export default async function ArticlesAdmin({
                 <input type="checkbox" name="aktif" defaultChecked={item ? item.aktif : true} /> Aktif (yayında)
               </label>
             </div>
-            <button className="rounded-lg bg-blue-600 px-5 py-2.5 font-bold text-white hover:bg-blue-700">
+            <button className="rounded-lg bg-blue px-5 py-2.5 font-bold text-white hover:brightness-110">
               Kaydet
             </button>
           </form>

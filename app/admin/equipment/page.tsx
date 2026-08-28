@@ -17,8 +17,8 @@ export default async function EquipmentAdmin({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-black text-slate-800">Ekipmanlar</h1>
-        <Link href="/admin/equipment?new=1" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+        <h1 className="text-2xl font-black tracking-tight text-navy">Ekipmanlar</h1>
+        <Link href="/admin/equipment?new=1" className="rounded-lg bg-blue px-4 py-2 text-sm font-semibold text-white hover:brightness-110">
           + Yeni
         </Link>
       </div>
@@ -68,7 +68,7 @@ export default async function EquipmentAdmin({
               </label>
             </div>
             <Field label="Periyot notu" name="periyotNot" value={item?.periyotNot} />
-            <button className="rounded-lg bg-blue-600 px-5 py-2.5 font-bold text-white hover:bg-blue-700">
+            <button className="rounded-lg bg-blue px-5 py-2.5 font-bold text-white hover:brightness-110">
               Kaydet
             </button>
           </form>

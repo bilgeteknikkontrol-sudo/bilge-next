@@ -47,3 +47,6 @@ next-env.d.ts
 
 KONUSMA_KAYDI.txt
 .env*
+
+# yerel gelistirme CMS deposu (uretimde kullanilmaz)
+.cms-local-*

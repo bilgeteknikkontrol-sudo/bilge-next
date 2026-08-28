@@ -12,7 +12,7 @@ export default async function LoginPage({
         action={loginAction}
         className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg"
       >
-        <h1 className="text-2xl font-black text-slate-800">Yönetici Girişi</h1>
+        <h1 className="text-2xl font-black tracking-tight text-navy">Yönetici Girişi</h1>
         <p className="mt-1 text-sm text-slate-500">Bilge Teknik Kontrol paneli</p>
         {sp.error && (
           <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
@@ -30,7 +30,7 @@ export default async function LoginPage({
         </label>
         <button
           type="submit"
-          className="mt-5 w-full rounded-lg bg-blue-600 px-4 py-2.5 font-bold text-white hover:bg-blue-700"
+          className="mt-5 w-full rounded-lg bg-blue px-4 py-2.5 font-bold text-white hover:brightness-110"
         >
           Giriş Yap
         </button>

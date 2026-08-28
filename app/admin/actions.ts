@@ -97,6 +97,7 @@ export async function deleteArticleAction(formData: FormData) {
   if (slug) await deleteArticle(slug);
   revalidatePath("/");
   revalidatePath("/yazilar");
+  redirect("/admin/articles");
 }
 
 function parseFaq(text: string) {
@@ -143,6 +144,7 @@ export async function deleteEquipmentAction(formData: FormData) {
   if (slug) await deleteEquipment(slug);
   revalidatePath("/");
   revalidatePath("/ekipman");
+  redirect("/admin/equipment");
 }
 
 // ---------- LOCATIONS ----------
@@ -178,6 +180,7 @@ export async function deleteLocationAction(formData: FormData) {
   if (slug) await deleteLocation(slug);
   revalidatePath("/");
   revalidatePath("/bolge");
+  redirect("/admin/locations");
 }
 
 // ---------- SETTINGS ----------
@@ -220,8 +223,10 @@ export async function saveSettingsAction(formData: FormData) {
     ctaText: String(formData.get("ctaText") || cur.ctaText),
   };
   await saveSettings(s);
-  revalidatePath("/");
-  redirect("/admin/settings");
+  // Renk, logo ve iletisim bilgisi TUM sayfalarda kullaniliyor; yalnizca
+  // ana sayfayi tazelemek yetmiyordu.
+  revalidatePath("/", "layout");
+  redirect("/admin/settings?kaydedildi=1");
 }
 
 // ---------- CONTENT ----------
@@ -252,13 +257,22 @@ export async function saveMediaAction(formData: FormData) {
   const file = formData.get("file");
   let dataUrl: string | null = null;
   let finalUrl = url;
-  if (file && typeof file === "object" && "arrayBuffer" in file) {
+  // ⚠️ Dosya secilmemis olsa bile tarayici BOS bir File nesnesi gonderiyor.
+  // Onceden yalnizca "arrayBuffer" in file kontrolu vardi; bu bos dosyayi da
+  // gecirip "data:...;base64," seklinde BOZUK bir gorsel kaydediyordu.
+  // Bu yuzden boyut kontrolu sart.
+  if (file && typeof file === "object" && "arrayBuffer" in file && (file as File).size > 0) {
     const buf = Buffer.from(await (file as File).arrayBuffer());
     const mime = (file as File).type || "image/png";
     dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
     finalUrl = dataUrl;
   }
+  if (!finalUrl) {
+    // Ne dosya ne adres verilmis: bos kayit olusturma.
+    redirect("/admin/media?hata=bos");
+  }
   await saveMedia({ name, url: finalUrl, dataUrl, alt });
+  revalidatePath("/", "layout");
   redirect("/admin/media");
 }
 
@@ -266,6 +280,10 @@ export async function deleteMediaAction(formData: FormData) {
   await guard();
   const id = num(formData.get("id"));
   if (id) await deleteMedia(id);
+  // ⚠️ Onceden ne tazeleme ne yonlendirme vardi; silinen gorsel listede
+  // kalmaya devam ediyordu.
+  revalidatePath("/", "layout");
+  redirect("/admin/media");
 }
 
 // ---------------- Bloklar (referans / ekip / sertifika / hero / sss) ----------------

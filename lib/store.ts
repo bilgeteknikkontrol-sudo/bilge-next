@@ -1,10 +1,49 @@
 import { put, list, get } from "@vercel/blob";
+import fs from "fs";
+import path from "path";
 
 const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 const CMS_PATH = "cms-state.json";
 const TEKLIF_PATH = "teklif-state.json";
 
+/**
+ * YEREL GELISTIRME DEPOSU
+ *
+ * Blob anahtari yokken (yerelde `npm run dev`) okuma/yazma sessizce hicbir sey
+ * yapmiyordu: panelde "kaydedildi" yaziyor, sayfa yenilenince degisiklik yok
+ * oluyordu. Bu yuzden panelin dogru calisip calismadigi yerelde HIC test
+ * edilemiyordu.
+ *
+ * Artik anahtar yoksa ve uretimde degilsek veri proje kokundeki
+ * `.cms-local.json` dosyasina yaziliyor. Uretimde bu yol hic calismaz
+ * (sunucusuz dosya sistemi kalici degildir); orada yalnizca Blob veya
+ * Postgres kullanilir.
+ */
+const YEREL_MOD = !BLOB_TOKEN && process.env.NODE_ENV !== "production";
+
+function yerelDosya(pathname: string): string {
+  return path.join(process.cwd(), `.cms-local-${pathname}`);
+}
+
+function yerelOku(pathname: string): string | null {
+  try {
+    const p = yerelDosya(pathname);
+    return fs.existsSync(p) ? fs.readFileSync(p, "utf8") : null;
+  } catch {
+    return null;
+  }
+}
+
+function yerelYaz(pathname: string, value: string): void {
+  try {
+    fs.writeFileSync(yerelDosya(pathname), value, "utf8");
+  } catch {
+    /* yerel yazma basarisizsa gelistirme akisi engellenmemeli */
+  }
+}
+
 async function readBlob(pathname: string): Promise<string | null> {
+  if (YEREL_MOD) return yerelOku(pathname);
   if (!BLOB_TOKEN) return null;
   try {
     const res = await list({ prefix: pathname, token: BLOB_TOKEN });
@@ -19,6 +58,7 @@ async function readBlob(pathname: string): Promise<string | null> {
 }
 
 async function writeBlob(pathname: string, value: string): Promise<void> {
+  if (YEREL_MOD) return yerelYaz(pathname, value);
   if (!BLOB_TOKEN) return;
   await put(pathname, value, { access: "private", token: BLOB_TOKEN, allowOverwrite: true });
 }
@@ -85,6 +125,7 @@ export async function tumTeklifler(): Promise<TeklifKayit[]> {
  * Panel bu kontrolu yapip durumu ekranin tepesinde gosteriyor.
  */
 export async function depoDurumu(): Promise<{ calisiyor: boolean; mesaj: string }> {
+  if (YEREL_MOD) return { calisiyor: true, mesaj: "" }; // yerel dosya deposu
   if (!BLOB_TOKEN) {
     return { calisiyor: false, mesaj: "BLOB_READ_WRITE_TOKEN tanımlı değil." };
   }

@@ -17,8 +17,8 @@ export default async function LocationsAdmin({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-black text-slate-800">Bölgeler</h1>
-        <Link href="/admin/locations?new=1" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+        <h1 className="text-2xl font-black tracking-tight text-navy">Bölgeler</h1>
+        <Link href="/admin/locations?new=1" className="rounded-lg bg-blue px-4 py-2 text-sm font-semibold text-white hover:brightness-110">
           + Yeni
         </Link>
       </div>
@@ -72,7 +72,7 @@ export default async function LocationsAdmin({
                 <input type="checkbox" name="aktif" defaultChecked={item ? item.aktif : true} /> Aktif
               </label>
             </div>
-            <button className="rounded-lg bg-blue-600 px-5 py-2.5 font-bold text-white hover:bg-blue-700">
+            <button className="rounded-lg bg-blue px-5 py-2.5 font-bold text-white hover:brightness-110">
               Kaydet
             </button>
           </form>

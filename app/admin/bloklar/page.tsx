@@ -29,7 +29,7 @@ export default async function BloklarAdmin({
 
   return (
     <div>
-      <h1 className="text-2xl font-black text-slate-800">İçerik Blokları</h1>
+      <h1 className="text-2xl font-black tracking-tight text-navy">İçerik Blokları</h1>
       <p className="mt-1 text-sm text-slate-500">
         Referanslar, ekip, sertifikalar, ana sayfa slaytları ve sık sorulan sorular buradan
         yönetilir. Her kayıt eklenebilir, düzenlenebilir, pasife alınabilir veya silinebilir.
@@ -45,7 +45,7 @@ export default async function BloklarAdmin({
               key={t}
               href={`/admin/bloklar?tur=${t}`}
               className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                aktifSekme ? "bg-blue-600 text-white" : "bg-white text-slate-600 hover:bg-slate-100"
+                aktifSekme ? "bg-blue text-white" : "bg-white text-slate-600 hover:bg-slate-100"
               }`}
             >
               {TUR_ETIKET[t]} <span className="opacity-70">({adet})</span>
@@ -105,7 +105,7 @@ export default async function BloklarAdmin({
             />
             <span className="mt-1 block text-xs text-slate-500">
               Görsel yüklemek için{" "}
-              <Link href="/admin/media" className="font-semibold text-blue-600 underline">
+              <Link href="/admin/media" className="font-semibold text-blue underline">
                 Medya Kütüphanesi
               </Link>
               &apos;ni kullanıp adresi buraya yapıştırın.
@@ -140,7 +140,7 @@ export default async function BloklarAdmin({
           </div>
 
           <div className="flex gap-2">
-            <button className="rounded-lg bg-blue-600 px-5 py-2.5 font-bold text-white hover:bg-blue-700">
+            <button className="rounded-lg bg-blue px-5 py-2.5 font-bold text-white hover:brightness-110">
               {duzenlenen ? "Güncelle" : "Ekle"}
             </button>
             {duzenlenen && (
