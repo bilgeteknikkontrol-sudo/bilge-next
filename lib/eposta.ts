@@ -6,22 +6,47 @@
  * gelen teklif talepleri sessizce bir dosyaya yaziliyor ve kimseye
  * bildirilmiyordu.
  *
- * Gonderim Resend'in HTTP API'siyle yapiliyor — ek bir paket kurulmadi,
- * duz bir fetch cagrisi. SMTP yerine HTTP secildi cunku Vercel'in sunucusuz
- * ortaminda SMTP baglantilari sik sik zaman asimina ugruyor.
+ * IKI YOL destekleniyor, hangisi tanimliysa o kullaniliyor:
  *
- * KURULUM (kullanicinin yapmasi gereken):
- *   Vercel > Settings > Environment Variables
- *     RESEND_API_KEY   -> resend.com'dan alinan anahtar
- *     TEKLIF_ALICI     -> bildirimlerin gidecegi adres (bos ise site e-postasi)
- *     TEKLIF_GONDEREN  -> gonderen adres; alan adi Resend'de dogrulanmali
+ *  A) SMTP (onerilen) — firmanin KENDI posta kutusu.
+ *     bilgeteknikkontrol.com postasi Hostinger'da (MX: mx1.hostinger.com).
+ *     Kendi kutusundan gonderdigi icin SPF/DKIM dogal olarak gecerli,
+ *     e-postalar spam'e dusmez ve ek bir servise kayit olmak gerekmez.
+ *       SMTP_HOST=smtp.hostinger.com
+ *       SMTP_PORT=465
+ *       SMTP_USER=info@bilgeteknikkontrol.com
+ *       SMTP_PASS=<posta kutusu sifresi>
  *
- * Anahtar tanimli DEGILSE: gonderim sessizce atlanir ve `false` doner.
- * Talep yine kaydedilir ve panelde gorunur — yani anahtar eklenene kadar
- * hicbir talep kaybolmaz.
+ *  B) RESEND_API_KEY — HTTP API. SMTP kullanilamiyorsa.
+ *
+ * Ortak (istege bagli):
+ *       TEKLIF_ALICI    -> bildirimlerin gidecegi adres(ler), virgulle
+ *       TEKLIF_GONDEREN -> gonderen adi/adresi
+ *
+ * Hicbiri tanimli degilse gonderim atlanir ve sebep `hata` alaninda doner;
+ * cagiran taraf buna gore davranir (bkz. app/api/teklif/route.ts).
  */
 
-export type EpostaSonuc = { gonderildi: boolean; hata?: string };
+export type EpostaSonuc = { gonderildi: boolean; hata?: string; yol?: "smtp" | "resend" };
+
+/** Bildirimlerin gidecegi adres. Kullanici acikca bu adresi istedi. */
+export const VARSAYILAN_ALICI = "info@bilgeteknikkontrol.com";
+
+export function alicilar(): string[] {
+  return (process.env.TEKLIF_ALICI || VARSAYILAN_ALICI)
+    .split(",")
+    .map((a) => a.trim())
+    .filter(Boolean);
+}
+
+/** Panelde gosterilecek kurulum durumu. */
+export function epostaAyari(): { hazir: boolean; yol: "smtp" | "resend" | "yok"; alici: string[] } {
+  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    return { hazir: true, yol: "smtp", alici: alicilar() };
+  }
+  if (process.env.RESEND_API_KEY) return { hazir: true, yol: "resend", alici: alicilar() };
+  return { hazir: false, yol: "yok", alici: alicilar() };
+}
 
 export async function epostaGonder({
   konu,
@@ -35,22 +60,64 @@ export async function epostaGonder({
   /** Musterinin adresi — "Yanitla" dendiginde ona gitsin */
   yanitla?: string;
 }): Promise<EpostaSonuc> {
-  const anahtar = process.env.RESEND_API_KEY;
-  if (!anahtar) return { gonderildi: false, hata: "RESEND_API_KEY tanımlı değil" };
+  const ayar = epostaAyari();
+  if (!ayar.hazir) {
+    return {
+      gonderildi: false,
+      hata: "E-posta gönderimi kurulu değil (SMTP_* veya RESEND_API_KEY tanımlı değil).",
+    };
+  }
 
-  const alici = process.env.TEKLIF_ALICI || "info@bilgeteknikkontrol.com";
-  const gonderen = process.env.TEKLIF_GONDEREN || "Bilge Teknik Kontrol <onboarding@resend.dev>";
+  const alici = ayar.alici;
+  const gonderenAdi = process.env.TEKLIF_GONDEREN || "Bilge Teknik Kontrol";
 
+  // ---------- A) SMTP ----------
+  if (ayar.yol === "smtp") {
+    try {
+      const nodemailer = (await import("nodemailer")).default;
+      const port = Number(process.env.SMTP_PORT || 465);
+      const tasiyici = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port,
+        // 465 dogrudan TLS; 587 STARTTLS ile yukseltiliyor.
+        secure: port === 465,
+        auth: { user: process.env.SMTP_USER!, pass: process.env.SMTP_PASS! },
+        // Sunucusuz ortamda asili kalmasin.
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
+      });
+      await tasiyici.sendMail({
+        // Gonderen, kimlik dogrulanan kutuyla AYNI olmali; aksi halde sunucu
+        // reddeder veya e-posta spam'e duser.
+        from: `"${gonderenAdi}" <${process.env.SMTP_USER}>`,
+        to: alici.join(", "),
+        subject: konu,
+        html,
+        text: metin,
+        ...(yanitla ? { replyTo: yanitla } : {}),
+      });
+      return { gonderildi: true, yol: "smtp" };
+    } catch (e) {
+      return {
+        gonderildi: false,
+        yol: "smtp",
+        hata: e instanceof Error ? e.message : "SMTP gönderimi başarısız",
+      };
+    }
+  }
+
+  // ---------- B) Resend ----------
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${anahtar}`,
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: gonderen,
-        to: alici.split(",").map((a) => a.trim()).filter(Boolean),
+        from: process.env.TEKLIF_GONDEREN || "Bilge Teknik Kontrol <onboarding@resend.dev>",
+        to: alici,
         subject: konu,
         html,
         text: metin,
@@ -59,11 +126,11 @@ export async function epostaGonder({
     });
     if (!res.ok) {
       const govde = await res.text().catch(() => "");
-      return { gonderildi: false, hata: `Resend ${res.status}: ${govde.slice(0, 200)}` };
+      return { gonderildi: false, yol: "resend", hata: `Resend ${res.status}: ${govde.slice(0, 200)}` };
     }
-    return { gonderildi: true };
+    return { gonderildi: true, yol: "resend" };
   } catch (e) {
-    return { gonderildi: false, hata: e instanceof Error ? e.message : "bilinmeyen hata" };
+    return { gonderildi: false, yol: "resend", hata: e instanceof Error ? e.message : "bilinmeyen hata" };
   }
 }
 

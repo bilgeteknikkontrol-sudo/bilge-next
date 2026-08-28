@@ -1,6 +1,8 @@
 import { guard } from "@/lib/auth";
 import { tumTeklifler } from "@/lib/store";
-import { SayfaBasligi, Kart, Bilgi, BosDurum } from "../ui";
+import { epostaAyari } from "@/lib/eposta";
+import { testEpostaAction } from "../actions";
+import { SayfaBasligi, Kart, Buton, Bilgi, BosDurum } from "../ui";
 
 export const dynamic = "force-dynamic";
 
@@ -11,10 +13,15 @@ export const dynamic = "force-dynamic";
  * kayitlar Vercel Blob icindeki bir JSON dosyasina yaziliyor, e-posta da
  * gonderilmiyordu. Yani her talep goruntuye cikmadan kayboluyordu.
  */
-export default async function TekliflerAdmin() {
+export default async function TekliflerAdmin({
+  searchParams,
+}: {
+  searchParams: Promise<{ test?: string; mesaj?: string }>;
+}) {
   await guard();
+  const sp = await searchParams;
   const kayitlar = await tumTeklifler().catch(() => []);
-  const bildirimAcik = Boolean(process.env.RESEND_API_KEY);
+  const eposta = epostaAyari();
 
   return (
     <div>
@@ -24,16 +31,63 @@ export default async function TekliflerAdmin() {
         onizleme="/teklif"
       />
 
-      {!bildirimAcik && (
+      {sp.test === "ok" && (
         <div className="mb-5">
-          <Bilgi tur="uyari">
-            <b>E-posta bildirimi kapalı.</b> Talepler burada birikiyor ama kimseye e-posta
-            gitmiyor. Açmak için Vercel &gt; Settings &gt; Environment Variables altına{" "}
-            <code>RESEND_API_KEY</code> ekleyin (resend.com üzerinden ücretsiz alınır).
-            İsterseniz <code>TEKLIF_ALICI</code> ile bildirimin gideceği adresi de belirleyin.
+          <Bilgi>
+            ✓ Test e-postası gönderildi. <b>{eposta.alici.join(", ")}</b> kutusunu kontrol edin
+            (spam klasörüne de bakın).
           </Bilgi>
         </div>
       )}
+      {sp.test === "hata" && (
+        <div className="mb-5">
+          <Bilgi tur="hata">
+            <b>Test e-postası gönderilemedi.</b>
+            <code className="mt-1 block break-all text-xs">{sp.mesaj}</code>
+          </Bilgi>
+        </div>
+      )}
+
+      <div className="mb-5">
+        {eposta.hazir ? (
+          <Kart
+            baslik="E-posta bildirimi açık"
+            aciklama={`Gelen talepler ${eposta.alici.join(", ")} adresine gönderiliyor (${
+              eposta.yol === "smtp" ? "kendi posta kutunuz üzerinden" : "Resend üzerinden"
+            }).`}
+          >
+            <form action={testEpostaAction}>
+              <Buton type="submit" tur="ikincil">
+                Test e-postası gönder
+              </Buton>
+            </form>
+          </Kart>
+        ) : (
+          <Bilgi tur="uyari">
+            <b className="block text-base">E-posta bildirimi kapalı</b>
+            <p className="mt-1">
+              Gelen talepler kimseye e-posta olarak gitmiyor. Bildirimler{" "}
+              <b>{eposta.alici.join(", ")}</b> adresine gidecek şekilde ayarlı; tek eksik gönderim
+              bilgileri.
+            </p>
+            <p className="mt-2">
+              <b>Önerilen yol — kendi posta kutunuz.</b> Vercel → bilge-next → Settings →
+              Environment Variables altına şunları ekleyin:
+            </p>
+            <ul className="mt-1.5 list-disc space-y-0.5 pl-5 font-mono text-xs">
+              <li>SMTP_HOST = smtp.hostinger.com</li>
+              <li>SMTP_PORT = 465</li>
+              <li>SMTP_USER = info@bilgeteknikkontrol.com</li>
+              <li>SMTP_PASS = (posta kutusu şifreniz)</li>
+            </ul>
+            <p className="mt-2 text-xs">
+              Postanız Hostinger&apos;da olduğu için e-postalar kendi kutunuzdan çıkar; spam&apos;e
+              düşme ihtimali en düşük yol budur. Ekledikten sonra bu sayfadaki test düğmesiyle
+              doğrulayabilirsiniz.
+            </p>
+          </Bilgi>
+        )}
+      </div>
 
       {kayitlar.length === 0 ? (
         <BosDurum

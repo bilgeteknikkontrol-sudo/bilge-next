@@ -474,3 +474,39 @@ export async function sertifikalariAktarAction() {
   revalidatePath("/sertifikalar");
   redirect("/admin/sayfa/akreditasyon?kaydedildi=1#sertifika");
 }
+
+// ---------- E-POSTA TESTI ----------
+/**
+ * Panelden tek tikla test e-postasi gonderir.
+ *
+ * Boyle bir dugme olmadan kullanicinin kurulumu dogrulamasinin tek yolu
+ * siteye sahte bir teklif talebi girmekti; bu da gercek taleplerin arasina
+ * cop kayit birakiyordu.
+ *
+ * Sonuc adres cubugunda donuyor (basari/hata), boylece hata mesaji
+ * dogrudan gorunuyor.
+ */
+export async function testEpostaAction() {
+  await guard();
+  const { epostaGonder, teklifEpostaHtml, teklifEpostaMetin } = await import("@/lib/eposta");
+  const ornek = {
+    ref: "TEST-" + Date.now().toString(36).toUpperCase(),
+    firma: "TEST — kurulum doğrulama",
+    ad: "Panel testi",
+    tel: "0212 872 52 04",
+    eposta: "info@bilgeteknikkontrol.com",
+    bolge: "İstanbul",
+    not: "Bu e-postayı görüyorsanız teklif bildirimleri çalışıyor demektir.",
+    ekipmanlar: ["Forklift", "Buhar Kazanı"],
+    tarih: new Date().toISOString(),
+  };
+  const sonuc = await epostaGonder({
+    konu: "Test — teklif bildirimi kurulumu",
+    html: teklifEpostaHtml(ornek),
+    metin: teklifEpostaMetin(ornek),
+  });
+  const p = sonuc.gonderildi
+    ? "test=ok"
+    : `test=hata&mesaj=${encodeURIComponent(sonuc.hata || "bilinmeyen")}`;
+  redirect(`/admin/teklifler?${p}`);
+}
