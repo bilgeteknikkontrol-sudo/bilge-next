@@ -8,6 +8,7 @@ import { EKIPMAN_GORSEL } from "@/lib/images";
 import { EKIPMAN_ICERIK } from "@/lib/ekipman-icerik";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,7 @@ function grupla(list: Equipment[]): [string, Equipment[]][] {
 }
 
 export default async function EkipmanIndex() {
+  const m = await metinleriOku();
   const hepsi = (await getEquipment().catch(() => [])).filter((e) => e.aktif);
   const kategoriler = grupla(hepsi);
   const toplam = hepsi.length;
@@ -84,12 +86,8 @@ export default async function EkipmanIndex() {
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Hizmetlerimiz</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">Periyodik Kontrol Hizmetlerimiz</h1>
-          <p className="mt-3 max-w-3xl text-onnavy">
-            TÜRKAK akredite ({KURUM.akreditasyon}) A Tipi muayene kuruluşu olarak {toplam} ayrı ekipman
-            ve tesisat grubunda periyodik kontrol hizmeti veriyoruz. Soldaki listeden kategoriye,
-            oradan aradığınız ekipmana ulaşabilirsiniz.
-          </p>
+          <h1 className="text-3xl font-black md:text-4xl">{m("ekipman_baslik")}</h1>
+          <p className="mt-3 max-w-3xl text-onnavy">{m("ekipman_giris")}</p>
           <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-onnavy">
             <span>📋 {kategoriler.length} kategori</span>
             <span>🔧 {toplam} hizmet</span>

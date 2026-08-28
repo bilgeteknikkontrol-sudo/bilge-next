@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { REFERANSLAR, KURUM } from "@/lib/site-data";
 import { KATEGORILER } from "@/lib/data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "Referanslarımız",
@@ -23,7 +24,8 @@ const SEKTORLER = [
   { ikon: "⚡", ad: "Elektrik ve Enerji", not: "Topraklama, paratoner, katodik koruma" },
 ];
 
-export default function ReferanslarPage() {
+export default async function ReferanslarPage() {
+  const m = await metinleriOku();
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
 
   const breadcrumbLd = {
@@ -43,14 +45,10 @@ export default function ReferanslarPage() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Referanslarımız</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("referans_baslik")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Referanslarımız</h1>
-          <p className="mt-3 max-w-3xl text-onnavy">
-            Üretimden lojistiğe, enerjiden inşaata kadar birçok sektörde işletmelerin periyodik
-            kontrol yükümlülüklerini karşılıyoruz. Aşağıda bizimle çalışan firmalardan bazıları
-            yer alıyor.
-          </p>
+          <p className="mt-3 max-w-3xl text-onnavy">{m("referans_giris")}</p>
         </div>
       </section>
 

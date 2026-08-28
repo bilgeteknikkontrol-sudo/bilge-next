@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { GENEL_SSS, KURUM } from "@/lib/site-data";
 import { ARTICLES } from "@/lib/content";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "Sık Sorulan Sorular",
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/sss" },
 };
 
-export default function SssPage() {
+export default async function SssPage() {
+  const m = await metinleriOku();
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -43,12 +45,10 @@ export default function SssPage() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Sık Sorulan Sorular</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("sss_baslik")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Sık Sorulan Sorular</h1>
-          <p className="mt-3 max-w-2xl text-onnavy">
-            Periyodik kontrol süreciyle ilgili en çok sorulan sorular ve kısa yanıtları.
-          </p>
+          <p className="mt-3 max-w-2xl text-onnavy">{m("sss_giris")}</p>
         </div>
       </section>
 

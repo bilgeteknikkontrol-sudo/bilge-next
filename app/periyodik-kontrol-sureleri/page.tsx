@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { getEquipment, type Equipment } from "@/lib/cms";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,7 @@ const SSS = [
 ];
 
 export default async function SurelerPage() {
+  const m = await metinleriOku();
   const hepsi = (await getEquipment().catch(() => [])).filter((e) => e.aktif);
   const kategoriler = grupla(hepsi);
 
@@ -97,11 +99,8 @@ export default async function SurelerPage() {
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Periyodik Kontrol Süreleri</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">Periyodik Kontrol Süreleri Tablosu</h1>
-          <p className="mt-3 max-w-3xl text-onnavy">
-            Hangi iş ekipmanının ne sıklıkla kontrol edilmesi gerektiğini, tabi olduğu standartla
-            birlikte tek tabloda topladık. {hepsi.length} ekipman türü, {kategoriler.length} kategori.
-          </p>
+          <h1 className="text-3xl font-black md:text-4xl">{m("sureler_baslik")}</h1>
+          <p className="mt-3 max-w-3xl text-onnavy">{m("sureler_giris")}</p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/hesapla" className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">
               Kendi Sürenizi Hesaplayın →

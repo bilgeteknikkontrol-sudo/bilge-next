@@ -10,6 +10,7 @@ import { bloklar } from "@/lib/bloklar";
 import { EKIPMAN_GORSEL } from "@/lib/images";
 import { EKIP, KURUM } from "@/lib/site-data";
 import { KATEGORILER } from "@/lib/data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 // Hero arka plani: saha fotografi. Genis (1000x486) oldugu icin tam genislikte net kaliyor.
 import heroGorsel from "../public/img/yangin-kontrolu.webp";
 
@@ -45,6 +46,7 @@ function groupByKategori(items: Equipment[]) {
 }
 
 export default async function Home() {
+  const m = await metinleriOku();
   const settings = await getSettings().catch(() => null);
   const equipment = await getEquipment().catch(() => []);
   const kategoriler = groupByKategori(equipment.filter((e) => e.aktif));
@@ -185,7 +187,7 @@ export default async function Home() {
           <div className="relative flex min-w-0 flex-col lg:pb-12">
             {/* Mobilde sabit oran (16/10 — 4/3 telefonda ekranin yarisini yiyordu),
                 lg'de sol sutunun boyuna uzayan esnek yukseklik */}
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_color-mix(in_srgb,var(--color-navy)_550%,transparent)] lg:aspect-auto lg:min-h-[340px] lg:flex-1">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_color-mix(in_srgb,var(--color-navy)_55%,transparent)] lg:aspect-auto lg:min-h-[340px] lg:flex-1">
               {/* Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
                   varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
               {heroSlaytlari.length > 0 ? (
@@ -260,9 +262,9 @@ export default async function Home() {
       <section id="hizmetler" className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
-            <span className="chip">Hizmetlerimiz</span>
-            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>Tüm İş Ekipmanınız Tek Çatı Altında</h2>
-            <p className="mt-3 text-muted">TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.</p>
+            <span className="chip">{m("as_hizmet_etiket")}</span>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>{m("as_hizmet_baslik")}</h2>
+            <p className="mt-3 text-muted">{m("as_hizmet_giris")}</p>
           </div>
           {/* Ana sayfada en fazla 6 hizmet gosterilir; tamami /ekipman sayfasinda. */}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

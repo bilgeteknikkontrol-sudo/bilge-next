@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { bloklar } from "@/lib/bloklar";
 import { KURUM } from "@/lib/site-data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,7 @@ const VARSAYILAN_BELGELER = [
 ];
 
 async function Sayfa() {
+  const m = await metinleriOku();
   const panelBelgeleri = await bloklar("sertifika").catch(() => []);
   const belgeler = panelBelgeleri.length ? panelBelgeleri : VARSAYILAN_BELGELER;
 
@@ -113,12 +115,8 @@ async function Sayfa() {
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> /{" "}
             <span>Akreditasyon ve Sertifikalar</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">Akreditasyon ve Sertifikalarımız</h1>
-          <p className="mt-3 max-w-3xl text-onnavy">
-            Düzenlediğimiz raporların denetimlerde ve ihale süreçlerinde kabul görmesi,
-            akreditasyonumuza dayanır. Yetki kapsamımızı ve belgelerimizi burada
-            inceleyebilirsiniz.
-          </p>
+          <h1 className="text-3xl font-black md:text-4xl">{m("sertifika_baslik")}</h1>
+          <p className="mt-3 max-w-3xl text-onnavy">{m("sertifika_giris")}</p>
         </div>
       </section>
 

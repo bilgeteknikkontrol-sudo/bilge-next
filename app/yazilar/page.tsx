@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import YaziGorseli from "../components/YaziGorseli";
 import { getArticles } from "@/lib/cms";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ export const metadata = {
 };
 
 export default async function YazilarPage() {
+  const m = await metinleriOku();
   const articles = await getArticles(true);
   return (
     <>
@@ -21,15 +23,15 @@ export default async function YazilarPage() {
       <section className="bg-bgsoft py-14">
         <div className="mx-auto max-w-[1200px] px-5 text-center">
           <span className="inline-flex rounded-full bg-blue-soft px-4 py-1.5 text-sm font-bold text-blue">Bilgi Merkezi</span>
-          <h1 className="mt-4 text-3xl font-black text-navy md:text-4xl">Makaleler & Rehberler</h1>
-          <p className="mt-3 text-muted">Periyodik kontrol dünyasında güncel, uzman ve uygulanabilir içerik.</p>
+          <h1 className="mt-4 text-3xl font-black text-navy md:text-4xl">{m("yazilar_baslik")}</h1>
+          <p className="mt-3 text-muted">{m("yazilar_giris")}</p>
         </div>
       </section>
 
       <section className="py-14">
         <div className="mx-auto grid max-w-[1200px] gap-6 px-5 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((a) => (
-            <Link key={a.slug} href={`/yazilar/${a.slug}`} className="group flex flex-col overflow-hidden rounded-card border border-line bg-white shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_250%,transparent)] transition hover:-translate-y-1">
+            <Link key={a.slug} href={`/yazilar/${a.slug}`} className="group flex flex-col overflow-hidden rounded-card border border-line bg-white shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_25%,transparent)] transition hover:-translate-y-1">
               <YaziGorseli slug={a.slug} cmsImage={a.image} bicim="kart" />
               <span className="flex flex-1 flex-col p-6">
                 <span className="text-xs font-bold text-blue">{a.category}</span>

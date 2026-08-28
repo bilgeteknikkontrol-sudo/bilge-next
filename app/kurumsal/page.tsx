@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { KURUM, ADRES_TEK_SATIR, EKIP, REFERANSLAR } from "@/lib/site-data";
 import { KATEGORILER } from "@/lib/data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "Kurumsal — Hakkımızda",
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/kurumsal" },
 };
 
-export default function KurumsalPage() {
+export default async function KurumsalPage() {
+  const m = await metinleriOku();
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
 
   const orgLd = {
@@ -57,13 +59,10 @@ export default function KurumsalPage() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Kurumsal</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("kurumsal_baslik")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Kurumsal</h1>
-          <p className="mt-3 max-w-3xl text-onnavy">
-            {KURUM.ad} — TÜRKAK tarafından {KURUM.standart} standardına göre akredite edilmiş
-            ({KURUM.akreditasyon}) bağımsız A Tipi muayene kuruluşu.
-          </p>
+          <p className="mt-3 max-w-3xl text-onnavy">{m("kurumsal_giris")}</p>
         </div>
       </section>
 

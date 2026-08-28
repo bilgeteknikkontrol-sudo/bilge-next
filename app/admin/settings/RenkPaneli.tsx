@@ -19,51 +19,67 @@ type Grup = { baslik: string; aciklama: string; alanlar: Alan[] };
 
 const GRUPLAR: Grup[] = [
   {
-    baslik: "Bölgeler",
-    aciklama: "Sitenin belirli bölümlerinin zemin renkleri. Genel paletten bağımsızdır.",
-    alanlar: [
-      { key: "headerBg", label: "Header arka planı", not: "Üst menü çubuğunun zemini" },
-      { key: "headerTopBg", label: "Header üst şeridi", not: "Menünün üstündeki ince iletişim şeridi" },
-      { key: "footerBg", label: "Footer arka planı", not: "Sayfa altı koyu alan" },
-      { key: "buttonBg", label: "Buton rengi", not: "“Teklif Al” gibi birincil butonlar" },
-      { key: "heroFrom", label: "Hero zemin (üst)", not: "Ana sayfa ilk bölümün gradyan başlangıcı" },
-      { key: "heroTo", label: "Hero zemin (alt)", not: "Ana sayfa ilk bölümün gradyan bitişi" },
-    ],
-  },
-  {
-    baslik: "Ana palet",
-    aciklama: "Tüm sayfalarda kullanılan temel renkler. Bunları değiştirmek siteyi baştan sona etkiler.",
-    alanlar: [
-      { key: "blue", label: "Vurgu rengi", not: "Bağlantılar, etiketler, ikon zeminleri (turuncu)" },
-      { key: "navy", label: "Başlık rengi", not: "Başlıklar ve koyu bölümlerin zemini" },
-      { key: "navy2", label: "Başlık rengi (açık ton)", not: "Koyu gradyanların ikinci ucu" },
-      { key: "accent", label: "İkincil vurgu", not: "Koyu zemin üzerindeki açık turuncu rozetler" },
-      { key: "accent2", label: "Onay rengi", not: "✓ işaretleri, doğrulama rozetleri" },
-      { key: "ink", label: "Metin rengi", not: "Gövde yazısının ana rengi" },
-      { key: "muted", label: "Soluk metin", not: "Açıklama ve yardımcı yazılar" },
-      { key: "line", label: "Çizgi rengi", not: "Kart kenarları ve ayraçlar" },
-      { key: "bgsoft", label: "Yumuşak zemin", not: "Açık gri/krem bölüm zeminleri" },
-    ],
-  },
-  {
-    baslik: "Yumuşak tonlar",
+    baslik: "1 · Belirli bölgeler",
     aciklama:
-      "Rozet ve ikon zeminlerinde kullanılan açık tonlar. Üçü de aynı değerde geliyor; " +
-      "farklı yapmak isterseniz tek tek değiştirebilirsiniz.",
+      "Sadece tek bir bölümü etkiler. Bir yeri değiştirmek istiyorsanız önce buraya bakın — " +
+      "ana paletten bağımsızdır, yani buradaki bir değişiklik sitenin geri kalanını bozmaz.",
     alanlar: [
-      { key: "blueSoft", label: "Vurgu (açık)", not: "Etiket ve ikon kutularının zemini" },
-      { key: "amberSoft", label: "Amber (açık)", not: "Uyarı/vurgu zeminleri" },
-      { key: "emeraldSoft", label: "Onay (açık)", not: "Akreditasyon rozetinin zemini" },
+      { key: "headerBg", label: "Menü çubuğu zemini", not: "En üstteki logo + menü şeridinin arka planı (şu an beyaz)" },
+      { key: "headerTopBg", label: "Menü üstü ince şerit", not: "Telefon, e-posta ve TÜRKAK rozetinin olduğu koyu şerit" },
+      { key: "footerBg", label: "Sayfa altı (footer) zemini", not: "Her sayfanın en altındaki koyu alan" },
+      { key: "buttonBg", label: "Ana buton zemini", not: "“Teklif Al”, “Teklif Formunu Aç” gibi dolu butonlar" },
+      { key: "heroFrom", label: "Ana sayfa üst zemin", not: "Ana sayfa ilk bölümün gradyan BAŞLANGICI (üst sol)" },
+      { key: "heroTo", label: "Ana sayfa alt zemin", not: "Aynı gradyanın BİTİŞİ (alt sağ)" },
     ],
   },
   {
-    baslik: "Koyu zemin üzerindeki metin",
+    baslik: "2 · Ana palet",
     aciklama:
-      "Lacivert gradyanlı kartlarda ve footer'da kullanılan yazı renkleri. " +
-      "Bunlar önceden kodun içine sabit yazılmıştı ve panelden değiştirilemiyordu.",
+      "Bunlar sitenin her yerinde kullanılır; birini değiştirmek baştan sona etkiler. " +
+      "Site iki renk ailesinden oluşuyor: KOYU MAVİ (ciddiyet) ve TURUNCU (yalnızca vurgu, logodan geliyor).",
     alanlar: [
-      { key: "onNavy", label: "Koyu zemin metni", not: "Koyu kartlardaki normal yazı" },
-      { key: "onNavyDim", label: "Koyu zemin metni (soluk)", not: "Tarih, ikincil açıklama" },
+      {
+        key: "navy",
+        label: "Koyu mavi — ana marka rengi",
+        not: "Başlıklar (H1, H2, H3), koyu kartların zemini, footer. Sitenin en çok görülen koyu rengi.",
+      },
+      { key: "navy2", label: "Koyu mavi — açık tonu", not: "Koyu kartlardaki gradyanın diğer ucu. Tek başına hiçbir yerde kullanılmaz." },
+      {
+        key: "blue",
+        label: "Mavi — bağlantı ve vurgu",
+        not: "Tıklanabilir yazılar, yazı içi bağlantılar, rakamlar (2014 / 500+ / 92), küçük etiketler.",
+      },
+      {
+        key: "accent",
+        label: "Turuncu — vurgu",
+        not: "KOYU zemin üzerinde kullanılır: footer telefonu, akreditasyon rozeti, uyarı notları. ⚠️ Beyaz zeminde yazı rengi olarak kullanılmaz, okunmaz.",
+      },
+      { key: "accent2", label: "Turuncu — koyu tonu", not: "Açık zemindeki ✓ işaretleri. Beyaz üzerinde okunacak kadar koyu seçilmeli." },
+      { key: "ink", label: "Gövde yazı rengi", not: "Normal paragraf metninin rengi. Neredeyse siyah olmalı." },
+      { key: "muted", label: "Soluk yazı rengi", not: "Açıklama satırları, kart altı notlar, tarihler. Gövdeden bir ton açık." },
+      { key: "line", label: "Çizgi ve kenarlık", not: "Kart kenarları, ayraç çizgileri, form kutularının çerçevesi." },
+      { key: "bgsoft", label: "Açık bölüm zemini", not: "Beyazla dönüşümlü kullanılan çok açık zemin (Hizmetler, Belgeler bölümleri)." },
+    ],
+  },
+  {
+    baslik: "3 · Açık tonlar (rozet zeminleri)",
+    aciklama:
+      "Küçük etiket ve ikon kutularının arka planı. Üçü de bilerek AYNI değerde: " +
+      "eskiden üç farklı açık ton vardı ve site alacalı duruyordu. Ayırmak isterseniz tek tek değiştirebilirsiniz.",
+    alanlar: [
+      { key: "blueSoft", label: "Etiket zemini", not: "“Hizmetlerimiz”, “Bilgi Merkezi” gibi küçük yuvarlak etiketler ve ikon kutuları" },
+      { key: "amberSoft", label: "Uyarı zemini", not: "Bilgi/uyarı kutularının arka planı" },
+      { key: "emeraldSoft", label: "Onay zemini", not: "✓ işaretinin arkasındaki kare kutu" },
+    ],
+  },
+  {
+    baslik: "4 · Koyu zemin üzerindeki yazı",
+    aciklama:
+      "Lacivert kartların ve footer'ın üzerindeki yazı renkleri. Bunlar eskiden 16 dosyaya sabit " +
+      "yazılmıştı ve panelden değiştirilemiyordu; artık buradan yönetiliyor.",
+    alanlar: [
+      { key: "onNavy", label: "Koyu zeminde normal yazı", not: "Hesaplayıcı sonucu, sayfa üstü koyu başlık altındaki açıklama, footer metinleri" },
+      { key: "onNavyDim", label: "Koyu zeminde soluk yazı", not: "Tarih, “son güncelleme” gibi ikincil satırlar" },
     ],
   },
 ];

@@ -23,6 +23,8 @@ import {
   type SiteSettings,
 } from "@/lib/cms";
 import { slugify } from "@/lib/content";
+import { menuYaz, type MenuOge, type MenuAlt } from "@/lib/menu";
+import { TUM_ALANLAR } from "@/lib/sayfa-metin";
 import {
   blokKaydet,
   blokSil,
@@ -308,4 +310,55 @@ function revalidateBloklar() {
   for (const p of ["/", "/referanslar", "/kurumsal", "/sertifikalar", "/sss", "/iletisim"]) {
     revalidatePath(p);
   }
+}
+
+// ---------- SAYFA METINLERI ----------
+/**
+ * Sayfa metinleri ekrani tum alanlari tek formda gonderiyor.
+ * Bos birakilan alan SILINIYOR (setContent yerine deleteContent) ki sayfa
+ * varsayilan metnine geri donsun — bos bir baslik yayinlanmasin.
+ */
+export async function saveSayfaMetinleriAction(formData: FormData) {
+  await guard();
+  for (const alan of TUM_ALANLAR) {
+    const deger = String(formData.get(alan.anahtar) ?? "").trim();
+    if (deger === "" || deger === alan.varsayilan) await deleteContent(alan.anahtar);
+    else await setContent(alan.anahtar, deger);
+  }
+  revalidatePath("/", "layout");
+  redirect("/admin/sayfalar?kaydedildi=1");
+}
+
+// ---------- MENU ----------
+/**
+ * Menu duzenleyici. Form alanlari duz isimli geliyor:
+ *   ust_<i>_etiket / ust_<i>_href / ust_<i>_ozel
+ *   alt_<i>_<j>_etiket / alt_<i>_<j>_href / alt_<i>_<j>_not
+ * Etiketi bos birakilan ust oge ve etiketi/adresi bos alt oge atlanir —
+ * silme islemi boylece "kutuyu bosalt" ile yapiliyor, ayri bir dugme gerekmiyor.
+ */
+export async function saveMenuAction(formData: FormData) {
+  await guard();
+  const menu: MenuOge[] = [];
+  for (let i = 0; i < 8; i++) {
+    const etiket = String(formData.get(`ust_${i}_etiket`) ?? "").trim();
+    if (!etiket) continue;
+    const oge: MenuOge = { label: etiket };
+    if (String(formData.get(`ust_${i}_ozel`) ?? "") === "hizmetler") oge.ozel = "hizmetler";
+    const href = String(formData.get(`ust_${i}_href`) ?? "").trim();
+    if (href) oge.href = href;
+    const alt: MenuAlt[] = [];
+    for (let j = 0; j < 8; j++) {
+      const ae = String(formData.get(`alt_${i}_${j}_etiket`) ?? "").trim();
+      const ah = String(formData.get(`alt_${i}_${j}_href`) ?? "").trim();
+      if (!ae || !ah) continue;
+      const an = String(formData.get(`alt_${i}_${j}_not`) ?? "").trim();
+      alt.push({ href: ah, label: ae, not: an || undefined });
+    }
+    if (alt.length) oge.alt = alt;
+    menu.push(oge);
+  }
+  if (menu.length) await menuYaz(menu);
+  revalidatePath("/", "layout");
+  redirect("/admin/menu?kaydedildi=1");
 }

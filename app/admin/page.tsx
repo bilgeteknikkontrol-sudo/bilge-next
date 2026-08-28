@@ -1,78 +1,141 @@
 import Link from "next/link";
 import { getArticles, getEquipment, getLocations, getMedia, isDbOn } from "@/lib/cms";
 import { guard } from "@/lib/auth";
+import { SayfaBasligi, Kart, Bilgi } from "./ui";
 
-export default async function Dashboard() {
+/**
+ * Panel ana sayfasi.
+ *
+ * Onceki hali dort sayi kutusu ve "Hizli Islemler" dugmeleriydi; panele
+ * girildiginde ne yapilabilecegi belli olmuyordu. Simdi ust sirada durum
+ * ozeti, altinda YAPILACAK ISE gore kartlar var — her kart ne ise yaradigini
+ * bir cumleyle soyluyor.
+ */
+
+const ISLER = [
+  {
+    href: "/admin/sayfalar",
+    ikon: "📄",
+    baslik: "Sayfa yazılarını değiştir",
+    not: "Her sayfanın başlığı ve giriş yazısı. Kod bilgisi gerekmez, kutuya yazıp kaydedin.",
+  },
+  {
+    href: "/admin/articles",
+    ikon: "✍️",
+    baslik: "Yazı ekle veya düzenle",
+    not: "Bilgi Merkezi'ndeki makaleler. Yeni yazı eklemek SEO için en etkili işlerden biri.",
+  },
+  {
+    href: "/admin/menu",
+    ikon: "🧭",
+    baslik: "Üst menüyü düzenle",
+    not: "Menüdeki başlıkları yeniden adlandırın, bağlantı ekleyin veya sırasını değiştirin.",
+  },
+  {
+    href: "/admin/bloklar",
+    ikon: "🧩",
+    baslik: "Görsel blokları yönet",
+    not: "Ana sayfa slaytları, referans logoları, ekip kartları, belgeler ve SSS.",
+  },
+  {
+    href: "/admin/settings",
+    ikon: "🎨",
+    baslik: "Renk ve iletişim ayarları",
+    not: "Site paleti, yazı boyutları, telefon, e-posta ve adres.",
+  },
+  {
+    href: "/admin/equipment",
+    ikon: "🔧",
+    baslik: "Ekipman listesini güncelle",
+    not: "Kontrol edilen ekipmanlar, kategorileri ve kontrol periyotları.",
+  },
+];
+
+export default async function Panel() {
   await guard();
-  const dbOn = isDbOn();
-  let counts = { articles: 0, equipment: 0, locations: 0, media: 0 };
-  let err: string | null = null;
+  const dbAcik = isDbOn();
+
+  let sayi = { yazi: 0, ekipman: 0, sehir: 0, medya: 0 };
+  let hata: string | null = null;
   try {
-    const [a, e, l, m] = await Promise.all([
-      getArticles(),
-      getEquipment(),
-      getLocations(),
-      getMedia(),
-    ]);
-    counts = { articles: a.length, equipment: e.length, locations: l.length, media: m.length };
+    const [a, e, l, m] = await Promise.all([getArticles(), getEquipment(), getLocations(), getMedia()]);
+    sayi = { yazi: a.length, ekipman: e.length, sehir: l.length, medya: m.length };
   } catch (e) {
-    err = e instanceof Error ? e.message : "Veritabanı hatası";
+    hata = e instanceof Error ? e.message : "Veri okunamadı";
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-black text-slate-800">Genel Bakış</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Bilge Teknik Kontrol içerik yönetim paneli
-      </p>
+      <SayfaBasligi
+        baslik="Yönetim Paneli"
+        aciklama="Sitenin içeriğini buradan yönetiyorsunuz. Ne yapmak istediğinizi aşağıdan seçin."
+        onizleme="/"
+      />
 
-      {!dbOn && (
-        <div className="mt-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-          <b>Veritabanı bağlantısı yok.</b> İçerik şu an kod içindeki sabit verilerle görüntüleniyor.
-          Canlı düzenleme için Vercel ortam değişkenine <code>DATABASE_URL</code> (Neon Postgres)
-          eklemeniz ve <code>ADMIN_PASSWORD</code> belirlemeniz gerekiyor.
+      {!dbAcik && (
+        <div className="mb-5">
+          <Bilgi tur="uyari">
+            <b>Veritabanı bağlantısı yok.</b> İçerik şu an koddaki sabit verilerle görüntüleniyor.
+            Canlı düzenleme için <code>DATABASE_URL</code> tanımlanmalı.
+          </Bilgi>
         </div>
       )}
-      {err && (
-        <div className="mt-5 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
-          Hata: {err}
+      {hata && (
+        <div className="mb-5">
+          <Bilgi tur="hata">Veri okunamadı: {hata}</Bilgi>
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {/* DURUM ÖZETİ */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: "Makaleler", v: counts.articles, href: "/admin/articles" },
-          { label: "Ekipmanlar", v: counts.equipment, href: "/admin/equipment" },
-          { label: "Bölgeler", v: counts.locations, href: "/admin/locations" },
-          { label: "Medya", v: counts.media, href: "/admin/media" },
-        ].map((c) => (
+          { etiket: "Yazı", v: sayi.yazi, href: "/admin/articles" },
+          { etiket: "Ekipman", v: sayi.ekipman, href: "/admin/equipment" },
+          { etiket: "Şehir sayfası", v: sayi.sehir, href: "/admin/locations" },
+          { etiket: "Görsel", v: sayi.medya, href: "/admin/media" },
+        ].map((k) => (
           <Link
-            key={c.href}
-            href={c.href}
-            className="rounded-2xl bg-white p-5 shadow-sm hover:shadow-md"
+            key={k.href}
+            href={k.href}
+            className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-blue"
           >
-            <div className="text-3xl font-black text-blue-700">{c.v}</div>
-            <div className="mt-1 text-sm text-slate-500">{c.label}</div>
+            <div className="text-2xl font-black tabular-nums text-blue">{k.v}</div>
+            <div className="mt-0.5 text-xs font-semibold text-slate-500">{k.etiket}</div>
           </Link>
         ))}
       </div>
 
-      <div className="mt-8 rounded-2xl bg-white p-6 shadow-sm">
-        <h2 className="font-bold text-slate-700">Hızlı İşlemler</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Link href="/admin/articles?new=1" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-            + Yeni Makale
+      {/* YAPILACAK İŞLER */}
+      <h2 className="mb-3 mt-8 text-sm font-bold uppercase tracking-[.1em] text-slate-400">
+        Ne yapmak istiyorsunuz?
+      </h2>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {ISLER.map((i) => (
+          <Link
+            key={i.href}
+            href={i.href}
+            className="group flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-blue hover:shadow-[0_10px_24px_-16px_rgba(11,42,74,.5)]"
+          >
+            <span aria-hidden className="text-2xl leading-none">{i.ikon}</span>
+            <span className="min-w-0">
+              <span className="block font-bold text-navy group-hover:text-blue">{i.baslik}</span>
+              <span className="mt-0.5 block text-sm leading-snug text-slate-500">{i.not}</span>
+            </span>
           </Link>
-          <Link href="/admin/equipment?new=1" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-            + Yeni Ekipman
-          </Link>
-          <Link href="/admin/locations?new=1" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-            + Yeni Bölge
-          </Link>
-          <Link href="/admin/settings" className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">
-            Site Ayarları
-          </Link>
-        </div>
+        ))}
+      </div>
+
+      <div className="mt-8">
+        <Kart
+          baslik="Yaptığınız değişiklik ne zaman görünür?"
+          aciklama="Kaydettiğiniz anda. Sayfayı yenilediğinizde yeni hâli gelir; ayrıca bir yayınlama adımı yok."
+        >
+          <p className="text-sm leading-relaxed text-slate-600">
+            Bir şeyi yanlışlıkla sildiyseniz veya bozduysanız endişelenmeyin: sayfa metinlerinde
+            bir kutuyu <b>boş bırakırsanız o alan ilk hâline döner</b>. Menüde de aynısı geçerli —
+            menüyü tamamen silerseniz site varsayılan menüyle çalışmaya devam eder.
+          </p>
+        </Kart>
       </div>
     </div>
   );

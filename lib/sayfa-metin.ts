@@ -1,0 +1,197 @@
+/**
+ * Sayfa metinleri — her sayfanin basligi ve giris yazisi panelden duzenlenir.
+ *
+ * Onceden bu metinler sayfa dosyalarina sabit yazilmisti; degistirmek icin kod
+ * degisikligi gerekiyordu. Panelde ise yalnizca ham anahtar-deger ekrani vardi
+ * (/admin/content) ve kullanicinin "footer_yazi" gibi anahtarlari ezberlemesi
+ * gerekiyordu.
+ *
+ * Burasi o anahtarlarin KAYITLI LISTESI. Admin > Sayfa Metinleri ekrani bu
+ * listeyi okuyup her alan icin etiketli bir kutu ciziyor; sayfalar da ayni
+ * listedeki varsayilanla birlikte degeri okuyor. Yani tek kaynak burasi.
+ *
+ * Yeni alan eklemek icin: buraya bir satir ekle, sayfada `m("anahtar")` cagir.
+ * Panelde otomatik gorunur, ayrica bir sey yapmak gerekmez.
+ */
+import { getAllContent } from "./cms";
+
+export type MetinAlani = {
+  /** Icerik deposundaki anahtar. Degistirilirse kayitli deger kaybolur. */
+  anahtar: string;
+  etiket: string;
+  /** Alanin ne oldugunu anlatan kisa not — panelde etiketin altinda cikar. */
+  not?: string;
+  /** Cok satirli mi? */
+  uzun?: boolean;
+  varsayilan: string;
+};
+
+export type MetinGrubu = {
+  baslik: string;
+  /** Sayfanin adresi — panelde "sayfayi ac" baglantisi icin. */
+  yol: string;
+  alanlar: MetinAlani[];
+};
+
+/** Bir sayfanin H1 + giris ciftini uretir; kalip her sayfada ayni. */
+const sayfa = (
+  baslik: string,
+  yol: string,
+  on: string,
+  h1: string,
+  giris: string,
+  ekstra: MetinAlani[] = []
+): MetinGrubu => ({
+  baslik,
+  yol,
+  alanlar: [
+    { anahtar: `${on}_baslik`, etiket: "Sayfa başlığı (H1)", not: "Sayfanın en üstündeki büyük başlık", varsayilan: h1 },
+    { anahtar: `${on}_giris`, etiket: "Giriş yazısı", not: "Başlığın altındaki açıklama paragrafı", uzun: true, varsayilan: giris },
+    ...ekstra,
+  ],
+});
+
+export const METIN_GRUPLARI: MetinGrubu[] = [
+  {
+    baslik: "Ana sayfa — bölüm başlıkları",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_hizmet_etiket", etiket: "Hizmetler — küçük etiket", varsayilan: "Hizmetlerimiz" },
+      { anahtar: "as_hizmet_baslik", etiket: "Hizmetler — başlık", varsayilan: "Tüm İş Ekipmanınız Tek Çatı Altında" },
+      {
+        anahtar: "as_hizmet_giris",
+        etiket: "Hizmetler — açıklama",
+        uzun: true,
+        varsayilan: "TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.",
+      },
+    ],
+  },
+  sayfa(
+    "Hakkımızda",
+    "/kurumsal",
+    "kurumsal",
+    "Kurumsal",
+    "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti. — TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş (AB-0296-M) bağımsız A Tipi muayene kuruluşu."
+  ),
+  sayfa(
+    "Hizmetler / Ekipman listesi",
+    "/ekipman",
+    "ekipman",
+    "Periyodik Kontrol Hizmetlerimiz",
+    "TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu olarak iş ekipmanı ve tesisat gruplarında periyodik kontrol hizmeti veriyoruz. Soldaki listeden kategoriye, oradan aradığınız ekipmana ulaşabilirsiniz."
+  ),
+  sayfa(
+    "Akreditasyon ve Sertifikalar",
+    "/sertifikalar",
+    "sertifika",
+    "Akreditasyon ve Sertifikalarımız",
+    "Düzenlediğimiz raporların denetimlerde ve ihale süreçlerinde kabul görmesi, akreditasyonumuza dayanır. Yetki kapsamımızı ve belgelerimizi burada inceleyebilirsiniz."
+  ),
+  sayfa(
+    "Referanslar",
+    "/referanslar",
+    "referans",
+    "Referanslarımız",
+    "Üretimden lojistiğe, enerjiden inşaata kadar birçok sektörde işletmelerin periyodik kontrol yükümlülüklerini karşılıyoruz. Aşağıda bizimle çalışan firmalardan bazıları yer alıyor."
+  ),
+  sayfa(
+    "Hizmet Bölgeleri",
+    "/bolge",
+    "bolge",
+    "Hizmet Bölgelerimiz",
+    "Merkez ofisimiz Beylikdüzü / İstanbul’dadır. Türkiye genelinde, birçok şehirde yerinde periyodik kontrol hizmeti veriyoruz. Listede şehriniz görünmüyorsa da planlama yapabiliriz — bize sormanız yeterli."
+  ),
+  sayfa(
+    "Sık Sorulan Sorular",
+    "/sss",
+    "sss",
+    "Sık Sorulan Sorular",
+    "Periyodik kontrol süreciyle ilgili en çok sorulan sorular ve kısa yanıtları."
+  ),
+  sayfa(
+    "Yasal Süre Hesaplayıcı",
+    "/hesapla",
+    "hesapla",
+    "Yasal Süre & Uygunluk Hesaplayıcı",
+    "Son kontrol tarihini girin; bir sonraki zorunlu kontrol tarihini ve gecikme riskini anında görün."
+  ),
+  sayfa(
+    "Online Teklif",
+    "/teklif",
+    "teklif",
+    "Online Teklif & Randevu Talebi",
+    "Sol kategoriden ekipmanlarınızı işaretleyin; sağdaki özet anında güncellenir. Bilgilerinizi bırakın, ekibimiz en kısa sürede dönüş yapsın."
+  ),
+  sayfa(
+    "Periyodik Kontrol Süreleri",
+    "/periyodik-kontrol-sureleri",
+    "sureler",
+    "Periyodik Kontrol Süreleri Tablosu",
+    "Hangi iş ekipmanının ne sıklıkla kontrol edilmesi gerektiğini, tabi olduğu standartla birlikte tek tabloda topladık."
+  ),
+  sayfa(
+    "Bilgi Merkezi (yazılar)",
+    "/yazilar",
+    "yazilar",
+    "Makaleler & Rehberler",
+    "Periyodik kontrol, mevzuat ve iş güvenliği üzerine yazılar."
+  ),
+  sayfa(
+    "İletişim",
+    "/iletisim",
+    "iletisim",
+    "İletişim",
+    "Merkez ofisimiz Beylikdüzü / İstanbul’dadır; Türkiye genelinde yerinde muayene hizmeti veriyoruz. Ekipman listenizi iletin, planlamayı birlikte yapalım."
+  ),
+  {
+    baslik: "Footer (sayfa altı)",
+    yol: "/",
+    alanlar: [
+      {
+        anahtar: "footer_yazi",
+        etiket: "Footer tanıtım yazısı",
+        not: "Logonun altındaki kısa kurum açıklaması",
+        uzun: true,
+        varsayilan:
+          "TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş bağımsız A Tipi muayene kuruluşu. 2014’ten bu yana iş ekipmanlarının periyodik kontrolünde uzmanız.",
+      },
+      { anahtar: "footer_cta_baslik", etiket: "Footer CTA başlığı", varsayilan: "Periyodik kontrol zamanınız geldi mi?" },
+      {
+        anahtar: "footer_cta_metin",
+        etiket: "Footer CTA açıklaması",
+        uzun: true,
+        varsayilan: "Ekipman listenizi iletin, kapsam ve fiyatı aynı gün değerlendirelim.",
+      },
+    ],
+  },
+];
+
+/** Tum alanlarin duz listesi — kaydetme ve varsayilan cozumu icin. */
+export const TUM_ALANLAR: MetinAlani[] = METIN_GRUPLARI.flatMap((g) => g.alanlar);
+
+const VARSAYILANLAR: Record<string, string> = Object.fromEntries(
+  TUM_ALANLAR.map((a) => [a.anahtar, a.varsayilan])
+);
+
+export type MetinOkuyucu = (anahtar: string) => string;
+
+/**
+ * Sayfa metinlerini tek seferde okur ve `m("anahtar")` seklinde bir okuyucu doner.
+ *
+ * Kayitli deger yoksa veya bossa varsayilan doner — yani panelde bir alani
+ * silmek sayfayi bos birakmaz, ilk haline dondurur.
+ * Depo okunamazsa da varsayilanlarla calisir.
+ */
+export async function metinleriOku(): Promise<MetinOkuyucu> {
+  let kayitli: Record<string, string> = {};
+  try {
+    const satirlar = await getAllContent();
+    kayitli = Object.fromEntries(satirlar.map((s) => [s.key, s.value]));
+  } catch {
+    /* depo okunamadi; varsayilanlarla devam */
+  }
+  return (anahtar: string) => {
+    const v = kayitli[anahtar];
+    return v !== undefined && v.trim() !== "" ? v : VARSAYILANLAR[anahtar] ?? "";
+  };
+}

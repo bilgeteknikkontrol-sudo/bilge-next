@@ -5,6 +5,7 @@ import { KURUM, ADRES_TEK_SATIR } from "@/lib/site-data";
 import CerezAyarButonu from "./CerezAyarButonu";
 // Koyu zemin varyanti: logonun lacivert bolumleri beyaza cevrilmis, turuncu korunmus.
 import logoLight from "../../public/img/marka/logo-light.png";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 const KURUMSAL = [
   { href: "/kurumsal", label: "Hakkımızda" },
@@ -23,7 +24,8 @@ const ARACLAR = [
   { href: "/dosya/bilge-teknik-kontrol-katalog.pdf", label: "Hizmet Kataloğu (PDF)", dis: true },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const m = await metinleriOku();
   const yil = new Date().getFullYear();
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
 
@@ -34,10 +36,8 @@ export default function Footer() {
       <div className="border-b border-white/10 bg-white/[.03]">
         <div className="container-x flex flex-col items-center justify-between gap-4 py-8 md:flex-row">
           <div className="text-center md:text-left">
-            <p className="text-xl font-black text-white">Periyodik kontrol zamanınız geldi mi?</p>
-            <p className="mt-1 text-sm text-white/70">
-              Ekipman listenizi iletin, kapsam ve fiyatı aynı gün değerlendirelim.
-            </p>
+            <p className="text-xl font-black text-white">{m("footer_cta_baslik")}</p>
+            <p className="mt-1 text-sm text-white/70">{m("footer_cta_metin")}</p>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
@@ -63,11 +63,7 @@ export default function Footer() {
           <Link href="/" aria-label={`${KURUM.kisaAd} — ana sayfa`}>
             <Image src={logoLight} alt={KURUM.kisaAd} sizes="200px" className="h-16 w-auto" />
           </Link>
-          <p className="mt-4 text-sm leading-relaxed text-white/70">
-            TÜRKAK tarafından {KURUM.standart} standardına göre akredite edilmiş bağımsız
-            <strong className="text-white"> A Tipi muayene kuruluşu</strong>. {KURUM.kurulus}&apos;ten
-            bu yana iş ekipmanlarının periyodik kontrolünde uzmanız.
-          </p>
+          <p className="mt-4 text-sm leading-relaxed text-white/70">{m("footer_yazi")}</p>
 
           <div className="mt-5 inline-flex items-center gap-3 rounded-xl border border-white/15 bg-white/[.06] px-4 py-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-soft text-lg text-navy">✓</span>

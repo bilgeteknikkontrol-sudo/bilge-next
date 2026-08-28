@@ -40,7 +40,7 @@ export default function Calculator() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-      <div className="rounded-card border border-line bg-white p-6 shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_250%,transparent)]">
+      <div className="rounded-card border border-line bg-white p-6 shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_25%,transparent)]">
         <label className="mb-1.5 block text-sm font-semibold">Ekipman *</label>
         <select
           value={ad}
@@ -76,7 +76,7 @@ export default function Calculator() {
         </p>
       </div>
 
-      <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-7 text-white shadow-[0_30px_60px_-20px_color-mix(in_srgb,var(--color-navy)_350%,transparent)]">
+      <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-7 text-white shadow-[0_30px_60px_-20px_color-mix(in_srgb,var(--color-navy)_35%,transparent)]">
         {!res ? (
           <>
             <h3 className="text-white">Sonucunuz burada görünecek</h3>

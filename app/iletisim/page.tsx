@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import HaritaGomulu from "../components/HaritaGomulu";
 import { KURUM, ADRES_TEK_SATIR, EKIP } from "@/lib/site-data";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -11,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/iletisim" },
 };
 
-export default function IletisimPage() {
+export default async function IletisimPage() {
+  const m = await metinleriOku();
   const localBusinessLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
@@ -62,13 +64,10 @@ export default function IletisimPage() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>İletişim</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("iletisim_baslik")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">İletişim</h1>
-          <p className="mt-3 max-w-2xl text-onnavy">
-            Merkez ofisimiz {KURUM.ilce} / {KURUM.il}&apos;dadır; Türkiye genelinde yerinde muayene
-            hizmeti veriyoruz. Ekipman listenizi iletin, planlamayı birlikte yapalım.
-          </p>
+          <p className="mt-3 max-w-2xl text-onnavy">{m("iletisim_giris")}</p>
         </div>
       </section>
 

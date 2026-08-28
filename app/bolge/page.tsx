@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { BOLGELER, KURUM } from "@/lib/site-data";
 import { LOCATIONS } from "@/lib/content";
+import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "Hizmet Bölgelerimiz",
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/bolge" },
 };
 
-export default function BolgeIndex() {
+export default async function BolgeIndex() {
+  const m = await metinleriOku();
   const toplamIl = BOLGELER.reduce((n, b) => n + b.iller.length, 0);
   // Ayri sayfasi olan sehirler icin il adi -> slug eslemesi
   const sayfaliIl = new Map(LOCATIONS.filter((l) => !l.ilce).map((l) => [l.il, l.slug]));
@@ -48,14 +50,17 @@ export default function BolgeIndex() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Hizmet Bölgelerimiz</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("bolge_baslik")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Hizmet Bölgelerimiz</h1>
-          <p className="mt-3 max-w-3xl text-onnavy">
-            Merkez ofisimiz {KURUM.ilce} / {KURUM.il}&apos;dadır. {BOLGELER.length} coğrafi bölgede,
-            {" "}{toplamIl} şehirde yerinde periyodik kontrol hizmeti veriyoruz. Listede şehriniz
-            görünmüyorsa da planlama yapabiliriz — bize sormanız yeterli.
-          </p>
+          <p className="mt-3 max-w-3xl text-onnavy">{m("bolge_giris")}</p>
+          {/* Sayilar giris yazisindan ayri: giris artik panelden duzenleniyor,
+              rakamlar ise listeden otomatik hesaplaniyor ve guncel kaliyor. */}
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-onnavy">
+            <span>🗺️ {BOLGELER.length} coğrafi bölge</span>
+            <span>🏙️ {toplamIl} şehir</span>
+            <span>🇹🇷 Yerinde muayene</span>
+          </div>
         </div>
       </section>
 
