@@ -281,16 +281,38 @@ async function getState(): Promise<CmsState> {
      * tam olarak boyle patladi. Sema kurulumu tek seferlik ve sonucu
      * onbellekleniyor, bu yuzden her okumada maliyeti yok.
      */
-    await ensureSchema();
-    const [equipment, locations, articles, settings, content, media] = await Promise.all([
-      dbGetEquipment(),
-      dbGetLocations(),
-      dbGetArticles(false),
-      dbGetSettings(),
-      dbGetAllContent(),
-      dbGetMedia(),
-    ]);
-    return { equipment, locations, articles, settings, content, media };
+    /**
+     * ⚠️ VERITABANI HATASI SITEYI OLDURMEZ.
+     *
+     * Eskiden buradaki her hata dogrudan yukari firliyordu. Sonucu: derleme
+     * sirasinda veritabani bos ya da erisilemez oldugunda `next build`
+     * "Error occurred prerendering page" ile TAMAMEN dusuyor ve ortada
+     * yayinlanacak hicbir sey kalmiyordu. Bir icerik deposunun gecici sorunu
+     * sitenin hic var olmamasina yol acmamali.
+     *
+     * Artik kod icindeki varsayilanlara duseriyoruz: site ayakta kaliyor,
+     * ISR bir sonraki tazelemede (en gec 5 dk) gercek veriyi cekiyor.
+     * Sessiz kalmiyor: sunucu gunlugune yaziliyor ve panelin tepesindeki
+     * depo uyarisi (bkz. store.ts depoDurumu) kirmizi yaniyor.
+     */
+    try {
+      await ensureSchema();
+      const [equipment, locations, articles, settings, content, media] = await Promise.all([
+        dbGetEquipment(),
+        dbGetLocations(),
+        dbGetArticles(false),
+        dbGetSettings(),
+        dbGetAllContent(),
+        dbGetMedia(),
+      ]);
+      return { equipment, locations, articles, settings, content, media };
+    } catch (e) {
+      console.error(
+        "[CMS] Veritabani okunamadi — kod icindeki varsayilan icerik kullaniliyor.",
+        e instanceof Error ? e.message : e
+      );
+      return seedState();
+    }
   }
   const now = Date.now();
   if (!_state || now - _stateTs > STATE_TTL) {
