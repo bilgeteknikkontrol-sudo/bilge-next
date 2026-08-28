@@ -39,13 +39,35 @@ export function alicilar(): string[] {
     .filter(Boolean);
 }
 
-/** Panelde gosterilecek kurulum durumu. */
-export function epostaAyari(): { hazir: boolean; yol: "smtp" | "resend" | "yok"; alici: string[] } {
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    return { hazir: true, yol: "smtp", alici: alicilar() };
+/**
+ * Panelde gosterilecek kurulum durumu.
+ *
+ * `eksik` alani ONEMLI: "kurulu degil" demek yeterli degildi, kullanicinin
+ * hangi degerin eksik oldugunu tahmin etmesi gerekiyordu. Artik tam olarak
+ * hangi ortam degiskeninin girilmedigi yaziliyor.
+ */
+export function epostaAyari(): {
+  hazir: boolean;
+  yol: "smtp" | "resend" | "yok";
+  alici: string[];
+  eksik: string[];
+} {
+  const smtpAlanlari = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"] as const;
+  const smtpEksik = smtpAlanlari.filter((a) => !process.env[a]);
+
+  if (smtpEksik.length === 0) {
+    return { hazir: true, yol: "smtp", alici: alicilar(), eksik: [] };
   }
-  if (process.env.RESEND_API_KEY) return { hazir: true, yol: "resend", alici: alicilar() };
-  return { hazir: false, yol: "yok", alici: alicilar() };
+  if (process.env.RESEND_API_KEY) {
+    return { hazir: true, yol: "resend", alici: alicilar(), eksik: [] };
+  }
+  // SMTP kismen girilmisse eksik olani soyle; hic girilmemisse hepsini iste.
+  return {
+    hazir: false,
+    yol: "yok",
+    alici: alicilar(),
+    eksik: smtpEksik.length === smtpAlanlari.length ? [...smtpAlanlari, "SMTP_PORT"] : smtpEksik,
+  };
 }
 
 export async function epostaGonder({

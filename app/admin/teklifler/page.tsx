@@ -66,24 +66,32 @@ export default async function TekliflerAdmin({
           <Bilgi tur="uyari">
             <b className="block text-base">E-posta bildirimi kapalı</b>
             <p className="mt-1">
-              Gelen talepler kimseye e-posta olarak gitmiyor. Bildirimler{" "}
-              <b>{eposta.alici.join(", ")}</b> adresine gidecek şekilde ayarlı; tek eksik gönderim
-              bilgileri.
+              Gelen talepler <b>{eposta.alici.join(", ")}</b> adresine gidecek şekilde ayarlı, ama
+              sunucu posta kutusuna giriş yapamadığı için gönderemiyor.
             </p>
-            <p className="mt-2">
-              <b>Önerilen yol — kendi posta kutunuz.</b> Vercel → bilge-next → Settings →
-              Environment Variables altına şunları ekleyin:
-            </p>
-            <ul className="mt-1.5 list-disc space-y-0.5 pl-5 font-mono text-xs">
-              <li>SMTP_HOST = smtp.hostinger.com</li>
-              <li>SMTP_PORT = 465</li>
-              <li>SMTP_USER = info@bilgeteknikkontrol.com</li>
-              <li>SMTP_PASS = (posta kutusu şifreniz)</li>
+
+            <p className="mt-3 font-bold">Eksik olan {eposta.eksik.length === 1 ? "değer" : "değerler"}:</p>
+            <ul className="mt-1 list-disc space-y-0.5 pl-5 font-mono text-xs">
+              {eposta.eksik.map((a) => (
+                <li key={a}>
+                  {a}
+                  {a === "SMTP_PASS" && " = info@bilgeteknikkontrol.com kutusunun şifresi"}
+                  {a === "SMTP_HOST" && " = smtp.hostinger.com"}
+                  {a === "SMTP_PORT" && " = 465"}
+                  {a === "SMTP_USER" && " = info@bilgeteknikkontrol.com"}
+                </li>
+              ))}
             </ul>
-            <p className="mt-2 text-xs">
+
+            <p className="mt-3 text-xs leading-relaxed">
+              Vercel → <b>bilge-next</b> → Settings → Environment Variables → Add New. Değeri
+              ekledikten sonra <b>Deployments</b> sekmesinden en üstteki dağıtımda “Redeploy”
+              deyin (ortam değişkenleri ancak yeni dağıtımda devreye girer). Sonra bu sayfadaki
+              test düğmesiyle doğrulayın.
+            </p>
+            <p className="mt-2 text-xs leading-relaxed">
               Postanız Hostinger&apos;da olduğu için e-postalar kendi kutunuzdan çıkar; spam&apos;e
-              düşme ihtimali en düşük yol budur. Ekledikten sonra bu sayfadaki test düğmesiyle
-              doğrulayabilirsiniz.
+              düşme ihtimali en düşük yol budur.
             </p>
           </Bilgi>
         )}
