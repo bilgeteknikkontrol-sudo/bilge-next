@@ -26,18 +26,33 @@ export async function run(q: Promise<unknown>): Promise<Record<string, unknown>[
  * hicbir yerde gorunmez. Bu yuzden host/kullanici/sifre ayri ayri verilirse
  * adresi kendimiz, kacislari dogru yaparak kuruyoruz.
  */
+/**
+ * Ortam degiskenini bosluklari kirparak okur.
+ *
+ * ⚠️ Hosting panellerine deger kopyalanirken basa/sona bosluk veya satir sonu
+ * takilmasi cok yaygin. Bir kez `MYSQL_USER` degeri "u238725264_ bilgekontrol1"
+ * olarak kaydedildi ve derleme "Access denied for user" ile dustu — hatanin
+ * gorunen yuzunde bosluk fark edilmiyor, saatlerce sifre aranir.
+ */
+function ortam(ad: string): string | undefined {
+  const v = process.env[ad];
+  if (v === undefined) return undefined;
+  const k = v.trim();
+  return k === "" ? undefined : k;
+}
+
 function mysqlAyriDegiskenlerden(): string | undefined {
-  const host = process.env.MYSQL_HOST;
-  const user = process.env.MYSQL_USER;
-  const veritabani = process.env.MYSQL_DATABASE;
+  const host = ortam("MYSQL_HOST");
+  const user = ortam("MYSQL_USER");
+  const veritabani = ortam("MYSQL_DATABASE");
   if (!host || !user || !veritabani) return undefined;
-  const sifre = process.env.MYSQL_PASSWORD ?? "";
-  const port = process.env.MYSQL_PORT || "3306";
+  const sifre = ortam("MYSQL_PASSWORD") ?? "";
+  const port = ortam("MYSQL_PORT") || "3306";
   return `mysql://${encodeURIComponent(user)}:${encodeURIComponent(sifre)}@${host}:${port}/${veritabani}`;
 }
 
 function dbUrl(): string | undefined {
-  return process.env.DATABASE_URL || process.env.POSTGRES_URL || mysqlAyriDegiskenlerden();
+  return ortam("DATABASE_URL") || ortam("POSTGRES_URL") || mysqlAyriDegiskenlerden();
 }
 
 export function isDbOn(): boolean {
