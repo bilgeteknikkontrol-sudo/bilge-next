@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { KATEGORILER } from "@/lib/data";
+import { KURUM } from "@/lib/site-data";
 
 export default function TeklifForm() {
   const [selected, setSelected] = useState<string[]>([]);
@@ -10,7 +11,35 @@ export default function TeklifForm() {
   // numarasiyla ayrilsin diye.
   const [sent, setSent] = useState<{ referans: string } | null>(null);
   const [hata, setHata] = useState<string | null>(null);
+  /**
+   * Sunucuya ulasilamadiginda formun icerigi burada tutulur; musteriye
+   * WhatsApp / e-posta ile gonderme secenegi sunulur.
+   *
+   * Neden: 2026-08-28 tarihinde kayit deposu askiya alinmis durumdaydi ve
+   * e-posta anahtari da tanimli degildi. Boyle bir durumda yalnizca "hata"
+   * yazip birakmak talebi tamamen kaybettiriyor. Bu iki kanal hicbir sunucu
+   * altyapisi gerektirmez; musterinin kendi uygulamasi uzerinden calisir.
+   */
+  const [yedek, setYedek] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  /** Form icerigini WhatsApp/e-posta ile gonderilebilir duz metne cevirir. */
+  function talepMetni(p: Record<string, unknown>): string {
+    const satirlar = [
+      "Periyodik kontrol teklif talebi",
+      "",
+      `Firma: ${p.firma || "-"}`,
+      `Yetkili: ${p.ad || "-"}`,
+      `Telefon: ${p.tel || "-"}`,
+      `E-posta: ${p.eposta || "-"}`,
+      `Bolge: ${p.bolge || "-"}`,
+      "",
+      `Ekipmanlar (${(p.ekipmanlar as string[]).length}):`,
+      ...(p.ekipmanlar as string[]).map((e) => `- ${e}`),
+    ];
+    if (p.not) satirlar.push("", `Not: ${p.not}`);
+    return satirlar.join("\n");
+  }
 
   function toggle(ad: string) {
     setSelected((s) => (s.includes(ad) ? s.filter((x) => x !== ad) : [...s, ad]));
@@ -42,14 +71,14 @@ export default function TeklifForm() {
       });
       const veri = await res.json().catch(() => null);
       if (!res.ok) {
-        setHata(veri?.error || "Talebiniz gönderilemedi. Lütfen tekrar deneyin.");
+        setHata(veri?.error || "Talebiniz gönderilemedi.");
+        setYedek(talepMetni(payload));
         return;
       }
       setSent({ referans: veri?.referans || "" });
     } catch {
-      setHata(
-        "Bağlantı kurulamadı. İnternet bağlantınızı kontrol edin veya 0212 872 52 04 numarasından bize ulaşın."
-      );
+      setHata("Bağlantı kurulamadı.");
+      setYedek(talepMetni(payload));
     } finally {
       setBusy(false);
     }
@@ -164,8 +193,46 @@ export default function TeklifForm() {
         </form>
 
         {hata && (
-          <div role="alert" className="mt-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-800">
-            {hata}
+          <div role="alert" className="mt-4 rounded-xl border border-amber-400 bg-amber-50 p-4 text-sm text-amber-900">
+            <b className="block text-base">{hata}</b>
+            {yedek ? (
+              <>
+                <p className="mt-1.5 leading-relaxed">
+                  Doldurduğunuz bilgiler kaybolmadı. Aşağıdaki düğmelerden biriyle talebinizi
+                  doğrudan bize iletebilirsiniz — bilgiler hazır olarak gelir.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    href={`https://wa.me/${KURUM.whatsappE164}?text=${encodeURIComponent(yedek)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center rounded-full bg-[#25D366] px-5 py-2.5 font-bold text-white"
+                  >
+                    WhatsApp ile gönder →
+                  </a>
+                  <a
+                    href={`mailto:${KURUM.eposta}?subject=${encodeURIComponent("Teklif talebi")}&body=${encodeURIComponent(yedek)}`}
+                    className="inline-flex items-center rounded-full border border-amber-400 bg-white px-5 py-2.5 font-bold text-amber-900"
+                  >
+                    E-posta ile gönder
+                  </a>
+                  <a
+                    href={`tel:${KURUM.telefonE164}`}
+                    className="inline-flex items-center rounded-full border border-amber-400 bg-white px-5 py-2.5 font-bold text-amber-900"
+                  >
+                    {KURUM.telefon}
+                  </a>
+                </div>
+              </>
+            ) : (
+              <p className="mt-1.5">
+                Lütfen tekrar deneyin veya{" "}
+                <a href={`tel:${KURUM.telefonE164}`} className="font-bold underline">
+                  {KURUM.telefon}
+                </a>{" "}
+                numarasından bize ulaşın.
+              </p>
+            )}
           </div>
         )}
 
