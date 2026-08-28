@@ -261,8 +261,19 @@ export async function saveMediaAction(formData: FormData) {
   // Onceden yalnizca "arrayBuffer" in file kontrolu vardi; bu bos dosyayi da
   // gecirip "data:...;base64," seklinde BOZUK bir gorsel kaydediyordu.
   // Bu yuzden boyut kontrolu sart.
-  if (file && typeof file === "object" && "arrayBuffer" in file && (file as File).size > 0) {
+  // Tarayicida kucultulmus surum varsa ONU kullan (bkz. app/admin/GorselYukle.tsx).
+  // Ham dosya yalnizca kucultme basarisiz oldugunda devreye giriyor.
+  const kucultulmus = String(formData.get("kucultulmus") || "").trim();
+  if (kucultulmus.startsWith("data:image/")) {
+    dataUrl = kucultulmus;
+    finalUrl = kucultulmus;
+  } else if (file && typeof file === "object" && "arrayBuffer" in file && (file as File).size > 0) {
     const buf = Buffer.from(await (file as File).arrayBuffer());
+    // ⚠️ Gorsel CMS verisinin icine base64 olarak giriyor; buyuk dosya tum
+    // icerigi tasiyan JSON u sisirir ve depolama kotasini doldurur.
+    if (buf.byteLength > 1_500_000) {
+      redirect("/admin/media?hata=buyuk");
+    }
     const mime = (file as File).type || "image/png";
     dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
     finalUrl = dataUrl;

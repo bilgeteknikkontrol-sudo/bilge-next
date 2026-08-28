@@ -1,6 +1,7 @@
 import { getMedia } from "@/lib/cms";
 import { saveMediaAction, deleteMediaAction } from "../actions";
 import { guard } from "@/lib/auth";
+import GorselYukle from "../GorselYukle";
 
 export default async function MediaAdmin() {
   await guard();
@@ -9,8 +10,10 @@ export default async function MediaAdmin() {
     <div>
       <h1 className="text-2xl font-black tracking-tight text-navy">Medya Kütüphanesi</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Görselleri yükleyin veya harici URL ekleyin. Yüklenen görsel base64 olarak saklanır,
-        kopyalayıp makale/içerik HTML&apos;ine yapıştırabilirsiniz.
+        Görsel yükleyin veya bir adres yapıştırın. Yüklediğiniz fotoğraf tarayıcıda otomatik
+        küçültülür (en fazla 1600px, WebP) — telefon fotoğrafları da rahatça yüklenebilir.
+        Ekledikten sonra alttaki kutudaki adresi kopyalayıp slayt, belge veya yazı görseli
+        olarak kullanabilirsiniz.
       </p>
 
       <div className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
@@ -20,7 +23,7 @@ export default async function MediaAdmin() {
             <input name="name" placeholder="Görsel adı" className="rounded-lg border border-slate-300 p-2 text-sm" />
             <input name="alt" placeholder="Alt metin" className="rounded-lg border border-slate-300 p-2 text-sm" />
           </div>
-          <input type="file" name="file" accept="image/*" className="block w-full text-sm" />
+          <GorselYukle />
           <div className="text-center text-xs text-slate-400">— veya —</div>
           <input name="url" placeholder="Harici görsel URL'si" className="w-full rounded-lg border border-slate-300 p-2 text-sm" />
           <button className="rounded-lg bg-blue px-5 py-2 font-bold text-white hover:brightness-110">
