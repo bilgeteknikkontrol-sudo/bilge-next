@@ -189,7 +189,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Her sayfada sag altta sabit duran WhatsApp butonu */}
         <WhatsappButon />
         <CerezOnay />
-        <AnalyticsOnayli />
+        {/*
+          Vercel Analytics yalnizca Vercel'de calisir: olcum istekleri
+          `/_vercel/insights/*` adresine gider ve bunu Vercel'in kenar sunucusu
+          karsilar. Site Hostinger'da calisirken bu adres 404 doner — yani her
+          ziyaretcide bosuna istek atilir ve konsolda hata birikir. Bu yuzden
+          bilesen yalnizca Vercel ortaminda basiliyor.
+        */}
+        {process.env.VERCEL ? <AnalyticsOnayli /> : null}
       </body>
     </html>
   );

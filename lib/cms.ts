@@ -1,13 +1,11 @@
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 import { KATEGORILER } from "./data";
 import { ARTICLES, LOCATIONS } from "./content";
 import { readCmsState, writeCmsState } from "./store";
+import { isDbOn, isMysql, run, sql, type Sql } from "./db";
 
-type Sql = NeonQueryFunction<false, boolean>;
-
-async function run(q: Promise<unknown>): Promise<Record<string, unknown>[]> {
-  return (await q) as Record<string, unknown>[];
-}
+// Baglanti katmani `lib/db.ts`'e tasindi (bkz. oradaki not). Cagri yerlerinin
+// `@/lib/cms`'ten almaya devam edebilmesi icin buradan yeniden ihrac ediliyor.
+export { isDbOn, isMysql, sql };
 
 export type Article = {
   slug: string;
@@ -87,64 +85,6 @@ type CmsState = {
   content: { key: string; value: string }[];
   media: MediaItem[];
 };
-
-function dbUrl(): string | undefined {
-  return process.env.DATABASE_URL || process.env.POSTGRES_URL || undefined;
-}
-
-export function isDbOn(): boolean {
-  return Boolean(dbUrl());
-}
-
-/**
- * IKI VERITABANI DESTEGI
- *
- * Site Hostinger'a tasiniyor ve oradaki Business planinda yalnizca MySQL var;
- * kod ise Postgres (Neon) icin yazilmisti. Tasima boyunca Vercel'in yedekte
- * calismaya devam etmesi gerektigi icin ikisi de destekleniyor: hangisinin
- * kullanilacagi DATABASE_URL'in basindaki semadan anlasiliyor.
- *
- *   mysql://...      -> MySQL   (Hostinger)
- *   postgres://...   -> Postgres (Neon/Vercel)
- *
- * Cagri yerleri degismedi: her iki surucu de ayni etiketli sablon bicimini
- * (sql()`SELECT ... ${deger}`) kullaniyor. MySQL tarafinda sablondaki
- * ${} yerlerine `?` konup degerler parametre olarak geciriliyor — yani
- * SQL enjeksiyonuna karsi Postgres tarafiyla ayni korumadayiz.
- */
-export function isMysql(): boolean {
-  const u = dbUrl() ?? "";
-  return u.startsWith("mysql://") || u.startsWith("mysql2://");
-}
-
-let _sql: Sql | null = null;
-let _mysqlHavuz: import("mysql2/promise").Pool | null = null;
-
-function mysqlSurucu(url: string): Sql {
-  const fn = (async (parcalar: TemplateStringsArray, ...degerler: unknown[]) => {
-    if (!_mysqlHavuz) {
-      const mysql = await import("mysql2/promise");
-      _mysqlHavuz = mysql.createPool({
-        uri: url,
-        connectionLimit: 5,
-        // Paylasimli hostingde baglanti sayisi sinirli; bosta kalanlar birakilsin.
-        idleTimeout: 30_000,
-        enableKeepAlive: true,
-      });
-    }
-    const metin = parcalar.join("?");
-    const [satirlar] = await _mysqlHavuz.query(metin, degerler);
-    return Array.isArray(satirlar) ? satirlar : [];
-  }) as unknown as Sql;
-  return fn;
-}
-
-export function sql(): Sql {
-  const url = dbUrl();
-  if (!url) throw new Error("DATABASE_URL tanimli degil");
-  if (!_sql) _sql = isMysql() ? mysqlSurucu(url) : (neon(url) as Sql);
-  return _sql as Sql;
-}
 
 let _schemaReady: Promise<void> | null = null;
 

@@ -1,6 +1,7 @@
 import { put, list, get } from "@vercel/blob";
 import fs from "fs";
 import path from "path";
+import { isDbOn, isMysql, run, sql } from "./db";
 
 const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 const CMS_PATH = "cms-state.json";
@@ -97,19 +98,103 @@ export type TeklifKayit = {
   ek: string;
 };
 
+/**
+ * TEKLIF KAYITLARI — veritabani varsa oraya, yoksa Blob'a.
+ *
+ * ⚠️ Hostinger'a tasinirken bu sart oldu: orada Vercel Blob yok. Eski hali
+ * yalnizca Blob'a yaziyordu ve anahtar tanimli degilse `writeBlob` SESSIZCE
+ * hicbir sey yapmiyordu — yani Hostinger'da her teklif talebi e-posta ile
+ * gelir ama panelde hic gorunmezdi (kayit "basarili" sayildigi icin uyari
+ * da cikmazdi).
+ *
+ * Tablo `cms.ts`'in semasindan bagimsiz olarak burada olusturuluyor; teklif
+ * akisi CMS'ten bagimsiz calisabilmeli.
+ */
+let _teklifSema: Promise<void> | null = null;
+
+function teklifSemaHazir(): Promise<void> {
+  if (_teklifSema) return _teklifSema;
+  _teklifSema = (async () => {
+    const s = sql();
+    if (isMysql()) {
+      await run(s`CREATE TABLE IF NOT EXISTS teklifler (ref VARCHAR(64) PRIMARY KEY, rapor_no VARCHAR(64), firma TEXT, ad TEXT, tel TEXT, eposta TEXT, bolge TEXT, ekipmanlar JSON, tarih VARCHAR(40), durum VARCHAR(32), gecerli TEXT, ek TEXT)`);
+      await run(s`CREATE INDEX idx_teklif_rapor ON teklifler (rapor_no)`).catch(() => {
+        // MySQL'de "CREATE INDEX IF NOT EXISTS" yok; ikinci calismada
+        // "Duplicate key name" hatasi normaldir, yutuluyor.
+      });
+    } else {
+      await run(s`CREATE TABLE IF NOT EXISTS teklifler (ref text PRIMARY KEY, rapor_no text, firma text, ad text, tel text, eposta text, bolge text, ekipmanlar jsonb, tarih text, durum text, gecerli text, ek text)`);
+      await run(s`CREATE INDEX IF NOT EXISTS idx_teklif_rapor ON teklifler (rapor_no)`);
+    }
+  })().catch((e) => {
+    _teklifSema = null;
+    throw e;
+  });
+  return _teklifSema;
+}
+
+function satirToTeklif(r: Record<string, unknown>): TeklifKayit {
+  const ek = r.ekipmanlar;
+  let ekipmanlar: string[] = [];
+  if (Array.isArray(ek)) ekipmanlar = ek as string[];
+  else if (typeof ek === "string" && ek.trim()) {
+    // mysql2 JSON sutununu bazen dize olarak doner (bkz. cms.ts jsonDizi notu).
+    try {
+      const c = JSON.parse(ek);
+      if (Array.isArray(c)) ekipmanlar = c as string[];
+    } catch {
+      /* bozuk JSON kaydin tamamini kaybettirmesin */
+    }
+  }
+  return {
+    ref: String(r.ref),
+    raporNo: String(r.rapor_no ?? ""),
+    firma: String(r.firma ?? ""),
+    ad: String(r.ad ?? ""),
+    tel: String(r.tel ?? ""),
+    eposta: String(r.eposta ?? ""),
+    bolge: String(r.bolge ?? ""),
+    ekipmanlar,
+    tarih: String(r.tarih ?? ""),
+    durum: String(r.durum ?? "yeni"),
+    gecerli: String(r.gecerli ?? ""),
+    ek: String(r.ek ?? ""),
+  };
+}
+
 export async function saveTeklif(kayit: TeklifKayit): Promise<void> {
+  if (isDbOn()) {
+    await teklifSemaHazir();
+    const s = sql();
+    await run(
+      s`INSERT INTO teklifler (ref, rapor_no, firma, ad, tel, eposta, bolge, ekipmanlar, tarih, durum, gecerli, ek) VALUES (${kayit.ref}, ${kayit.raporNo}, ${kayit.firma}, ${kayit.ad}, ${kayit.tel}, ${kayit.eposta}, ${kayit.bolge}, ${JSON.stringify(kayit.ekipmanlar)}, ${kayit.tarih}, ${kayit.durum}, ${kayit.gecerli}, ${kayit.ek})`
+    );
+    return;
+  }
   const arr = (parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || []) as TeklifKayit[];
   arr.push(kayit);
   await writeBlob(TEKLIF_PATH, JSON.stringify(arr));
 }
 
 export async function findTeklif(no: string): Promise<TeklifKayit | null> {
+  if (isDbOn()) {
+    await teklifSemaHazir();
+    const s = sql();
+    const r = await run(s`SELECT * FROM teklifler WHERE rapor_no = ${no} LIMIT 1`);
+    return r.length ? satirToTeklif(r[0]) : null;
+  }
   const arr = parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || [];
   return arr.find((t) => t.raporNo === no) || null;
 }
 
 /** Tum teklif taleplerini doner (en yeni once). Panel ekrani icin. */
 export async function tumTeklifler(): Promise<TeklifKayit[]> {
+  if (isDbOn()) {
+    await teklifSemaHazir();
+    const s = sql();
+    const r = await run(s`SELECT * FROM teklifler ORDER BY tarih DESC`);
+    return r.map(satirToTeklif);
+  }
   const arr = parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || [];
   return [...arr].reverse();
 }
@@ -125,6 +210,17 @@ export async function tumTeklifler(): Promise<TeklifKayit[]> {
  * Panel bu kontrolu yapip durumu ekranin tepesinde gosteriyor.
  */
 export async function depoDurumu(): Promise<{ calisiyor: boolean; mesaj: string }> {
+  // Veritabani varsa (Hostinger MySQL / Neon) asil depo odur; Blob hic
+  // kullanilmaz, dolayisiyla token'in yoklugu bir hata degildir.
+  if (isDbOn()) {
+    try {
+      await run(sql()`SELECT 1 AS x`);
+      return { calisiyor: true, mesaj: "" };
+    } catch (e) {
+      const m = e instanceof Error ? e.message : String(e);
+      return { calisiyor: false, mesaj: `Veritabanına bağlanılamadı: ${m}` };
+    }
+  }
   if (YEREL_MOD) return { calisiyor: true, mesaj: "" }; // yerel dosya deposu
   if (!BLOB_TOKEN) {
     return { calisiyor: false, mesaj: "BLOB_READ_WRITE_TOKEN tanımlı değil." };
