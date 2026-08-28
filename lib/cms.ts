@@ -96,12 +96,53 @@ export function isDbOn(): boolean {
   return Boolean(dbUrl());
 }
 
+/**
+ * IKI VERITABANI DESTEGI
+ *
+ * Site Hostinger'a tasiniyor ve oradaki Business planinda yalnizca MySQL var;
+ * kod ise Postgres (Neon) icin yazilmisti. Tasima boyunca Vercel'in yedekte
+ * calismaya devam etmesi gerektigi icin ikisi de destekleniyor: hangisinin
+ * kullanilacagi DATABASE_URL'in basindaki semadan anlasiliyor.
+ *
+ *   mysql://...      -> MySQL   (Hostinger)
+ *   postgres://...   -> Postgres (Neon/Vercel)
+ *
+ * Cagri yerleri degismedi: her iki surucu de ayni etiketli sablon bicimini
+ * (sql()`SELECT ... ${deger}`) kullaniyor. MySQL tarafinda sablondaki
+ * ${} yerlerine `?` konup degerler parametre olarak geciriliyor — yani
+ * SQL enjeksiyonuna karsi Postgres tarafiyla ayni korumadayiz.
+ */
+export function isMysql(): boolean {
+  const u = dbUrl() ?? "";
+  return u.startsWith("mysql://") || u.startsWith("mysql2://");
+}
+
 let _sql: Sql | null = null;
+let _mysqlHavuz: import("mysql2/promise").Pool | null = null;
+
+function mysqlSurucu(url: string): Sql {
+  const fn = (async (parcalar: TemplateStringsArray, ...degerler: unknown[]) => {
+    if (!_mysqlHavuz) {
+      const mysql = await import("mysql2/promise");
+      _mysqlHavuz = mysql.createPool({
+        uri: url,
+        connectionLimit: 5,
+        // Paylasimli hostingde baglanti sayisi sinirli; bosta kalanlar birakilsin.
+        idleTimeout: 30_000,
+        enableKeepAlive: true,
+      });
+    }
+    const metin = parcalar.join("?");
+    const [satirlar] = await _mysqlHavuz.query(metin, degerler);
+    return Array.isArray(satirlar) ? satirlar : [];
+  }) as unknown as Sql;
+  return fn;
+}
 
 export function sql(): Sql {
   const url = dbUrl();
   if (!url) throw new Error("DATABASE_URL tanimli degil");
-  if (!_sql) _sql = neon(url);
+  if (!_sql) _sql = isMysql() ? mysqlSurucu(url) : (neon(url) as Sql);
   return _sql as Sql;
 }
 
@@ -112,14 +153,32 @@ function ensureSchema(): Promise<void> {
   if (_schemaReady) return _schemaReady;
   _schemaReady = (async () => {
     const s = sql();
-    await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
-    await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
-    await run(s`CREATE TABLE IF NOT EXISTS articles (slug text PRIMARY KEY, title text, description text, category text, date text, readmin int, keywords jsonb, lead text, body text, faq jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0, image text)`);
-    // Onceden olusturulmus kurulumlarda sutun yoksa ekle
-    await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS image text`);
-    await run(s`CREATE TABLE IF NOT EXISTS site_settings (id int PRIMARY KEY, data jsonb)`);
-    await run(s`CREATE TABLE IF NOT EXISTS site_content (key text PRIMARY KEY, value text)`);
-    await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
+    if (isMysql()) {
+      /**
+       * MySQL semasi. Postgres'ten farklari:
+       *  - TEXT sutunu anahtar olamaz (uzunluk ister) -> VARCHAR(191)
+       *    191: utf8mb4'te dizin anahtari sinirina (767 bayt) sigan en buyuk deger.
+       *  - jsonb -> JSON
+       *  - serial -> INT AUTO_INCREMENT
+       *  - timestamptz DEFAULT now() -> TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+       *  - `lead` ve `key` MySQL'de AYRILMIS KELIME; ters tirnak sart.
+       */
+      await run(s`CREATE TABLE IF NOT EXISTS equipment (slug VARCHAR(191) PRIMARY KEY, ad TEXT, kategori TEXT, standart TEXT, periyot INT, periyot_not TEXT, aktif TINYINT(1) DEFAULT 1, sira INT DEFAULT 0)`);
+      await run(s`CREATE TABLE IF NOT EXISTS locations (slug VARCHAR(191) PRIMARY KEY, il TEXT, ilce TEXT, title TEXT, description TEXT, intro TEXT, hizmetler JSON, aktif TINYINT(1) DEFAULT 1, sira INT DEFAULT 0)`);
+      await run(s`CREATE TABLE IF NOT EXISTS articles (slug VARCHAR(191) PRIMARY KEY, title TEXT, description TEXT, category TEXT, date TEXT, readmin INT, keywords JSON, \`lead\` TEXT, body LONGTEXT, faq JSON, aktif TINYINT(1) DEFAULT 1, sira INT DEFAULT 0, image LONGTEXT)`);
+      await run(s`CREATE TABLE IF NOT EXISTS site_settings (id INT PRIMARY KEY, data JSON)`);
+      await run(s`CREATE TABLE IF NOT EXISTS site_content (\`key\` VARCHAR(191) PRIMARY KEY, value LONGTEXT)`);
+      await run(s`CREATE TABLE IF NOT EXISTS media (id INT AUTO_INCREMENT PRIMARY KEY, name TEXT, url LONGTEXT, data_url LONGTEXT, alt TEXT, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
+    } else {
+      await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
+      await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
+      await run(s`CREATE TABLE IF NOT EXISTS articles (slug text PRIMARY KEY, title text, description text, category text, date text, readmin int, keywords jsonb, lead text, body text, faq jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0, image text)`);
+      // Onceden olusturulmus kurulumlarda sutun yoksa ekle
+      await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS image text`);
+      await run(s`CREATE TABLE IF NOT EXISTS site_settings (id int PRIMARY KEY, data jsonb)`);
+      await run(s`CREATE TABLE IF NOT EXISTS site_content (key text PRIMARY KEY, value text)`);
+      await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
+    }
     await seedIfEmpty(s);
   })().catch((e) => {
     _schemaReady = null;
