@@ -98,7 +98,7 @@ export default async function Panel() {
       <div className="mt-8">
         <Kart
           baslik="Yaptığınız değişiklik ne zaman görünür?"
-          aciklama="Kaydettiğiniz anda. Sayfayı yenilediğinizde yeni hâli gelir; ayrıca bir yayınlama adımı yok."
+          aciklama="Size hemen. Başka ziyaretçilerde en geç birkaç dakika içinde; ayrıca bir yayınlama adımı yok."
         >
           <p className="text-sm leading-relaxed text-slate-600">
             Bir şeyi yanlışlıkla sildiyseniz veya bozduysanız endişelenmeyin: sayfa metinlerinde

@@ -219,7 +219,23 @@ export function defaultSettings(): SiteSettings {
 // ---------------- STATE (Vercel Blob JSON) backend ----------------
 let _state: CmsState | null = null;
 let _stateTs = 0;
-const STATE_TTL = 15000;
+
+/**
+ * CMS durumunun bellekte tutulma suresi.
+ *
+ * ⚠️ Onceden 15 saniyeydi ve BU, Vercel Blob kotasinin dolup deponun askiya
+ * alinmasinin muhtemel sebebi. Sitede 18 sayfa CMS'i okuyor ve 9'u
+ * force-dynamic (onbelleksiz). Her ziyaretci, onbellek 15 saniyede bir
+ * bayatladigi icin yeni bir blob okumasi tetikliyordu; her okuma da iki
+ * islem (list + get). Google taramasi ve normal trafik eklenince ucretsiz
+ * kotanin dolmasi kacinilmazdi. Depo yeniden acilsa bile ayni yere gelirdi.
+ *
+ * 5 dakika: okuma sayisi ~20 kat azaliyor. Panelden kaydeden kisi kendi
+ * degisikligini ANINDA goruyor (setState bellegi hemen tazeliyor ve
+ * revalidatePath sayfayi yeniden uretiyor); diger sunucu ornekleri en gec
+ * bu sure icinde yetisiyor.
+ */
+const STATE_TTL = 5 * 60 * 1000;
 
 function seedState(): CmsState {
   const equipment: Equipment[] = [];
