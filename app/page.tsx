@@ -128,7 +128,7 @@ export default async function Home() {
         {/* items-center YOK: sutunlar esnesin (grid varsayilani stretch). Boylece
             sagdaki gorsel sol sutunun tepesinden basliyor ve ayni hizada bitiyor;
             ortalanmis halinde 150px kadar asagi kayip asimetrik duruyordu. */}
-        <div className="container-x relative grid gap-10 py-10 lg:grid-cols-[1.05fr_.95fr] lg:py-14">
+        <div className="container-x relative grid gap-8 py-7 lg:grid-cols-[1.05fr_.95fr] lg:py-10">
           {/* --- SOL: anlatim --- */}
           <div className="min-w-0">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_color-mix(in_srgb,var(--color-navy)_60%,transparent)]">
@@ -141,16 +141,16 @@ export default async function Home() {
                 clamp: panel degeri artik ust sinir, dar ekranda olcekleniyor. */}
             <h1
               className="mt-5 font-black tracking-tight text-navy"
-              style={{ fontSize: "clamp(1.9rem, 3.4vw, var(--fs-hero))", lineHeight: 1.1 }}
+              style={{ fontSize: "clamp(1.75rem, 2.9vw, var(--fs-hero))", lineHeight: 1.12 }}
             >
               {heroTitle}
             </h1>
 
-            <p className="mt-4 max-w-xl leading-relaxed text-muted">{heroSubtitle}</p>
+            <p className="mt-3 max-w-xl leading-relaxed text-muted">{heroSubtitle}</p>
 
             {/* Hizmetin ne oldugunu somutlastiran uc madde:
                 iddia degil, dogrulanabilir olgu. */}
-            <ul className="mt-6 grid gap-2.5 sm:max-w-lg">
+            <ul className="mt-5 grid gap-2 sm:max-w-lg">
               {[
                 ["🛡️", "Bağımsız ve tarafsız muayene", "A Tipi kuruluş; rapor satış kaygısı olmadan düzenlenir."],
                 ["📋", "TS EN ISO/IEC 17020", "Akredite kapsam; denetim ve ihalelerde sorunsuz kabul."],
@@ -171,13 +171,13 @@ export default async function Home() {
               ))}
             </ul>
 
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/teklif" className="btn-primary px-7 py-3">Teklif Al →</Link>
               <Link href="/hesapla" className="btn-ghost px-7 py-3">Yasal Sürenizi Hesaplayın</Link>
             </div>
 
             {/* Rakamlar: metnin altinda ince bir serit, karta gerek yok */}
-            <dl className="mt-7 grid max-w-lg grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-5 sm:grid-cols-4">
+            <dl className="mt-6 grid max-w-lg grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-4 sm:grid-cols-4">
               {[
                 ["2014", "Yılından beri"],
                 ["500+", "Müşteri firma"],
@@ -199,7 +199,7 @@ export default async function Home() {
           <div className="relative flex min-w-0 flex-col lg:pb-12">
             {/* Mobilde sabit oran (16/10 — 4/3 telefonda ekranin yarisini yiyordu),
                 lg'de sol sutunun boyuna uzayan esnek yukseklik */}
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_color-mix(in_srgb,var(--color-navy)_55%,transparent)] lg:aspect-auto lg:min-h-[340px] lg:flex-1">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_color-mix(in_srgb,var(--color-navy)_55%,transparent)] lg:aspect-auto lg:min-h-[300px] lg:flex-1">
               {/* Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
                   varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
               {heroSlaytlari.length > 0 ? (
@@ -395,7 +395,7 @@ export default async function Home() {
                 <li>🛡️ TÜRKAK {KURUM.akreditasyon}</li>
                 <li>📋 TS EN ISO/IEC 17020</li>
               </ul>
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href="/dosya/bilge-teknik-kontrol-katalog.pdf"
                   target="_blank"

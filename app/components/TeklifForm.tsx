@@ -6,7 +6,10 @@ import { KATEGORILER } from "@/lib/data";
 
 export default function TeklifForm() {
   const [selected, setSelected] = useState<string[]>([]);
-  const [sent, setSent] = useState(false);
+  // "sent" artik referans numarasini da tasiyor; musteri elinde bir takip
+  // numarasiyla ayrilsin diye.
+  const [sent, setSent] = useState<{ referans: string } | null>(null);
+  const [hata, setHata] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   function toggle(ad: string) {
@@ -27,13 +30,26 @@ export default function TeklifForm() {
       ekipmanlar: selected,
     };
     setBusy(true);
+    setHata(null);
     try {
-      await fetch("/api/teklif", {
+      // ⚠️ Onceki hali yanitin BASARILI olup olmadigina hic bakmiyordu:
+      // sunucu 400/500 donse bile "Talebiniz alindi" yaziyordu ve musteri
+      // hicbir sey iletilmedigini bilmiyordu.
+      const res = await fetch("/api/teklif", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      setSent(true);
+      const veri = await res.json().catch(() => null);
+      if (!res.ok) {
+        setHata(veri?.error || "Talebiniz gönderilemedi. Lütfen tekrar deneyin.");
+        return;
+      }
+      setSent({ referans: veri?.referans || "" });
+    } catch {
+      setHata(
+        "Bağlantı kurulamadı. İnternet bağlantınızı kontrol edin veya 0212 872 52 04 numarasından bize ulaşın."
+      );
     } finally {
       setBusy(false);
     }
@@ -147,11 +163,24 @@ export default function TeklifForm() {
           </div>
         </form>
 
+        {hata && (
+          <div role="alert" className="mt-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-800">
+            {hata}
+          </div>
+        )}
+
         {sent && (
-          <div className="mt-4 rounded-xl border border-blue/25 bg-blue-soft p-4 text-sm text-navy">
-            ✅ Talebiniz alındı! Ekibimiz kapsam ve fiyat için en kısa sürede size dönüş yapacak.
-            Acil durumlar için <a href="tel:+902128725204" className="font-bold underline">0212 872 52 04</a>{" "}
-            numaralı hattımızdan bize ulaşabilirsiniz.
+          <div role="status" className="mt-4 rounded-xl border border-blue/25 bg-blue-soft p-4 text-sm text-navy">
+            <b className="block text-base">✅ Talebiniz alındı.</b>
+            {sent.referans && (
+              <span className="mt-1 block">
+                Referans numaranız: <b className="font-mono">{sent.referans}</b>
+              </span>
+            )}
+            <span className="mt-1 block">
+              Ekibimiz kapsam ve fiyat için en kısa sürede size dönüş yapacak. Acil durumlar için{" "}
+              <a href="tel:+902128725204" className="font-bold underline">0212 872 52 04</a>.
+            </span>
           </div>
         )}
       </div>

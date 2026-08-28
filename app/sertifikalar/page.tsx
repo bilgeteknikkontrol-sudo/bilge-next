@@ -28,41 +28,11 @@ export default function SertifikalarPage() {
  * her zaman gorunur ama panelden degistirilebilir kalir.
  */
 const VARSAYILAN_BELGELER = [
-  {
-    id: "akreditasyon-sertifikasi",
-    baslik: "TÜRKAK Akreditasyon Sertifikası",
-    metin: "AB-0296-M · TS EN ISO/IEC 17020:2012 · Geçerlilik: 29.05.2028",
-    gorsel: "/img/belgeler/akreditasyon-sertifikasi.webp",
-    url: "",
-  },
-  {
-    id: "kapsam-kaldirma-iletme",
-    baslik: "Kapsam Eki 1/4 — Kaldırma ve İletme Makineleri",
-    metin: "Köprülü/portal/monoray vinç, forklift, istif makinesi, transpalet, yürüyen merdiven ve bant, yük asansörü",
-    gorsel: "/img/belgeler/kapsam-kaldirma-iletme.webp",
-    url: "",
-  },
-  {
-    id: "kapsam-kazanlar",
-    baslik: "Kapsam Eki 2/4 — Kazanlar",
-    metin: "Buhar kazanı, kalorifer/sıcak su kazanı, ütü kazanı",
-    gorsel: "/img/belgeler/kapsam-kazanlar.webp",
-    url: "",
-  },
-  {
-    id: "kapsam-yangin",
-    baslik: "Kapsam Eki 3/4 — Yangından Korunma Sistemleri",
-    metin: "Sprinkler, yangın su deposu, pompa istasyonu, hidrant, dolap, algılama-alarm, gazlı söndürme",
-    gorsel: "/img/belgeler/kapsam-yangin.webp",
-    url: "",
-  },
-  {
-    id: "kapsam-basincli-kaplar",
-    baslik: "Kapsam Eki 4/4 — Basınçlı Kaplar",
-    metin: "Basınçlı hava tankı, hidrofor/genleşme tankı, kompresör hava tankı, boyler, buhar jeneratörü",
-    gorsel: "/img/belgeler/kapsam-basincli-kaplar.webp",
-    url: "",
-  },
+  { id: "belge-1", baslik: "TÜRKAK Akreditasyon Sertifikası 1", metin: "", gorsel: "/img/belgeler/akreditasyon-sertifikasi.webp", url: "" },
+  { id: "belge-2", baslik: "TÜRKAK Akreditasyon Sertifikası 2", metin: "", gorsel: "/img/belgeler/kapsam-kaldirma-iletme.webp", url: "" },
+  { id: "belge-3", baslik: "TÜRKAK Akreditasyon Sertifikası 3", metin: "", gorsel: "/img/belgeler/kapsam-kazanlar.webp", url: "" },
+  { id: "belge-4", baslik: "TÜRKAK Akreditasyon Sertifikası 4", metin: "", gorsel: "/img/belgeler/kapsam-yangin.webp", url: "" },
+  { id: "belge-5", baslik: "TÜRKAK Akreditasyon Sertifikası 5", metin: "", gorsel: "/img/belgeler/kapsam-basincli-kaplar.webp", url: "" },
 ];
 
 async function Sayfa() {

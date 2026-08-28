@@ -67,3 +67,9 @@ export async function findTeklif(no: string): Promise<TeklifKayit | null> {
   const arr = parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || [];
   return arr.find((t) => t.raporNo === no) || null;
 }
+
+/** Tum teklif taleplerini doner (en yeni once). Panel ekrani icin. */
+export async function tumTeklifler(): Promise<TeklifKayit[]> {
+  const arr = parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || [];
+  return [...arr].reverse();
+}

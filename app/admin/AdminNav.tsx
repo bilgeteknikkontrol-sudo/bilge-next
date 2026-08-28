@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ADMIN_SAYFALAR } from "@/lib/admin-sayfalar";
 
 /**
  * Panel menusu.
@@ -18,29 +19,36 @@ import { usePathname } from "next/navigation";
 type Madde = { href: string; etiket: string; not: string; ikon: string };
 type Grup = { baslik: string; maddeler: Madde[] };
 
+/**
+ * Menu sitedeki SAYFA SIRASIYLA diziliyor (ADMIN_SAYFALAR tek kaynak).
+ * Once icerik turune gore bolunmustu ve "ana sayfanin slaytini degistir"
+ * icin hangi ekrana gidilecegi belli degildi.
+ */
 const GRUPLAR: Grup[] = [
   {
-    baslik: "İçerik",
-    maddeler: [
-      { href: "/admin/sayfalar", etiket: "Sayfa Metinleri", not: "Başlıklar ve giriş yazıları", ikon: "📄" },
-      { href: "/admin/articles", etiket: "Yazılar", not: "Bilgi Merkezi makaleleri", ikon: "✍️" },
-      { href: "/admin/equipment", etiket: "Ekipman & Hizmetler", not: "Kontrol edilen ekipman listesi", ikon: "🔧" },
-      { href: "/admin/locations", etiket: "Şehir Sayfaları", not: "İl bazlı hizmet sayfaları", ikon: "📍" },
-      { href: "/admin/bloklar", etiket: "Görsel Bloklar", not: "Slayt, referans, ekip, belge, SSS", ikon: "🧩" },
-    ],
+    baslik: "Sayfalar",
+    maddeler: ADMIN_SAYFALAR.map((s) => ({
+      href: `/admin/sayfa/${s.id}`,
+      etiket: s.ad,
+      not: s.yol,
+      ikon: s.ikon,
+    })),
   },
   {
-    baslik: "Görünüm",
+    baslik: "Site geneli",
     maddeler: [
-      { href: "/admin/menu", etiket: "Menü", not: "Üst menü başlıkları ve bağlantılar", ikon: "🧭" },
-      { href: "/admin/settings", etiket: "Renkler & Ayarlar", not: "Palet, yazı boyutu, iletişim", ikon: "🎨" },
-      { href: "/admin/media", etiket: "Medya", not: "Yüklenen görseller", ikon: "🖼️" },
+      { href: "/admin/menu", etiket: "Menü", not: "Üst menü başlıkları", ikon: "🧭" },
+      { href: "/admin/teklifler", etiket: "Teklif Talepleri", not: "Formdan gelen istekler", ikon: "📥" },
+      { href: "/admin/settings", etiket: "Renkler & Ayarlar", not: "Palet, yazı boyutu, logo", ikon: "🎨" },
+      { href: "/admin/media", etiket: "Medya", not: "Görsel yükleme", ikon: "🖼️" },
+      { href: "/admin/sayfalar", etiket: "Tüm Metinler", not: "Hepsi tek listede", ikon: "📄" },
     ],
   },
   {
     baslik: "Gelişmiş",
     maddeler: [
-      { href: "/admin/content", etiket: "Ham Metin Anahtarları", not: "Teknik: anahtar-değer kayıtları", ikon: "⚙️" },
+      { href: "/admin/bloklar", etiket: "Tüm Bloklar", not: "Slayt/referans/ekip/belge/SSS", ikon: "🧩" },
+      { href: "/admin/content", etiket: "Ham Anahtarlar", not: "Teknik kayıtlar", ikon: "⚙️" },
     ],
   },
 ];

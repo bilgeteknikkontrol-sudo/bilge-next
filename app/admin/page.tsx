@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getArticles, getEquipment, getLocations, getMedia, isDbOn } from "@/lib/cms";
 import { guard } from "@/lib/auth";
+import { ADMIN_SAYFALAR } from "@/lib/admin-sayfalar";
 import { SayfaBasligi, Kart, Bilgi } from "./ui";
 
 /**
@@ -12,44 +13,13 @@ import { SayfaBasligi, Kart, Bilgi } from "./ui";
  * bir cumleyle soyluyor.
  */
 
-const ISLER = [
-  {
-    href: "/admin/sayfalar",
-    ikon: "📄",
-    baslik: "Sayfa yazılarını değiştir",
-    not: "Her sayfanın başlığı ve giriş yazısı. Kod bilgisi gerekmez, kutuya yazıp kaydedin.",
-  },
-  {
-    href: "/admin/articles",
-    ikon: "✍️",
-    baslik: "Yazı ekle veya düzenle",
-    not: "Bilgi Merkezi'ndeki makaleler. Yeni yazı eklemek SEO için en etkili işlerden biri.",
-  },
-  {
-    href: "/admin/menu",
-    ikon: "🧭",
-    baslik: "Üst menüyü düzenle",
-    not: "Menüdeki başlıkları yeniden adlandırın, bağlantı ekleyin veya sırasını değiştirin.",
-  },
-  {
-    href: "/admin/bloklar",
-    ikon: "🧩",
-    baslik: "Görsel blokları yönet",
-    not: "Ana sayfa slaytları, referans logoları, ekip kartları, belgeler ve SSS.",
-  },
-  {
-    href: "/admin/settings",
-    ikon: "🎨",
-    baslik: "Renk ve iletişim ayarları",
-    not: "Site paleti, yazı boyutları, telefon, e-posta ve adres.",
-  },
-  {
-    href: "/admin/equipment",
-    ikon: "🔧",
-    baslik: "Ekipman listesini güncelle",
-    not: "Kontrol edilen ekipmanlar, kategorileri ve kontrol periyotları.",
-  },
-];
+/** Panel ana sayfasindaki gorev kartlari — sitedeki sayfa sirasiyla. */
+const ISLER = ADMIN_SAYFALAR.map((sy) => ({
+  href: `/admin/sayfa/${sy.id}`,
+  ikon: sy.ikon,
+  baslik: sy.ad,
+  not: sy.aciklama,
+}));
 
 export default async function Panel() {
   await guard();
@@ -107,7 +77,7 @@ export default async function Panel() {
 
       {/* YAPILACAK İŞLER */}
       <h2 className="mb-3 mt-8 text-sm font-bold uppercase tracking-[.1em] text-slate-400">
-        Ne yapmak istiyorsunuz?
+        Hangi sayfayı düzenlemek istiyorsunuz?
       </h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {ISLER.map((i) => (

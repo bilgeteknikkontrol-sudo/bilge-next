@@ -27,6 +27,7 @@ import { menuYaz, type MenuOge, type MenuAlt } from "@/lib/menu";
 import { TUM_ALANLAR } from "@/lib/sayfa-metin";
 import {
   blokKaydet,
+  tumBloklar,
   blokSil,
   blokDurumDegistir,
   yeniId,
@@ -284,7 +285,8 @@ export async function saveBlokAction(formData: FormData) {
   };
   await blokKaydet(blok);
   revalidateBloklar();
-  redirect(`/admin/bloklar?tur=${blok.tur}`);
+  // "donus" doluysa cagiran sayfa ekranina geri don; degilse eski toplu ekran.
+  redirect(donusAdresi(formData, `/admin/bloklar?tur=${blok.tur}`, blok.tur));
 }
 
 export async function deleteBlokAction(formData: FormData) {
@@ -293,7 +295,7 @@ export async function deleteBlokAction(formData: FormData) {
   const tur = String(formData.get("tur") || "referans");
   if (id) await blokSil(id);
   revalidateBloklar();
-  redirect(`/admin/bloklar?tur=${tur}`);
+  redirect(donusAdresi(formData, `/admin/bloklar?tur=${tur}`, tur));
 }
 
 export async function toggleBlokAction(formData: FormData) {
@@ -302,7 +304,18 @@ export async function toggleBlokAction(formData: FormData) {
   const tur = String(formData.get("tur") || "referans");
   if (id) await blokDurumDegistir(id);
   revalidateBloklar();
-  redirect(`/admin/bloklar?tur=${tur}`);
+  redirect(donusAdresi(formData, `/admin/bloklar?tur=${tur}`, tur));
+}
+
+/**
+ * Blok formu hangi ekrandan gonderildiyse oraya geri donulur.
+ * Guvenlik: yalnizca /admin ile baslayan ic adresler kabul edilir; disaridan
+ * gelen bir "donus" degeriyle baska siteye yonlendirme yapilamaz.
+ */
+function donusAdresi(formData: FormData, varsayilan: string, capa?: string): string {
+  const d = String(formData.get("donus") || "");
+  if (!d.startsWith("/admin/") || d.includes("//")) return varsayilan;
+  return capa ? `${d}#${capa}` : d;
 }
 
 /** Bloklar birden fazla sayfada kullanildigi icin hepsi tazeleniyor. */
@@ -361,4 +374,85 @@ export async function saveMenuAction(formData: FormData) {
   if (menu.length) await menuYaz(menu);
   revalidatePath("/", "layout");
   redirect("/admin/menu?kaydedildi=1");
+}
+
+// ---------- TEK SAYFANIN ICERIGI (Admin > Sayfalar > ...) ----------
+/**
+ * Bir site sayfasinin yazilarini ve o sayfaya ait ayar alanlarini kaydeder.
+ *
+ * saveSayfaMetinleriAction TUM alanlari tek formda aliyordu; sayfa ekranlari
+ * ise yalnizca kendi alanlarini gonderiyor. Bu yuzden burada "formda gelen
+ * alanlar" isleniyor, gelmeyenlere DOKUNULMUYOR — yoksa bir sayfayi
+ * kaydetmek diger sayfalarin metinlerini silerdi.
+ *
+ * Metin alanlari: bos birakilan veya varsayilanla ayni olan kayittan silinir
+ * (sayfa varsayilan metnine doner). Ayar alanlari (telefon, hero basligi...)
+ * SiteSettings icinde durur ve bos gonderilirse eski degeri korunur.
+ */
+export async function saveSayfaIcerikAction(formData: FormData) {
+  await guard();
+  const sayfaId = String(formData.get("sayfaId") || "");
+  const { sayfaBul } = await import("@/lib/admin-sayfalar");
+  const sayfa = sayfaBul(sayfaId);
+  if (!sayfa) redirect("/admin");
+
+  // --- metin alanlari ---
+  const metinAnahtarlari = sayfa.bolumler.flatMap((b) => (b.tip === "metin" ? b.anahtarlar : []));
+  const varsayilanlar = new Map(TUM_ALANLAR.map((a) => [a.anahtar, a.varsayilan]));
+  for (const anahtar of metinAnahtarlari) {
+    if (!formData.has(anahtar)) continue;
+    const deger = String(formData.get(anahtar) ?? "").trim();
+    if (deger === "" || deger === varsayilanlar.get(anahtar)) await deleteContent(anahtar);
+    else await setContent(anahtar, deger);
+  }
+
+  // --- ayar alanlari (SiteSettings) ---
+  const ayarAdlari = sayfa.bolumler.flatMap((b) => (b.tip === "ayar" ? b.alanlar.map((a) => a.ad) : []));
+  if (ayarAdlari.length) {
+    const mevcut = await getSettings().catch(() => defaultSettings());
+    const yeni: SiteSettings = { ...mevcut };
+    for (const ad of ayarAdlari) {
+      if (!formData.has(`ayar_${ad}`)) continue;
+      const v = String(formData.get(`ayar_${ad}`) ?? "").trim();
+      if (v !== "") (yeni as unknown as Record<string, unknown>)[ad] = v;
+    }
+    await saveSettings(yeni);
+  }
+
+  revalidatePath("/", "layout");
+  redirect(`/admin/sayfa/${sayfaId}?kaydedildi=1`);
+}
+
+// ---------- SERTIFIKALARI PANELE AKTAR ----------
+/**
+ * /sertifikalar sayfasi, panelde hic belge yokken koddaki varsayilan 5 belgeyi
+ * gosteriyor. Kullanici bunlari panelden duzenlemek istedi; bu eylem onlari
+ * gercek kayda cevirir. Zaten kayit varsa hicbir sey yapmaz.
+ */
+export async function sertifikalariAktarAction() {
+  await guard();
+  const mevcut = (await tumBloklar().catch(() => [])).filter((b) => b.tur === "sertifika");
+  if (mevcut.length === 0) {
+    const dosyalar = [
+      "akreditasyon-sertifikasi",
+      "kapsam-kaldirma-iletme",
+      "kapsam-kazanlar",
+      "kapsam-yangin",
+      "kapsam-basincli-kaplar",
+    ];
+    for (let i = 0; i < dosyalar.length; i++) {
+      await blokKaydet({
+        id: yeniId(),
+        tur: "sertifika",
+        baslik: `TÜRKAK Akreditasyon Sertifikası ${i + 1}`,
+        metin: "",
+        gorsel: `/img/belgeler/${dosyalar[i]}.webp`,
+        url: "",
+        sira: i + 1,
+        aktif: true,
+      });
+    }
+  }
+  revalidatePath("/sertifikalar");
+  redirect("/admin/sayfa/akreditasyon?kaydedildi=1#sertifika");
 }
