@@ -41,13 +41,31 @@ function ortam(ad: string): string | undefined {
   return k === "" ? undefined : k;
 }
 
+/**
+ * Kimlik alanlarindaki TUM bosluklari atar (ortadakiler dahil).
+ *
+ * ⚠️ `MYSQL_USER` degeri panelde iki ayri seferde `u238725264_ bilgekontrol1`
+ * olarak kaydedildi — alt cizgiden sonra bir bosluk. Hata "Access denied for
+ * user" olarak ciktigi icin herkes sifreyi sorgular, boslugu goren olmaz.
+ *
+ * MySQL kullanici adi, sunucu adi ve veritabani adi bosluk icermez (Hostinger
+ * bunlari `u<rakam>_<ad>` kalibiyla uretir), bu yuzden temizlemek guvenli.
+ * SIFREYE DOKUNULMUYOR: orada bosluk gecerli bir karakter olabilir.
+ */
+function kimlik(ad: string): string | undefined {
+  const v = ortam(ad);
+  if (v === undefined) return undefined;
+  const k = v.replace(/\s+/g, "");
+  return k === "" ? undefined : k;
+}
+
 function mysqlAyriDegiskenlerden(): string | undefined {
-  const host = ortam("MYSQL_HOST");
-  const user = ortam("MYSQL_USER");
-  const veritabani = ortam("MYSQL_DATABASE");
+  const host = kimlik("MYSQL_HOST");
+  const user = kimlik("MYSQL_USER");
+  const veritabani = kimlik("MYSQL_DATABASE");
   if (!host || !user || !veritabani) return undefined;
   const sifre = ortam("MYSQL_PASSWORD") ?? "";
-  const port = ortam("MYSQL_PORT") || "3306";
+  const port = kimlik("MYSQL_PORT") || "3306";
   return `mysql://${encodeURIComponent(user)}:${encodeURIComponent(sifre)}@${host}:${port}/${veritabani}`;
 }
 
