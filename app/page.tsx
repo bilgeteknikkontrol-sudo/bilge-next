@@ -90,16 +90,25 @@ export default async function Home() {
               "linear-gradient(160deg, var(--color-herofrom) 0%, var(--color-bgsoft) 55%, var(--color-heroto) 100%)",
           }}
         />
-        {/* Sol ustte ve sag altta yumusak turuncu isik — duz zeminin monotonlugunu kiriyor */}
+        {/* Sol ustte ve sag altta yumusak isik — duz zeminin monotonlugunu kiriyor.
+            Ikisi de paletten turetiliyor: ust sol birincil maviden, alt sag
+            logonun turuncusundan. Turuncu hero'da sadece burada ve butonda
+            gorunuyor; renk yuku maviye birakildi. */}
         <div
           aria-hidden
           className="absolute -left-40 -top-48 -z-10 h-[520px] w-[520px] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgba(247,154,71,.30), transparent 70%)" }}
+          style={{
+            background:
+              "radial-gradient(circle, color-mix(in srgb, var(--color-blue) 18%, transparent), transparent 70%)",
+          }}
         />
         <div
           aria-hidden
           className="absolute -bottom-56 right-[-10rem] -z-10 h-[560px] w-[560px] rounded-full blur-3xl"
-          style={{ background: "radial-gradient(circle, rgba(255,205,160,.45), transparent 70%)" }}
+          style={{
+            background:
+              "radial-gradient(circle, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 70%)",
+          }}
         />
 
         {/* items-center YOK: sutunlar esnesin (grid varsayilani stretch). Boylece
@@ -108,7 +117,7 @@ export default async function Home() {
         <div className="container-x relative grid gap-10 py-10 lg:grid-cols-[1.05fr_.95fr] lg:py-14">
           {/* --- SOL: anlatim --- */}
           <div className="min-w-0">
-            <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_rgba(194,94,8,.6)]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_color-mix(in_srgb,var(--color-navy)_60%,transparent)]">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue text-[.7rem] text-white">✓</span>
               TÜRKAK Akredite A Tipi Muayene Kuruluşu · {KURUM.akreditasyon}
             </span>
@@ -176,7 +185,7 @@ export default async function Home() {
           <div className="relative flex min-w-0 flex-col lg:pb-12">
             {/* Mobilde sabit oran (16/10 — 4/3 telefonda ekranin yarisini yiyordu),
                 lg'de sol sutunun boyuna uzayan esnek yukseklik */}
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_rgba(88,67,52,.55)] lg:aspect-auto lg:min-h-[340px] lg:flex-1">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[28px] border border-line bg-bgsoft shadow-[0_40px_70px_-40px_color-mix(in_srgb,var(--color-navy)_550%,transparent)] lg:aspect-auto lg:min-h-[340px] lg:flex-1">
               {/* Panelden slayt eklendiyse yumusak gecisli slayt, eklenmediyse tek
                   varsayilan foto. (Panel: İçerik Blokları -> Ana Sayfa Slayt Görselleri) */}
               {heroSlaytlari.length > 0 ? (
@@ -385,11 +394,11 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="mx-auto flex h-52 w-40 shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-navy to-navy2 text-white shadow-[0_20px_40px_-20px_rgba(15,23,42,.6)]">
+            <div className="mx-auto flex h-52 w-40 shrink-0 flex-col items-center justify-center rounded-2xl bg-gradient-to-br from-navy to-navy2 text-white shadow-[0_20px_40px_-20px_color-mix(in_srgb,var(--color-navy)_60%,transparent)]">
               <span className="text-5xl" aria-hidden>📕</span>
               <span className="mt-3 px-3 text-center text-xs font-bold leading-tight">
                 Bilge Teknik Kontrol
-                <span className="mt-1 block font-normal text-[#c7d6f0]">Hizmet Kataloğu</span>
+                <span className="mt-1 block font-normal text-onnavy">Hizmet Kataloğu</span>
               </span>
             </div>
           </div>
@@ -450,7 +459,7 @@ export default async function Home() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-16 text-center text-white">
         <div className="container-x mx-auto max-w-[680px]">
           <h2 className="font-black" style={{ fontSize: "var(--fs-h2)" }}>{ctaTitle}</h2>
-          <p className="mt-3 text-[#c7d6f0]">{ctaText}</p>
+          <p className="mt-3 text-onnavy">{ctaText}</p>
           <Link href="/teklif" className="btn-primary mt-5 bg-accent text-navy hover:bg-amber-soft">Hemen Başla →</Link>
         </div>
       </section>

@@ -29,15 +29,15 @@ export default function CerezPage() {
 
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Çerez Politikası</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Çerez Politikası</h1>
-          <p className="mt-3 max-w-3xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-3xl text-onnavy">
             bilgekontrol.com üzerinde hangi çerezlerin kullanıldığı, ne amaçla kullanıldıkları ve
             bunları nasıl yönetebileceğiniz hakkında bilgilendirme.
           </p>
-          <p className="mt-2 text-sm text-[#9db4de]">Son güncelleme: {SON_GUNCELLEME}</p>
+          <p className="mt-2 text-sm text-onnavydim">Son güncelleme: {SON_GUNCELLEME}</p>
         </div>
       </section>
 

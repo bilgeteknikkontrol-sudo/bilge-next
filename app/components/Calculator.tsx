@@ -40,7 +40,7 @@ export default function Calculator() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-      <div className="rounded-card border border-line bg-white p-6 shadow-[0_10px_30px_-12px_rgba(11,31,58,.25)]">
+      <div className="rounded-card border border-line bg-white p-6 shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_250%,transparent)]">
         <label className="mb-1.5 block text-sm font-semibold">Ekipman *</label>
         <select
           value={ad}
@@ -66,7 +66,7 @@ export default function Calculator() {
 
         <button
           onClick={calc}
-          className="w-full rounded-full bg-blue px-6 py-3.5 font-bold text-white shadow-[0_12px_24px_-10px_rgba(28,95,214,.7)] transition hover:-translate-y-0.5"
+          className="w-full rounded-full bg-blue px-6 py-3.5 font-bold text-white shadow-[0_12px_24px_-10px_color-mix(in_srgb,var(--color-blue)_70%,transparent)] transition hover:-translate-y-0.5"
         >
           Hesapla →
         </button>
@@ -76,14 +76,14 @@ export default function Calculator() {
         </p>
       </div>
 
-      <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-7 text-white shadow-[0_30px_60px_-20px_rgba(11,31,58,.35)]">
+      <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-7 text-white shadow-[0_30px_60px_-20px_color-mix(in_srgb,var(--color-navy)_350%,transparent)]">
         {!res ? (
           <>
             <h3 className="text-white">Sonucunuz burada görünecek</h3>
-            <p className="text-[#b9cae8]">Sol formu doldurduğunuzda; periyot, yasal bir sonraki tarih ve denetim riski burada belirecek.</p>
+            <p className="text-onnavy">Sol formu doldurduğunuzda; periyot, yasal bir sonraki tarih ve denetim riski burada belirecek.</p>
             <ul className="mt-4 grid gap-2.5">
-              <li className="text-[#d6e2f7]">📜 Üretici aksini belirtmedikçe çoğu ekipman <b>yılda 1 kez</b> kontrol edilir.</li>
-              <li className="text-[#d6e2f7]">⚠️ Yaptırılmayan kontrol; <b>idari para cezası</b> ve işin durdurulması riski doğurur.</li>
+              <li className="text-onnavy">📜 Üretici aksini belirtmedikçe çoğu ekipman <b>yılda 1 kez</b> kontrol edilir.</li>
+              <li className="text-onnavy">⚠️ Yaptırılmayan kontrol; <b>idari para cezası</b> ve işin durdurulması riski doğurur.</li>
             </ul>
           </>
         ) : (
@@ -92,17 +92,18 @@ export default function Calculator() {
             <div className="text-3xl font-black text-accent">
               {res.periyot === 1 ? "Aylık test" : `${res.periyot} ayda bir`}
             </div>
-            <p className="m-0 text-[#b9cae8]">Dayanak: <b>{res.standart}</b></p>
-            {res.not && <p className="mt-1.5 text-[.9rem] text-[#ffd9a3]">ℹ️ {res.not}</p>}
+            <p className="m-0 text-onnavy">Dayanak: <b>{res.standart}</b></p>
+            {/* Uyari niteligindeki not: koyu kartta turuncu vurguyla ayrisiyor */}
+            {res.not && <p className="mt-1.5 text-[.9rem] text-accent">ℹ️ {res.not}</p>}
             <ul className="mt-4 grid gap-2.5">
-              <li className="text-[#d6e2f7]">📅 Son kontrol: <b>{last ? fmt(new Date(last)) : fmt(new Date())}</b></li>
-              <li className="text-[#d6e2f7]">⏰ Yasal bir sonraki: <b>{fmt(res.due)}</b></li>
-              <li className="text-[#d6e2f7]">
+              <li className="text-onnavy">📅 Son kontrol: <b>{last ? fmt(new Date(last)) : fmt(new Date())}</b></li>
+              <li className="text-onnavy">⏰ Yasal bir sonraki: <b>{fmt(res.due)}</b></li>
+              <li className="text-onnavy">
                 ⏳ {res.gecikti
                   ? `⚠️ ${Math.abs(res.kalan)} gün gecikmiş — denetim riski`
                   : `Kontrole ${res.kalan} gün var`}
               </li>
-              <li className="text-[#d6e2f7]">📜 {YASA.cezaNotu}</li>
+              <li className="text-onnavy">📜 {YASA.cezaNotu}</li>
             </ul>
             <Link href="/teklif" className="mt-4 inline-block rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">
               Hemen Teklif Al →

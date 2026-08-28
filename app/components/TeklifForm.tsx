@@ -140,7 +140,7 @@ export default function TeklifForm() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-full bg-blue px-6 py-3.5 font-bold text-white shadow-[0_12px_24px_-10px_rgba(28,95,214,.7)] transition hover:-translate-y-0.5 disabled:opacity-60"
+              className="w-full rounded-full bg-blue px-6 py-3.5 font-bold text-white shadow-[0_12px_24px_-10px_color-mix(in_srgb,var(--color-blue)_70%,transparent)] transition hover:-translate-y-0.5 disabled:opacity-60"
             >
               {busy ? "Gönderiliyor…" : "Talebi Gönder →"}
             </button>
@@ -148,7 +148,7 @@ export default function TeklifForm() {
         </form>
 
         {sent && (
-          <div className="mt-4 rounded-xl border border-[#f3d29a] bg-[#fff4e0] p-4 text-sm text-[#8a5a10]">
+          <div className="mt-4 rounded-xl border border-blue/25 bg-blue-soft p-4 text-sm text-navy">
             ✅ Talebiniz alındı! Ekibimiz kapsam ve fiyat için en kısa sürede size dönüş yapacak.
             Acil durumlar için <a href="tel:+902128725204" className="font-bold underline">0212 872 52 04</a>{" "}
             numaralı hattımızdan bize ulaşabilirsiniz.

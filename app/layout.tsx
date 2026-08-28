@@ -45,6 +45,8 @@ const COLOR_VAR: Record<string, string> = {
   amberSoft: "--color-amber-soft",
   emeraldSoft: "--color-emerald-soft",
   ink: "--color-ink",
+  onNavy: "--color-onnavy",
+  onNavyDim: "--color-onnavydim",
   muted: "--color-muted",
   line: "--color-line",
   bgsoft: "--color-bgsoft",

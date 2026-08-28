@@ -47,11 +47,23 @@ const GRUPLAR: Grup[] = [
   },
   {
     baslik: "Yumuşak tonlar",
-    aciklama: "Rozet ve ikon zeminlerinde kullanılan açık tonlar.",
+    aciklama:
+      "Rozet ve ikon zeminlerinde kullanılan açık tonlar. Üçü de aynı değerde geliyor; " +
+      "farklı yapmak isterseniz tek tek değiştirebilirsiniz.",
     alanlar: [
       { key: "blueSoft", label: "Vurgu (açık)", not: "Etiket ve ikon kutularının zemini" },
       { key: "amberSoft", label: "Amber (açık)", not: "Uyarı/vurgu zeminleri" },
       { key: "emeraldSoft", label: "Onay (açık)", not: "Akreditasyon rozetinin zemini" },
+    ],
+  },
+  {
+    baslik: "Koyu zemin üzerindeki metin",
+    aciklama:
+      "Lacivert gradyanlı kartlarda ve footer'da kullanılan yazı renkleri. " +
+      "Bunlar önceden kodun içine sabit yazılmıştı ve panelden değiştirilemiyordu.",
+    alanlar: [
+      { key: "onNavy", label: "Koyu zemin metni", not: "Koyu kartlardaki normal yazı" },
+      { key: "onNavyDim", label: "Koyu zemin metni (soluk)", not: "Tarih, ikincil açıklama" },
     ],
   },
 ];

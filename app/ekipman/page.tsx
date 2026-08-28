@@ -81,16 +81,16 @@ export default async function EkipmanIndex() {
       {/* KAHRAMAN */}
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Hizmetlerimiz</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Periyodik Kontrol Hizmetlerimiz</h1>
-          <p className="mt-3 max-w-3xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-3xl text-onnavy">
             TÜRKAK akredite ({KURUM.akreditasyon}) A Tipi muayene kuruluşu olarak {toplam} ayrı ekipman
             ve tesisat grubunda periyodik kontrol hizmeti veriyoruz. Soldaki listeden kategoriye,
             oradan aradığınız ekipmana ulaşabilirsiniz.
           </p>
-          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#c7d6f0]">
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-onnavy">
             <span>📋 {kategoriler.length} kategori</span>
             <span>🔧 {toplam} hizmet</span>
             <span>🇹🇷 Türkiye geneli yerinde muayene</span>
@@ -126,7 +126,7 @@ export default async function EkipmanIndex() {
 
             <div className="mt-5 rounded-card bg-gradient-to-br from-navy to-navy2 p-5 text-white">
               <h2 className="text-base font-bold text-white">Ekipmanınız listede yok mu?</h2>
-              <p className="mt-1 text-sm text-[#c7d6f0]">
+              <p className="mt-1 text-sm text-onnavy">
                 Kapsamımız listeyle sınırlı değil. Listenizi iletin, birlikte değerlendirelim.
               </p>
               <Link
@@ -163,7 +163,7 @@ export default async function EkipmanIndex() {
                       <li key={e.slug}>
                         <Link
                           href={`/ekipman/${e.slug}`}
-                          className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-blue hover:shadow-[0_18px_36px_-20px_rgba(15,23,42,.4)]"
+                          className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-blue hover:shadow-[0_18px_36px_-20px_color-mix(in_srgb,var(--color-navy)_40%,transparent)]"
                         >
                           {g && (
                             <span className="block aspect-[16/10] overflow-hidden bg-bgsoft">
@@ -200,7 +200,7 @@ export default async function EkipmanIndex() {
 
             <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-8 text-center text-white">
               <h2 className="text-2xl font-black text-white">Kapsamı birlikte belirleyelim</h2>
-              <p className="mx-auto mt-2 max-w-2xl text-[#c7d6f0]">
+              <p className="mx-auto mt-2 max-w-2xl text-onnavy">
                 Ekipman listenizi iletin; hangi muayenelerin yasal olarak zorunlu olduğunu,
                 periyotları ve toplam maliyeti tek bir teklifte size sunalım.
               </p>

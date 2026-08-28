@@ -1,39 +1,52 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Renk paleti — beyaz + turuncu, acik ton.
+   Renk paleti — KURUMSAL MAVI + TURUNCU (v4).
+
+   Iki renk ailesi var, uctuncusu yok:
+     - derin mavi  -> koyu yuzeyler, basliklar, baglantilar, birincil buton
+     - turuncu     -> yalnizca VURGU; logodan geliyor (#EF7F2D)
 
    Token adlari (navy/blue/emerald) tum sayfalarda kullanildigi icin
-   degistirilmedi; yalnizca degerleri sicak paletle guncellendi. Yani
-   "blue" = birincil turuncu, "navy" = sicak koyu kahve (baslik ve koyu
-   bolumler), "emerald" = ikincil turuncu (dogrulama/onay isaretleri).
-   Metin olarak kullanilan turuncu (--color-blue) beyaz uzerinde
-   WCAG AA (>=4.5:1) saglayacak koyulukta secildi.
+   degistirilmedi, yalnizca degerleri guncellendi. "emerald-soft" ve
+   "amber-soft" artik blue-soft ile AYNI degerde: onceki palette birbirinden
+   farkli uc acik ton vardi ve site alacali duruyordu.
+
+   Metin olarak kullanilan mavi (--color-blue) beyaz uzerinde 6.89:1 (AAA).
+   DIKKAT: --color-accent (turuncu) beyaz uzerinde 2.71:1 — beyaz zeminde
+   METIN rengi olarak kullanilmaz, yalnizca koyu zeminde ve dolgu/kenarlikta.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-navy: #3A2C22;
-  --color-navy2: #584334;
-  --color-blue: #C25E08;
-  --color-blue-dark: #9C4A05;
-  --color-blue-soft: #FFEBD8;
-  --color-accent: #F79A47;
-  --color-accent2: #E08A2C;
-  --color-emerald-soft: #FFF0DF;
-  --color-amber-soft: #FFF3E6;
-  --color-ink: #2E2620;
-  --color-muted: #6B5F57;
-  --color-line: #EFE3D8;
-  --color-bgsoft: #FFF8F2;
+  --color-navy: #0B2A4A;
+  --color-navy2: #14406E;
+  --color-blue: #0F5AA8;
+  --color-blue-dark: #0B4586;
+  --color-blue-soft: #E4EEF9;
+  --color-accent: #EF7F2D;
+  --color-accent2: #B2540A;
+  --color-emerald-soft: #E4EEF9;
+  --color-amber-soft: #E4EEF9;
+  --color-ink: #10202F;
+  --color-muted: #566B7E;
+  --color-line: #DFE7EF;
+  --color-bgsoft: #F5F8FC;
+
+  /* Koyu zemin uzerindeki metin. Eskiden 16 dosyada elle yazilmis sabit
+     renklerdi (#c7d6f0 34 yerde, #d6e2f7, #b9cae8, #9db4de) — eski mavi
+     tasarimdan kalmislardi ve kahverengi kartlarin uzerinde duruyorlardi.
+     Artik paletin parcasi ve panelden yonetiliyor. */
+  --color-onnavy: #C3D6EA;      /* navy gradyan uzerinde normal metin */
+  --color-onnavydim: #93AECB;   /* ayni zeminde soluk/ikincil metin */
 
   /* Bolge renkleri — panelden ayri ayri yonetilir (Admin > Site Ayarlari > Renkler).
      Genel paletten bagimsizdirlar ki "header beyaz kalsin ama footer koyu olsun"
      gibi istekler tek tek yapilabilsin. */
   --color-header: #FFFFFF;      /* ust menu cubugu zemini */
-  --color-headertop: #3A2C22;   /* menunun ustundeki ince iletisim seridi */
-  --color-footer: #3A2C22;      /* footer zemini */
-  --color-btn: #C25E08;         /* birincil buton (Teklif Al vb.) */
+  --color-headertop: #0B2A4A;   /* menunun ustundeki ince iletisim seridi */
+  --color-footer: #0B2A4A;      /* footer zemini */
+  --color-btn: #0F5AA8;         /* birincil buton (Teklif Al vb.) */
   --color-herofrom: #FFFFFF;    /* hero zemin gradyaninin basi */
-  --color-heroto: #FFF1E4;      /* hero zemin gradyaninin sonu */
+  --color-heroto: #EDF3FA;      /* hero zemin gradyaninin sonu */
 
   --radius-card: 20px;
   --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -55,12 +68,15 @@ body {
 .container-x { @apply mx-auto w-full max-w-[1200px] px-5; }
 .nav-link { @apply font-semibold text-ink/80 transition-colors hover:text-blue; }
 /* Buton rengi panelden ayri yonetildigi icin bg-btn; hover'da sabit bir renk
-   yerine parlaklik degisiyor ki hangi renk secilirse secilsin uyumlu kalsin. */
-.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-btn px-6 py-3 font-bold text-white shadow-[0_14px_30px_-12px_rgba(194,94,8,.55)] transition hover:-translate-y-0.5 hover:brightness-110; }
+   yerine parlaklik degisiyor ki hangi renk secilirse secilsin uyumlu kalsin.
+   Golge de ayni mantikla color-mix ile butonun kendi renginden turetiliyor —
+   eskiden sabit kahve/turuncu yaziliydi ve panelden renk degistirilince
+   golge eski renkte kaliyordu. */
+.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-full bg-btn px-6 py-3 font-bold text-white shadow-[0_14px_30px_-12px_color-mix(in_srgb,var(--color-btn)_55%,transparent)] transition hover:-translate-y-0.5 hover:brightness-110; }
 .btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-white px-6 py-3 font-bold text-navy transition hover:border-blue hover:text-blue; }
 .section { @apply py-16 md:py-20; }
 .chip { @apply inline-flex items-center gap-1.5 rounded-full bg-blue-soft px-3 py-1 text-sm font-bold text-blue; }
-.card { @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[0_18px_40px_-22px_rgba(88,67,52,.30)]; }
+.card { @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[0_18px_40px_-22px_color-mix(in_srgb,var(--color-navy)_30%,transparent)]; }
 
 /* ---------------------------------------------------------------------------
    Uzun metin tipografisi (.prose)

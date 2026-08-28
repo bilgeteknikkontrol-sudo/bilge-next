@@ -40,7 +40,7 @@ export default function CerezOnay() {
       role="dialog"
       aria-live="polite"
       aria-label="Çerez tercihleri"
-      className="fixed inset-x-0 bottom-0 z-[60] border-t border-line bg-white/98 shadow-[0_-10px_30px_-12px_rgba(15,23,42,.3)] backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-[60] border-t border-line bg-white/98 shadow-[0_-10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_30%,transparent)] backdrop-blur-md"
     >
       <div className="container-x flex flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between md:gap-6">
         <p className="text-sm leading-relaxed text-muted">

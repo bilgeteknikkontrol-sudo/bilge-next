@@ -94,11 +94,11 @@ export default async function SurelerPage() {
 
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Periyodik Kontrol Süreleri</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Periyodik Kontrol Süreleri Tablosu</h1>
-          <p className="mt-3 max-w-3xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-3xl text-onnavy">
             Hangi iş ekipmanının ne sıklıkla kontrol edilmesi gerektiğini, tabi olduğu standartla
             birlikte tek tabloda topladık. {hepsi.length} ekipman türü, {kategoriler.length} kategori.
           </p>
@@ -217,7 +217,7 @@ export default async function SurelerPage() {
 
             <div className="mt-12 rounded-card bg-gradient-to-br from-navy to-navy2 p-8 text-center text-white">
               <h2 className="text-2xl font-black text-white">Süreniz dolmak üzere mi?</h2>
-              <p className="mx-auto mt-2 max-w-2xl text-[#c7d6f0]">
+              <p className="mx-auto mt-2 max-w-2xl text-onnavy">
                 Son kontrol tarihinizi girin, bir sonraki yasal tarihi anında görün. Gerekirse aynı
                 ekrandan teklif oluşturun.
               </p>

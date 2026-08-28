@@ -29,7 +29,7 @@ export default async function YazilarPage() {
       <section className="py-14">
         <div className="mx-auto grid max-w-[1200px] gap-6 px-5 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((a) => (
-            <Link key={a.slug} href={`/yazilar/${a.slug}`} className="group flex flex-col overflow-hidden rounded-card border border-line bg-white shadow-[0_10px_30px_-12px_rgba(11,31,58,.25)] transition hover:-translate-y-1">
+            <Link key={a.slug} href={`/yazilar/${a.slug}`} className="group flex flex-col overflow-hidden rounded-card border border-line bg-white shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_250%,transparent)] transition hover:-translate-y-1">
               <YaziGorseli slug={a.slug} cmsImage={a.image} bicim="kart" />
               <span className="flex flex-1 flex-col p-6">
                 <span className="text-xs font-bold text-blue">{a.category}</span>

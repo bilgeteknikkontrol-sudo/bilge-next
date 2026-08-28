@@ -47,11 +47,11 @@ export default function BolgeIndex() {
 
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Hizmet Bölgelerimiz</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Hizmet Bölgelerimiz</h1>
-          <p className="mt-3 max-w-3xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-3xl text-onnavy">
             Merkez ofisimiz {KURUM.ilce} / {KURUM.il}&apos;dadır. {BOLGELER.length} coğrafi bölgede,
             {" "}{toplamIl} şehirde yerinde periyodik kontrol hizmeti veriyoruz. Listede şehriniz
             görünmüyorsa da planlama yapabiliriz — bize sormanız yeterli.
@@ -93,7 +93,7 @@ export default function BolgeIndex() {
 
           <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-8 text-center text-white">
             <h2 className="text-2xl font-black text-white">Şehriniz listede yok mu?</h2>
-            <p className="mt-2 text-[#c7d6f0]">
+            <p className="mt-2 text-onnavy">
               Türkiye genelinde planlama yapıyoruz. Ekipman listenizi iletin, bölgenize uygun
               takvimi birlikte belirleyelim.
             </p>

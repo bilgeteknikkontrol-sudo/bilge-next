@@ -102,13 +102,13 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
           </>
         )}
         <div className="container-x relative py-14">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link>{" "}/{" "}
             <Link href="/ekipman" className="hover:text-white">Hizmetlerimiz</Link>{" "}/{" "}
             <span>{e.kategori}</span>
           </nav>
           <h1 className="max-w-3xl text-3xl font-black leading-tight md:text-4xl">{e.ad} Periyodik Kontrolü</h1>
-          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#c7d6f0]">
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-onnavy">
             <span>🛡️ TÜRKAK akredite · {KURUM.akreditasyon}</span>
             <span>📋 {e.standart}</span>
             <span>🗓️ {periyotText}</span>
@@ -240,11 +240,11 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
 
             <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-6 text-white">
               <h2 className="text-lg font-bold text-white">Hemen bilgi alın</h2>
-              <p className="mt-1 text-sm text-[#c7d6f0]">{KURUM.calismaSaatleri}</p>
+              <p className="mt-1 text-sm text-onnavy">{KURUM.calismaSaatleri}</p>
               <a href={`tel:${KURUM.telefonE164}`} className="mt-3 block text-xl font-black text-accent">
                 {KURUM.telefon}
               </a>
-              <a href={`mailto:${KURUM.eposta}`} className="mt-1 block text-sm text-[#c7d6f0] hover:text-white">
+              <a href={`mailto:${KURUM.eposta}`} className="mt-1 block text-sm text-onnavy hover:text-white">
                 {KURUM.eposta}
               </a>
             </div>

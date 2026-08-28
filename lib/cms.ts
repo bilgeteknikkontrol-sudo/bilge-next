@@ -161,29 +161,34 @@ async function seedIfEmpty(s: Sql) {
 
 export function defaultSettings(): SiteSettings {
   return {
-    // Beyaz + turuncu (acik) palet. Degerler app/globals.css @theme ile aynidir;
-    // birini degistirirken digerini de guncelle.
+    // v4 — kurumsal mavi + turuncu vurgu. Degerler app/globals.css @theme ile
+    // aynidir; birini degistirirken digerini de guncelle.
     colors: {
-      navy: "#3A2C22",
-      navy2: "#584334",
-      blue: "#C25E08",
-      blueSoft: "#FFEBD8",
-      accent: "#F79A47",
-      accent2: "#E08A2C",
-      amberSoft: "#FFF3E6",
-      emeraldSoft: "#FFF0DF",
-      bgsoft: "#FFF8F2",
-      ink: "#2E2620",
-      muted: "#6B5F57",
-      line: "#EFE3D8",
+      navy: "#0B2A4A",
+      navy2: "#14406E",
+      blue: "#0F5AA8",
+      blueSoft: "#E4EEF9",
+      accent: "#EF7F2D",
+      accent2: "#B2540A",
+      amberSoft: "#E4EEF9",
+      emeraldSoft: "#E4EEF9",
+      bgsoft: "#F5F8FC",
+      ink: "#10202F",
+      muted: "#566B7E",
+      line: "#DFE7EF",
       white: "#ffffff",
+      // Koyu zemin (navy gradyanli kartlar, footer) uzerindeki metin. Eskiden
+      // 16 dosyada elle yazilmis sabit renklerdi (#c7d6f0 vb.) ve panelden
+      // degistirilemiyordu; artik paletin parcasi.
+      onNavy: "#C3D6EA",
+      onNavyDim: "#93AECB",
       // Bolge renkleri: genel paletten bagimsiz, panelden tek tek ayarlanir.
       headerBg: "#FFFFFF",
-      headerTopBg: "#3A2C22",
-      footerBg: "#3A2C22",
-      buttonBg: "#C25E08",
+      headerTopBg: "#0B2A4A",
+      footerBg: "#0B2A4A",
+      buttonBg: "#0F5AA8",
       heroFrom: "#FFFFFF",
-      heroTo: "#FFF1E4",
+      heroTo: "#EDF3FA",
     },
     fonts: {
       hero: "3.5rem",
@@ -508,22 +513,53 @@ const PALET_GECMISI: Record<string, string>[] = [
     line: "#e2e8f0",
     bgsoft: "#f8fafc",
   },
+  // v3 — beyaz + kahve/turuncu. Bolge renkleri (headerTopBg, footerBg ...) bu
+  // surumde eklendi; v4'e gecerken onlarin da tasinabilmesi icin burada.
+  {
+    navy: "#3A2C22",
+    navy2: "#584334",
+    ink: "#2E2620",
+    accent: "#F79A47",
+    accent2: "#E08A2C",
+    blue: "#C25E08",
+    blueSoft: "#FFEBD8",
+    amberSoft: "#FFF3E6",
+    emeraldSoft: "#FFF0DF",
+    muted: "#6B5F57",
+    line: "#EFE3D8",
+    bgsoft: "#FFF8F2",
+    headerTopBg: "#3A2C22",
+    footerBg: "#3A2C22",
+    buttonBg: "#C25E08",
+    heroTo: "#FFF1E4",
+  },
 ];
 
-/** v3 — beyaz + turuncu, acik ton. app/globals.css icindeki @theme ile ayni. */
+/**
+ * v4 — KURUMSAL MAVI + TURUNCU. app/globals.css icindeki @theme ile ayni.
+ *
+ * Iki renk ailesi: derin mavi (koyu yuzeyler, baglantilar) + logonun turuncusu
+ * (yalnizca vurgu). Onceki palette birbirinden farkli UC acik ton vardi
+ * (blueSoft/amberSoft/emeraldSoft); ucu de ayni acik maviye indirildi —
+ * anahtarlar kod genelinde kullanildigi icin duruyor, degerleri ayni.
+ */
 const YENI_PALET: Record<string, string> = {
-  navy: "#3A2C22",       // sicak koyu kahve: basliklar ve koyu bolumler
-  navy2: "#584334",
-  ink: "#2E2620",
-  accent: "#F79A47",     // koyu zemin uzerinde acik turuncu
-  accent2: "#E08A2C",    // onay/dogrulama isaretleri
-  blue: "#C25E08",       // birincil turuncu; beyaz uzerinde AA (>=4.5:1)
-  blueSoft: "#FFEBD8",
-  amberSoft: "#FFF3E6",
-  emeraldSoft: "#FFF0DF",
-  muted: "#6B5F57",
-  line: "#EFE3D8",
-  bgsoft: "#FFF8F2",
+  navy: "#0B2A4A",       // derin mavi: basliklar ve koyu bolumler
+  navy2: "#14406E",      // koyu gradyanlarin ikinci ucu
+  ink: "#10202F",
+  accent: "#EF7F2D",     // logonun turuncusu — KOYU zeminde vurgu olarak
+  accent2: "#B2540A",    // onay/dogrulama isaretleri
+  blue: "#0F5AA8",       // birincil mavi; beyaz uzerinde 6.89:1 (AAA)
+  blueSoft: "#E4EEF9",
+  amberSoft: "#E4EEF9",
+  emeraldSoft: "#E4EEF9",
+  muted: "#566B7E",
+  line: "#DFE7EF",
+  bgsoft: "#F5F8FC",
+  headerTopBg: "#0B2A4A",
+  footerBg: "#0B2A4A",
+  buttonBg: "#0F5AA8",
+  heroTo: "#EDF3FA",
 };
 
 function paletiGuncelle(s: SiteSettings): SiteSettings {

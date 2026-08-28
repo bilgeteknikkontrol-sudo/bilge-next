@@ -164,7 +164,7 @@ export default function Header() {
                   <div
                     className={`absolute left-0 top-full pt-2 ${megaMenu ? "w-[680px]" : "w-[300px]"}`}
                   >
-                    <div className="rounded-2xl border border-line bg-white p-4 shadow-[0_24px_50px_-20px_rgba(15,23,42,.45)]">
+                    <div className="rounded-2xl border border-line bg-white p-4 shadow-[0_24px_50px_-20px_color-mix(in_srgb,var(--color-navy)_450%,transparent)]">
                       {megaMenu ? (
                         <>
                           <div className="grid grid-cols-2 gap-1">

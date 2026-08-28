@@ -61,11 +61,11 @@ export default function IletisimPage() {
 
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>İletişim</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">İletişim</h1>
-          <p className="mt-3 max-w-2xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-2xl text-onnavy">
             Merkez ofisimiz {KURUM.ilce} / {KURUM.il}&apos;dadır; Türkiye genelinde yerinde muayene
             hizmeti veriyoruz. Ekipman listenizi iletin, planlamayı birlikte yapalım.
           </p>

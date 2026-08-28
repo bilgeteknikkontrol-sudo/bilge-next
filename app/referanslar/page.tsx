@@ -42,11 +42,11 @@ export default function ReferanslarPage() {
 
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Referanslarımız</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Referanslarımız</h1>
-          <p className="mt-3 max-w-3xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-3xl text-onnavy">
             Üretimden lojistiğe, enerjiden inşaata kadar birçok sektörde işletmelerin periyodik
             kontrol yükümlülüklerini karşılıyoruz. Aşağıda bizimle çalışan firmalardan bazıları
             yer alıyor.
@@ -106,7 +106,7 @@ export default function ReferanslarPage() {
         <div className="container-x">
           <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-10 text-center text-white">
             <h2 className="text-2xl font-black text-white md:text-3xl">Siz de aramıza katılın</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-[#c7d6f0]">
+            <p className="mx-auto mt-3 max-w-2xl text-onnavy">
               TÜRKAK akredite ({KURUM.akreditasyon}) raporlarımızla, denetimlerde ve ihale
               süreçlerinde sorun yaşamayın. Ekipman listenizi iletin, kapsamı birlikte belirleyelim.
             </p>

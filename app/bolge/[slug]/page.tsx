@@ -55,11 +55,11 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <section className="bg-gradient-to-br from-navy to-navy2 py-12 text-white">
         <div className="mx-auto max-w-[1200px] px-5">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <Link href="/bolge" className="hover:text-white">Hizmet Bölgeleri</Link> / <span>{l.il}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">{l.il} Periyodik Kontrol Hizmeti</h1>
-          <p className="mt-2 text-[#c7d6f0]">TÜRKAK akredite (AB-0296-M)</p>
+          <p className="mt-2 text-onnavy">TÜRKAK akredite (AB-0296-M)</p>
         </div>
       </section>
 

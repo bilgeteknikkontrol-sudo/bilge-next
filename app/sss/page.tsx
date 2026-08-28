@@ -42,11 +42,11 @@ export default function SssPage() {
 
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
-          <nav className="mb-3 text-sm text-[#c7d6f0]">
+          <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Sık Sorulan Sorular</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">Sık Sorulan Sorular</h1>
-          <p className="mt-3 max-w-2xl text-[#c7d6f0]">
+          <p className="mt-3 max-w-2xl text-onnavy">
             Periyodik kontrol süreciyle ilgili en çok sorulan sorular ve kısa yanıtları.
           </p>
         </div>
