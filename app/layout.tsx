@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 // Analytics dogrudan degil, cerez onayina bagli sarmalayici uzerinden yuklenir.
 import AnalyticsOnayli from "./components/AnalyticsOnayli";
 import CerezOnay from "./components/CerezOnay";
+import WhatsappButon from "./components/WhatsappButon";
 import "./globals.css";
 import { getSettings } from "@/lib/cms";
 
@@ -121,9 +122,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           basiliyordu. Kayitli bu eski deger yok sayilir; panelden gercek bir dosya
           secilirse otomatik olarak devreye girer.
         */}
-        {settings?.favicon && settings.favicon !== "/icon.svg" && (
-          <link rel="icon" href={settings.favicon} />
-        )}
+        {settings?.favicon &&
+          !["/icon.svg", "/favicon.ico"].includes(settings.favicon) && (
+            <link rel="icon" href={settings.favicon} />
+          )}
         <style dangerouslySetInnerHTML={{ __html: `:root{${cssVars}}` }} />
       </head>
       <body style={{ fontSize: "var(--fs-body)" }}>
@@ -136,6 +138,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         {children}
+        {/* Her sayfada sag altta sabit duran WhatsApp butonu */}
+        <WhatsappButon />
         <CerezOnay />
         <AnalyticsOnayli />
       </body>

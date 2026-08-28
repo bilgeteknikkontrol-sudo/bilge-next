@@ -79,6 +79,65 @@ body {
 .card { @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[0_18px_40px_-22px_color-mix(in_srgb,var(--color-navy)_30%,transparent)]; }
 
 /* ---------------------------------------------------------------------------
+   WhatsApp butonu — sag altta sabit
+--------------------------------------------------------------------------- */
+.wa-buton {
+  position: fixed;
+  right: 1.25rem;
+  z-index: 40;                 /* cerez banner'i (z-50) ustte kalsin */
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem;
+  border-radius: 999px;
+  background: #25D366;         /* WhatsApp marka rengi — paletten bagimsiz, bilerek */
+  color: #fff;
+  font-weight: 700;
+  font-size: .9rem;
+  text-decoration: none;
+  box-shadow: 0 12px 28px -10px rgba(37, 211, 102, .55);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.wa-buton:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -10px rgba(37, 211, 102, .7); }
+.wa-buton:focus-visible { outline: 3px solid var(--color-navy); outline-offset: 3px; }
+.wa-yazi { display: none; padding-right: .35rem; }
+@media (min-width: 640px) { .wa-yazi { display: inline; } }
+
+/* ---------------------------------------------------------------------------
+   Animasyonlar
+
+   Kural: JavaScript YOK, layout hesabi YOK. Yalnizca transform/opacity —
+   bunlar bilesim (compositor) katmaninda calisir, sayfayi yavaslatmaz.
+
+   Kaydirma animasyonu `animation-timeline: view()` ile yapiliyor: tarayicinin
+   kendi kaydirma zamanlayicisi, IntersectionObserver ve scroll dinleyicisi
+   gerektirmiyor. Destekleyen tarayicida (Chrome/Edge) icerik yumusakca
+   beliriyor; DESTEKLEMEYENDE (Safari) hicbir sey olmuyor, icerik dogrudan
+   gorunur -- yani hicbir kullanici bos ekran gormuyor. Bu yuzden @supports
+   icine alindi ve varsayilan durum "gorunur".
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .beliren {
+      animation: belir linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 22%;
+    }
+  }
+  /* Kartlarin uzerine gelince hafif kalkma. transition zaten transform/opacity. */
+  .card-hover { transition: transform .22s ease, box-shadow .22s ease; }
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 50px -24px color-mix(in srgb, var(--color-navy) 45%, transparent);
+  }
+}
+
+@keyframes belir {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------------------------
    Uzun metin tipografisi (.prose)
 
    Blog gövdeleri ve ekipman sayfası gövdeleri veriden HTML olarak geliyor

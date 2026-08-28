@@ -25,7 +25,7 @@ const GRUPLAR: Grup[] = [
       { key: "headerBg", label: "Header arka planı", not: "Üst menü çubuğunun zemini" },
       { key: "headerTopBg", label: "Header üst şeridi", not: "Menünün üstündeki ince iletişim şeridi" },
       { key: "footerBg", label: "Footer arka planı", not: "Sayfa altı koyu alan" },
-      { key: "buttonBg", label: "Buton rengi", not: "“Ücretsiz Teklif Al” gibi birincil butonlar" },
+      { key: "buttonBg", label: "Buton rengi", not: "“Teklif Al” gibi birincil butonlar" },
       { key: "heroFrom", label: "Hero zemin (üst)", not: "Ana sayfa ilk bölümün gradyan başlangıcı" },
       { key: "heroTo", label: "Hero zemin (alt)", not: "Ana sayfa ilk bölümün gradyan bitişi" },
     ],
@@ -183,7 +183,7 @@ function Onizleme({ c }: { c: Record<string, string> }) {
           <span className="flex items-center gap-3 text-[.7rem]" style={{ color: c.muted }}>
             Hizmetler · Kurumsal
             <span className="rounded-full px-3 py-1.5 text-[.7rem] font-bold text-white" style={{ background: c.buttonBg }}>
-              Ücretsiz Teklif Al
+              Teklif Al
             </span>
           </span>
         </div>

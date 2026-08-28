@@ -111,6 +111,10 @@ export const KURUM = {
   standart: "TS EN ISO/IEC 17020",
   telefon: "0212 872 52 04",
   telefonE164: "+902128725204",
+  // WhatsApp hatti ayri bir numara (kullanici 2026-08-28'de verdi).
+  // wa.me bicimi: basinda + ve bosluk olmadan.
+  whatsapp: "0507 133 18 34",
+  whatsappE164: "905071331834",
   eposta: "info@bilgeteknikkontrol.com",
   adres: "Yakuplu Mah. 65. Sk. No: 35 İç Kapı No: 4",
   ilce: "Beylikdüzü",

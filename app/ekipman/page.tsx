@@ -133,7 +133,7 @@ export default async function EkipmanIndex() {
                 href="/teklif"
                 className="mt-3 block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-bold text-navy transition hover:-translate-y-0.5"
               >
-                Ücretsiz Teklif Al →
+                Teklif Al →
               </Link>
               <a href={`tel:${KURUM.telefonE164}`} className="mt-3 block text-center text-sm font-bold text-accent">
                 {KURUM.telefon}
@@ -206,7 +206,7 @@ export default async function EkipmanIndex() {
               </p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
                 <Link href="/teklif" className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">
-                  Ücretsiz Teklif Al →
+                  Teklif Al →
                 </Link>
                 <Link href="/hesapla" className="rounded-full border border-white/40 px-6 py-3 font-bold text-white transition hover:bg-white/10">
                   Süremi Hesapla

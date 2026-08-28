@@ -17,7 +17,7 @@ const KURUMSAL = [
 ];
 
 const ARACLAR = [
-  { href: "/teklif", label: "Ücretsiz Teklif Al" },
+  { href: "/teklif", label: "Teklif Al" },
   { href: "/hesapla", label: "Yasal Süre Hesaplayıcı" },
   { href: "/ekipman", label: "Tüm Hizmetlerimiz" },
   { href: "/dosya/bilge-teknik-kontrol-katalog.pdf", label: "Hizmet Kataloğu (PDF)", dis: true },
@@ -44,7 +44,7 @@ export default function Footer() {
               href="/teklif"
               className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5"
             >
-              Ücretsiz Teklif Al →
+              Teklif Al →
             </Link>
             <a
               href={`tel:${KURUM.telefonE164}`}

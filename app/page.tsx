@@ -158,7 +158,7 @@ export default async function Home() {
             </ul>
 
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/teklif" className="btn-primary px-7 py-3">Ücretsiz Teklif Al →</Link>
+              <Link href="/teklif" className="btn-primary px-7 py-3">Teklif Al →</Link>
               <Link href="/hesapla" className="btn-ghost px-7 py-3">Yasal Sürenizi Hesaplayın</Link>
             </div>
 
@@ -264,12 +264,12 @@ export default async function Home() {
             <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>Tüm İş Ekipmanınız Tek Çatı Altında</h2>
             <p className="mt-3 text-muted">TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.</p>
           </div>
-          {/* Ana sayfada en fazla 9 hizmet gosterilir; tamami /ekipman sayfasinda. */}
+          {/* Ana sayfada en fazla 6 hizmet gosterilir; tamami /ekipman sayfasinda. */}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {kategoriler.slice(0, 9).map(([kat, items]) => {
+            {kategoriler.slice(0, 6).map(([kat, items]) => {
               const g = EKIPMAN_GORSEL[items[0].slug];
               return (
-                <Link key={kat} href={`/ekipman/${items[0].slug}`} className="group card flex flex-col overflow-hidden transition hover:-translate-y-1">
+                <Link key={kat} href={`/ekipman/${items[0].slug}`} className="group card card-hover beliren flex flex-col overflow-hidden">
                   {g && (
                     <span className="relative block aspect-[16/9] overflow-hidden bg-bgsoft">
                       <Image
@@ -309,7 +309,7 @@ export default async function Home() {
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {AVANTAJLAR.map(([i, t, d]) => (
-              <div key={t} className="card p-6">
+              <div key={t} className="card card-hover beliren p-6">
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl text-blue">{i}</div>
                 <h3 className="text-lg text-navy">{t}</h3>
                 <p className="mt-1 text-sm text-muted">{d}</p>
@@ -420,7 +420,7 @@ export default async function Home() {
           </div>
           <div className="mx-auto grid max-w-[820px] gap-5 sm:grid-cols-3">
             {ekipListesi.map((u) => (
-              <div key={u.name} className="card p-6 text-center">
+              <div key={u.name} className="card card-hover beliren p-6 text-center">
                 {u.gorsel ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

@@ -18,8 +18,55 @@ export default function SertifikalarPage() {
   return <Sayfa />;
 }
 
+/**
+ * Gercek belgeler — eski PHP sitesinden alindi (sunucu yedegi 2026-08-28).
+ * TURKAK sertifikasi + 4 sayfalik akreditasyon kapsam eki.
+ *
+ * Panelden (Icerik Bloklari > Sertifika) belge eklenirse ORASI kullanilir;
+ * bu liste yalnizca panel bosken devreye giren varsayilan. Boylece belgeler
+ * her zaman gorunur ama panelden degistirilebilir kalir.
+ */
+const VARSAYILAN_BELGELER = [
+  {
+    id: "akreditasyon-sertifikasi",
+    baslik: "TÜRKAK Akreditasyon Sertifikası",
+    metin: "AB-0296-M · TS EN ISO/IEC 17020:2012 · Geçerlilik: 29.05.2028",
+    gorsel: "/img/belgeler/akreditasyon-sertifikasi.webp",
+    url: "",
+  },
+  {
+    id: "kapsam-kaldirma-iletme",
+    baslik: "Kapsam Eki 1/4 — Kaldırma ve İletme Makineleri",
+    metin: "Köprülü/portal/monoray vinç, forklift, istif makinesi, transpalet, yürüyen merdiven ve bant, yük asansörü",
+    gorsel: "/img/belgeler/kapsam-kaldirma-iletme.webp",
+    url: "",
+  },
+  {
+    id: "kapsam-kazanlar",
+    baslik: "Kapsam Eki 2/4 — Kazanlar",
+    metin: "Buhar kazanı, kalorifer/sıcak su kazanı, ütü kazanı",
+    gorsel: "/img/belgeler/kapsam-kazanlar.webp",
+    url: "",
+  },
+  {
+    id: "kapsam-yangin",
+    baslik: "Kapsam Eki 3/4 — Yangından Korunma Sistemleri",
+    metin: "Sprinkler, yangın su deposu, pompa istasyonu, hidrant, dolap, algılama-alarm, gazlı söndürme",
+    gorsel: "/img/belgeler/kapsam-yangin.webp",
+    url: "",
+  },
+  {
+    id: "kapsam-basincli-kaplar",
+    baslik: "Kapsam Eki 4/4 — Basınçlı Kaplar",
+    metin: "Basınçlı hava tankı, hidrofor/genleşme tankı, kompresör hava tankı, boyler, buhar jeneratörü",
+    gorsel: "/img/belgeler/kapsam-basincli-kaplar.webp",
+    url: "",
+  },
+];
+
 async function Sayfa() {
-  const belgeler = await bloklar("sertifika").catch(() => []);
+  const panelBelgeleri = await bloklar("sertifika").catch(() => []);
+  const belgeler = panelBelgeleri.length ? panelBelgeleri : VARSAYILAN_BELGELER;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",

@@ -226,7 +226,7 @@ export default function Header() {
             </span>
           </a>
           <Link href="/teklif" className="btn-primary hidden whitespace-nowrap px-6 py-3 text-[.92rem] md:inline-flex">
-            Ücretsiz Teklif Al
+            Teklif Al
           </Link>
           <button
             className="rounded-lg p-2 text-2xl leading-none text-navy lg:hidden"
@@ -283,7 +283,7 @@ export default function Header() {
               ✉️ {KURUM.eposta}
             </a>
             <Link href="/teklif" className="btn-primary mt-3 w-full">
-              Ücretsiz Teklif Al
+              Teklif Al
             </Link>
           </div>
         </nav>

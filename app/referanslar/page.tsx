@@ -112,7 +112,7 @@ export default function ReferanslarPage() {
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link href="/teklif" className="rounded-full bg-accent px-7 py-3.5 font-bold text-navy transition hover:-translate-y-0.5">
-                Ücretsiz Teklif Al →
+                Teklif Al →
               </Link>
               <a href={`tel:${KURUM.telefonE164}`} className="rounded-full border border-white/40 px-7 py-3.5 font-bold text-white transition hover:bg-white/10">
                 {KURUM.telefon}
