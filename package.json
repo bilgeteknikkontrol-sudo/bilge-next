@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "//build:hostinger": "Hostinger derleme sunucusunda glibc 2.28 var; Next 16'nin yerel SWC/Turbopack ikilisi glibc 2.29 istiyor ve yuklenemiyor. WASM yedegi Turbopack'i calistiramadigi icin orada webpack ile derliyoruz. Vercel'de `build` (Turbopack) aynen kaliyor.",
+    "build:hostinger": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },

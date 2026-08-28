@@ -1,6 +1,22 @@
-import type { NextConfig } from "next";
+// @ts-check
 
-const nextConfig: NextConfig = {
+/**
+ * ⚠️ Bu dosya bilerek .ts DEGIL .js.
+ *
+ * Hostinger'in derleme sunucusunda glibc 2.28 var; Next.js 16'nin yerel SWC
+ * ikilisi (@next/swc-linux-x64-gnu) glibc 2.29 istiyor. Yuklenemeyince Next
+ * WASM surumune dusuyor — ve WASM yolunda `next.config.ts` derlenemiyor:
+ *
+ *   ⨯ Failed to load next.config.ts
+ *   Error: Cannot find module '.../6a920bbf7debe.next.config'
+ *
+ * Duz JavaScript config hic derlenmeden dogrudan yuklendigi icin bu adim
+ * tamamen ortadan kalkiyor. TypeScript'e donmek, ancak Hostinger derleme
+ * imajini yeni bir glibc'ye gecirirse mumkun.
+ *
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
   // Standalone çıktısı yalnızca Docker/self-host için. Vercel kendi runtime'ını kullanır.
   output: process.env.STANDALONE === "1" ? "standalone" : undefined,
   async redirects() {
@@ -30,4 +46,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
