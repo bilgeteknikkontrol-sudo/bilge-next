@@ -111,9 +111,17 @@ export default async function BlokYonetici({
       )}
 
       {/* ---------------- Ekle / düzenle formu ---------------- */}
+      {/**
+       * ⚠️ Hic kayit yokken form ACIK geliyor.
+       *
+       * Onceden yalnizca duzenleme sirasinda aciliyordu; bos bir bolumde
+       * kullanici "Burada henüz kayıt yok" yazisini ve kapali bir
+       * "+ Yeni ekle" satirini goruyor, dosya secme alanini hic goremiyordu.
+       * Eklemenin ilk adimi gorunmez olunca bolum "calismiyor" gibi duruyordu.
+       */}
       <details
         id={tur}
-        open={Boolean(duzenlenen)}
+        open={Boolean(duzenlenen) || liste.length === 0}
         className="rounded-xl border border-slate-200 bg-slate-50 p-4"
       >
         <summary className="cursor-pointer text-sm font-bold text-navy">
