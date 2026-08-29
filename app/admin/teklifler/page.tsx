@@ -2,7 +2,7 @@ import { guard } from "@/lib/auth";
 import { tumTeklifler } from "@/lib/store";
 import { epostaAyari } from "@/lib/eposta";
 import { hataMetni } from "@/lib/hata";
-import { testEpostaAction } from "../actions";
+import { testEpostaAction, deleteTeklifAction } from "../actions";
 import { SayfaBasligi, Kart, Buton, Bilgi, BosDurum } from "../ui";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export default async function TekliflerAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ test?: string; mesaj?: string }>;
+  searchParams: Promise<{ test?: string; mesaj?: string; silindi?: string }>;
 }) {
   await guard();
   const sp = await searchParams;
@@ -50,6 +50,11 @@ export default async function TekliflerAdmin({
         onizleme="/teklif"
       />
 
+      {sp.silindi && (
+        <div className="mb-5">
+          <Bilgi>✓ Talep silindi.</Bilgi>
+        </div>
+      )}
       {sp.test === "ok" && (
         <div className="mb-5">
           <Bilgi>
@@ -145,8 +150,8 @@ export default async function TekliflerAdmin({
             <table className="w-full min-w-[720px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-slate-200 text-left">
-                  {["Tarih", "Firma", "İletişim", "Ekipman", "Referans"].map((b) => (
-                    <th key={b} className="py-2 pr-4 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  {["Tarih", "Firma", "İletişim", "Ekipman", "Referans", ""].map((b, i) => (
+                    <th key={b || i} className="py-2 pr-4 text-xs font-bold uppercase tracking-wide text-slate-500">
                       {b}
                     </th>
                   ))}
@@ -186,7 +191,16 @@ export default async function TekliflerAdmin({
                         </span>
                       )}
                     </td>
-                    <td className="py-3 font-mono text-xs text-slate-400">{t.ref}</td>
+                    <td className="py-3 pr-4 font-mono text-xs text-slate-400">{t.ref}</td>
+                    <td className="py-3 whitespace-nowrap text-right">
+                      {/* Silme onay ister: musteri talebi yanlislikla gitmesin. */}
+                      <form action={deleteTeklifAction}>
+                        <input type="hidden" name="ref" value={t.ref} />
+                        <button className="text-xs font-semibold text-red-600 hover:underline">
+                          Sil
+                        </button>
+                      </form>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -492,6 +492,22 @@ export async function saveSayfaIcerikAction(formData: FormData) {
   redirect(`/admin/sayfa/${sayfaId}?kaydedildi=1`);
 }
 
+// ---------- TEKLIF TALEPLERI ----------
+/**
+ * Gelen bir teklif talebini siler.
+ *
+ * ⚠️ Panelde silme yoktu; test kayitlarini temizlemek icin veritabaninda elle
+ * SQL calistirmak gerekiyordu. Musteri verisi iceren bir tabloda bu gereksiz
+ * bir risk (yanlis WHERE ile tum tablo silinebilir).
+ */
+export async function deleteTeklifAction(formData: FormData) {
+  await guard();
+  const { deleteTeklif } = await import("@/lib/store");
+  const ref = String(formData.get("ref") || "").trim();
+  if (ref) await deleteTeklif(ref);
+  redirect("/admin/teklifler?silindi=1");
+}
+
 // ---------- TEKLIF FORMU EK BILGI SORULARI ----------
 /**
  * Ekipmana bagli ek bilgi sorulari (m², kat sayisi, dedektor adedi...).

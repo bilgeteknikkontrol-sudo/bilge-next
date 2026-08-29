@@ -176,6 +176,24 @@ export async function saveTeklif(kayit: TeklifKayit): Promise<void> {
   await writeBlob(TEKLIF_PATH, JSON.stringify(arr));
 }
 
+/**
+ * Tek bir teklif kaydini siler.
+ *
+ * ⚠️ Panelde silme HIC YOKTU: talepler listeleniyor ama kaldirilamiyordu.
+ * Test kayitlarini temizlemek icin phpMyAdmin'e girmek gerekiyordu — yani
+ * veritabaninda elle SQL calistirmak. Musteri verisi iceren bir tabloda bu
+ * gereksiz bir risk.
+ */
+export async function deleteTeklif(ref: string): Promise<void> {
+  if (isDbOn()) {
+    await teklifSemaHazir();
+    await run(sql()`DELETE FROM teklifler WHERE ref = ${ref}`);
+    return;
+  }
+  const arr = (parseState<TeklifKayit[]>(await readBlob(TEKLIF_PATH)) || []) as TeklifKayit[];
+  await writeBlob(TEKLIF_PATH, JSON.stringify(arr.filter((t) => t.ref !== ref)));
+}
+
 export async function findTeklif(no: string): Promise<TeklifKayit | null> {
   if (isDbOn()) {
     await teklifSemaHazir();
