@@ -19,47 +19,67 @@ const MAX_AGE = 60 * 60 * 24 * 7; // 7 gün
  * gelistirme moduna dusuyor demektir; o durumda sabit bir gelistirme anahtari
  * kullanilir ama URETIMDE bu mumkun degil (asagidaki kontrol hata firlatir).
  */
-function imzaAnahtari(): string {
-  const s = process.env.ADMIN_SECRET;
+function imzaAnahtari(): string | null {
+  const s = process.env.ADMIN_SECRET?.trim();
   if (s) return s;
-  const pw = process.env.ADMIN_PASSWORD;
+  const pw = process.env.ADMIN_PASSWORD?.trim();
   if (pw) return `turetilmis:${crypto.createHash("sha256").update(pw).digest("hex")}`;
-  if (process.env.NODE_ENV === "production") {
-    throw new Error(
-      "ADMIN_SECRET veya ADMIN_PASSWORD tanimli degil — yonetici oturumu guvenle imzalanamaz."
-    );
-  }
+  if (process.env.NODE_ENV === "production") return null;
   return "yerel-gelistirme-anahtari";
 }
 
-function sign(payload: string): string {
-  return crypto.createHmac("sha256", imzaAnahtari()).update(payload).digest("base64url");
+/**
+ * Panel kurulu mu? (ADMIN_PASSWORD / ADMIN_SECRET tanimli mi)
+ *
+ * ⚠️ 2026-08-29: Hostinger'da bu degiskenlerin ikisi de yoktu ve kod hata
+ * FIRLATIYORDU. Sonuc: cerezi olan her istek 500 aliyordu, panele giris
+ * tamamen imkansizdi ve ekranda sebebi soyleyen hicbir sey yoktu — Hostinger
+ * uygulama gunlugu de tutmadigi icin teshis edilemez bir "bozuk panel"
+ * olusuyordu. Artik hata firlatilmiyor: giris yine IMKANSIZ (guvenlik ayni),
+ * ama giris ekrani neyin eksik oldugunu yaziyor.
+ */
+export function panelKurulu(): boolean {
+  return imzaAnahtari() !== null && Boolean(process.env.ADMIN_PASSWORD?.trim());
+}
+
+function sign(payload: string): string | null {
+  const anahtar = imzaAnahtari();
+  if (!anahtar) return null;
+  return crypto.createHmac("sha256", anahtar).update(payload).digest("base64url");
 }
 
 /**
  * Yonetici sifresi. Uretimde sabit varsayilan kullanilamaz: depo acik oldugu
  * icin "bilgeadmin2026" herkesin gorebilecegi bir sifre olurdu.
  */
-export function adminPassword(): string {
-  const pw = process.env.ADMIN_PASSWORD;
+export function adminPassword(): string | null {
+  const pw = process.env.ADMIN_PASSWORD?.trim();
   if (pw) return pw;
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("ADMIN_PASSWORD tanimli degil — yonetici girisi kapali.");
-  }
+  if (process.env.NODE_ENV === "production") return null;
   return "bilgeadmin2026"; // yalnizca yerel gelistirme
 }
 
+/**
+ * ⚠️ Karsilastirma once SHA-256'dan geciriliyor.
+ *
+ * Onceki hali uzunluklar farkliysa hemen `false` donuyordu; bu, denemenin ne
+ * kadar surdugune bakan birine sifrenin UZUNLUGUNU sizdirir. Ozetler her zaman
+ * 32 bayt oldugu icin `timingSafeEqual` gercekten sabit surede calisiyor ve
+ * uzunluk bilgisi disari cikmiyor.
+ */
 export function verifyPassword(pw: string): boolean {
   const a = adminPassword();
-  const b = pw || "";
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+  if (!a) return false; // panel kurulu degil -> giris yok
+  const ozet = (s: string) => crypto.createHash("sha256").update(s).digest();
+  return crypto.timingSafeEqual(ozet(a), ozet(pw || ""));
 }
 
 export async function createSession(): Promise<void> {
   const expiry = Date.now() + MAX_AGE * 1000;
   const payload = String(expiry);
-  const token = `${payload}.${sign(payload)}`;
+  const imza = sign(payload);
+  if (!imza) return; // anahtar yoksa oturum acilmaz
+  const token = `${payload}.${imza}`;
   const jar = await cookies();
   jar.set(COOKIE, token, {
     httpOnly: true,
@@ -81,7 +101,9 @@ export async function isAuthenticated(): Promise<boolean> {
   if (!token) return false;
   const [payload, sig] = token.split(".");
   if (!payload || !sig) return false;
-  if (sign(payload) !== sig) return false;
+  const beklenen = sign(payload);
+  // Anahtar yoksa dogrulanamaz -> yetkisiz say (hata firlatma; bkz. panelKurulu)
+  if (!beklenen || beklenen !== sig) return false;
   const expiry = Number(payload);
   return !Number.isNaN(expiry) && expiry > Date.now();
 }

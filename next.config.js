@@ -37,6 +37,49 @@ const nextConfig = {
   experimental: {
     cpus: 2,
   },
+
+  // Sunucu yazilimini duyurmanin faydasi yok, saldirgana ipucu vermenin zarari var.
+  poweredByHeader: false,
+
+  /**
+   * GUVENLIK BASLIKLARI
+   *
+   * ⚠️ Site Vercel'den Hostinger'a tasininca HSTS KAYBOLDU: Vercel
+   * `Strict-Transport-Security` gonderiyordu, Hostinger gondermiyor. Basliklar
+   * platforma birakildigi surece tasima her seferinde sessizce guvenlik
+   * kaybettiriyor — bu yuzden artik uygulamanin kendisi gonderiyor.
+   */
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // HTTPS'i zorunlu kil. Site zaten tam HTTPS ve HTTP -> HTTPS 301 var.
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          // Tarayici Content-Type'i "tahmin etmeye" calismasin (MIME sniffing).
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          // Siteyi baska bir sayfanin cercevesine gomup tiklama calmayi engeller.
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          // Disariya giden baglantilarda tam adres sizmasin.
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // Sitenin ihtiyaci olmayan donanim izinlerini bastan kapat.
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+      {
+        // Panel hicbir durumda onbellege alinmasin ve indekslenmesin.
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "Cache-Control", value: "no-store, must-revalidate" },
+        ],
+      },
+    ];
+  },
+
   async redirects() {
     return [
       // /portal (sahte demo verisiyle calisan rapor sorgulama sayfasi) kaldirildi.
