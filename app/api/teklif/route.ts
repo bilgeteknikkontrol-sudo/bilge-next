@@ -123,5 +123,8 @@ export async function POST(req: Request) {
     kaydedildi,
     // `hataMetni` her zaman dolu doner; kosul yalnizca "kayit basarili" halini eler.
     ...(kaydedildi ? {} : { kayitHata }),
+    // Bildirim de ayni sebeple: "gonderilemedi" bilgisi tek basina teshis
+    // ettirmiyor, sebep lazim (kimlik hatasi mi, port kapali mi, zaman asimi mi).
+    ...(bildirim.gonderildi ? {} : { bildirimHata: (bildirim.hata || "sebep bildirilmedi").slice(0, 300) }),
   });
 }
