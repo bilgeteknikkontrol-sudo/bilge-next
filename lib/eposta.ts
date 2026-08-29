@@ -29,6 +29,30 @@
 
 export type EpostaSonuc = { gonderildi: boolean; hata?: string; yol?: "smtp" | "resend" };
 
+/**
+ * SMTP ayarlarini panel kopyalama kazalarina karsi temizler.
+ *
+ * ⚠️ 2026-08-29: Hostinger'da gonderim `535 5.7.8 authentication failed` ile
+ * dusuyordu, AYNI bilgiler Vercel'de calisiyorken. Yani deger dogru, kopyasi
+ * bozuk. Bu projede tam olarak ayni sey `MYSQL_USER` degerinde de yasandi
+ * (`u238725264_ bilgekontrol1`) ve sebebi bulmak saatler aldi — bosluk gozle
+ * gorunmuyor, hata da "kimlik hatasi" diye ciktigi icin herkes sifreyi sorgular.
+ *
+ * Sunucu adi, port ve kullanici adinda bosluk ASLA gecerli degildir; tamamen
+ * kirpiliyor. Sifrede bosluk gecerli OLABILIR, o yuzden ona dokunulmuyor —
+ * yalnizca satir sonlari atiliyor: bir SMTP sifresinde satir sonu bulunamaz,
+ * varsa kesin kopyalama artigidir.
+ */
+function smtpAyar(ad: "SMTP_HOST" | "SMTP_PORT" | "SMTP_USER"): string | undefined {
+  const v = process.env[ad]?.trim();
+  return v ? v : undefined;
+}
+
+function smtpSifre(): string | undefined {
+  const v = process.env.SMTP_PASS?.replace(/[\r\n]/g, "");
+  return v ? v : undefined;
+}
+
 /** Bildirimlerin gidecegi adres. Kullanici acikca bu adresi istedi. */
 export const VARSAYILAN_ALICI = "info@bilgeteknikkontrol.com";
 
@@ -53,7 +77,10 @@ export function epostaAyari(): {
   eksik: string[];
 } {
   const smtpAlanlari = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"] as const;
-  const smtpEksik = smtpAlanlari.filter((a) => !process.env[a]);
+  // Yalnizca bosluk iceren bir deger "girilmis" sayilmamali.
+  const smtpEksik = smtpAlanlari.filter((a) =>
+    a === "SMTP_PASS" ? !smtpSifre() : !smtpAyar(a as "SMTP_HOST" | "SMTP_USER")
+  );
 
   if (smtpEksik.length === 0) {
     return { hazir: true, yol: "smtp", alici: alicilar(), eksik: [] };
@@ -97,13 +124,14 @@ export async function epostaGonder({
   if (ayar.yol === "smtp") {
     try {
       const nodemailer = (await import("nodemailer")).default;
-      const port = Number(process.env.SMTP_PORT || 465);
+      const port = Number(smtpAyar("SMTP_PORT") || 465);
+      const kullanici = smtpAyar("SMTP_USER")!;
       const tasiyici = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
+        host: smtpAyar("SMTP_HOST"),
         port,
         // 465 dogrudan TLS; 587 STARTTLS ile yukseltiliyor.
         secure: port === 465,
-        auth: { user: process.env.SMTP_USER!, pass: process.env.SMTP_PASS! },
+        auth: { user: kullanici, pass: smtpSifre()! },
         // Sunucusuz ortamda asili kalmasin.
         connectionTimeout: 10000,
         greetingTimeout: 10000,
@@ -112,7 +140,7 @@ export async function epostaGonder({
       await tasiyici.sendMail({
         // Gonderen, kimlik dogrulanan kutuyla AYNI olmali; aksi halde sunucu
         // reddeder veya e-posta spam'e duser.
-        from: `"${gonderenAdi}" <${process.env.SMTP_USER}>`,
+        from: `"${gonderenAdi}" <${kullanici}>`,
         to: alici.join(", "),
         subject: konu,
         html,
