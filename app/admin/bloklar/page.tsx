@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function BloklarAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ tur?: string; duzenle?: string }>;
+  searchParams: Promise<{ tur?: string; duzenle?: string; hata?: string }>;
 }) {
   await guard();
   const sp = await searchParams;
@@ -61,7 +61,14 @@ export default async function BloklarAdmin({
         </h2>
         <p className="mt-1 text-xs text-slate-500">{TUR_IPUCU[tur]}</p>
 
-        <form action={saveBlokAction} className="mt-4 space-y-3">
+        {sp.hata === "buyuk" && (
+          <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            <b>Görsel çok büyük.</b> En fazla 6 MB. Görseli küçültüp (tercihen WebP,
+            1600 px genişlik) tekrar deneyin. Diğer alanlar kaydedilmedi.
+          </p>
+        )}
+
+        <form action={saveBlokAction} encType="multipart/form-data" className="mt-4 space-y-3">
           <input type="hidden" name="tur" value={tur} />
           <input type="hidden" name="id" value={duzenlenen?.id || ""} />
 
@@ -95,22 +102,41 @@ export default async function BloklarAdmin({
             />
           </label>
 
-          <label className="block">
-            <span className="text-xs font-semibold text-slate-600">Görsel adresi</span>
-            <input
-              name="gorsel"
-              defaultValue={duzenlenen?.gorsel || ""}
-              placeholder="/img/ornek.webp · https://… · Medya Kütüphanesi'nden kopyalanan adres"
-              className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm"
-            />
-            <span className="mt-1 block text-xs text-slate-500">
-              Görsel yüklemek için{" "}
-              <Link href="/admin/media" className="font-semibold text-blue underline">
-                Medya Kütüphanesi
-              </Link>
-              &apos;ni kullanıp adresi buraya yapıştırın.
-            </span>
-          </label>
+          <div className="rounded-lg border border-slate-200 p-3">
+            <span className="text-xs font-semibold text-slate-600">Görsel</span>
+
+            <label className="mt-2 block">
+              <span className="mb-1 block text-xs text-slate-500">Bilgisayarınızdan seçin</span>
+              <input
+                type="file"
+                name="gorselDosya"
+                accept="image/*"
+                className="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-blue file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-white"
+              />
+              <span className="mt-1 block text-xs text-slate-400">
+                En fazla 6 MB. Tercihen WebP, 1600 px genişlik.
+                {duzenlenen?.gorsel && " Yeni dosya seçmezseniz mevcut görsel korunur."}
+              </span>
+            </label>
+
+            <details className="mt-3">
+              <summary className="cursor-pointer text-xs font-semibold text-slate-500">
+                veya adres gir (harici görsel)
+              </summary>
+              <input
+                name="gorsel"
+                defaultValue={duzenlenen?.gorsel || ""}
+                placeholder="/img/ornek.webp veya https://…"
+                className="mt-2 w-full rounded-lg border border-slate-300 p-2 text-sm"
+              />
+              <span className="mt-1 block text-xs text-slate-500">
+                <Link href="/admin/media" className="font-semibold text-blue underline">
+                  Medya Kütüphanesi
+                </Link>
+                &apos;ne yüklediğiniz bir görselin adresini de yapıştırabilirsiniz.
+              </span>
+            </details>
+          </div>
 
           {duzenlenen?.gorsel && (
             <div className="h-28 w-48 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">

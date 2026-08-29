@@ -21,12 +21,15 @@ export default async function BlokYonetici({
   aciklama,
   donusYolu,
   duzenlenenId,
+  hata,
 }: {
   tur: BlokTuru;
   baslik: string;
   aciklama: string;
   donusYolu: string;
   duzenlenenId?: string;
+  /** Sunucu eyleminden donen hata kodu (ornek: "buyuk" = dosya cok buyuk). */
+  hata?: string;
 }) {
   const liste = (await tumBloklar().catch(() => []))
     .filter((b) => b.tur === tur)
@@ -37,6 +40,13 @@ export default async function BlokYonetici({
 
   return (
     <Kart baslik={baslik} aciklama={aciklama}>
+      {hata === "buyuk" && (
+        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+          <b>Görsel çok büyük.</b> En fazla 6 MB yükleyebilirsiniz. Görseli küçültüp
+          (tercihen WebP, 1600 px genişlik) tekrar deneyin. Diğer alanlar kaydedilmedi.
+        </p>
+      )}
+
       {/* ---------------- Liste ---------------- */}
       {liste.length === 0 ? (
         <BosDurum
@@ -112,7 +122,9 @@ export default async function BlokYonetici({
 
         <p className="mt-2 text-xs leading-relaxed text-slate-500">{TUR_IPUCU[tur]}</p>
 
-        <form action={saveBlokAction} className="mt-4 space-y-3">
+        {/* encType: dosya alani var; sunucu eylemi FormData'yi coklu parca
+            olarak almali, yoksa dosya bos gelir. */}
+        <form action={saveBlokAction} encType="multipart/form-data" className="mt-4 space-y-3">
           <input type="hidden" name="tur" value={tur} />
           <input type="hidden" name="id" value={duzenlenen?.id || ""} />
           <input type="hidden" name="donus" value={donusYolu} />
@@ -147,22 +159,44 @@ export default async function BlokYonetici({
             />
           </label>
 
-          <label className="block">
+          <div className="rounded-lg border border-slate-200 bg-white p-3">
             <span className="text-sm font-semibold text-slate-700">Görsel</span>
-            <span className="mb-1 mt-0.5 block text-xs text-slate-400">
-              Önce{" "}
-              <Link href="/admin/media" className="font-semibold text-blue underline">
-                Medya
-              </Link>{" "}
-              ekranından görseli yükleyin, oradaki adresi buraya yapıştırın.
-            </span>
-            <input
-              name="gorsel"
-              defaultValue={duzenlenen?.gorsel || ""}
-              placeholder="/img/ornek.webp"
-              className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
-            />
-          </label>
+
+            <label className="mt-2 block">
+              <span className="mb-1 block text-xs text-slate-500">
+                Bilgisayarınızdan seçin
+              </span>
+              <input
+                type="file"
+                name="gorselDosya"
+                accept="image/*"
+                className="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2.5 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-blue file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-white"
+              />
+              <span className="mt-1 block text-xs text-slate-400">
+                En fazla 6 MB. Tercihen WebP, 1600 px genişlik.
+                {duzenlenen?.gorsel && " Yeni dosya seçmezseniz mevcut görsel korunur."}
+              </span>
+            </label>
+
+            <details className="mt-3">
+              <summary className="cursor-pointer text-xs font-semibold text-slate-500">
+                veya adres gir (harici görsel)
+              </summary>
+              <input
+                name="gorsel"
+                defaultValue={duzenlenen?.gorsel || ""}
+                placeholder="/img/ornek.webp veya https://…"
+                className="mt-2 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
+              />
+              <span className="mt-1 block text-xs text-slate-400">
+                Daha önce{" "}
+                <Link href="/admin/media" className="font-semibold text-blue underline">
+                  Medya
+                </Link>{" "}
+                ekranına yüklediğiniz bir görselin adresini de yapıştırabilirsiniz.
+              </span>
+            </details>
+          </div>
 
           {duzenlenen?.gorsel && (
             <div className="h-28 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white">

@@ -29,7 +29,7 @@ export default async function AdminSayfaEkrani({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ kaydedildi?: string; duzenle?: string }>;
+  searchParams: Promise<{ kaydedildi?: string; duzenle?: string; hata?: string }>;
 }) {
   await guard();
   const { id } = await params;
@@ -151,6 +151,7 @@ export default async function AdminSayfaEkrani({
                   aciklama={b.aciklama}
                   donusYolu={donusYolu}
                   duzenlenenId={sp.duzenle}
+                  hata={sp.hata}
                 />
               </div>
             );

@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
  * KURAL: her dagitimdan once `SURUM` degeri elle guncellenir. Degismediyse
  * calisan kod eskidir — panel ne yazarsa yazsin.
  */
-const SURUM = "2026-08-29-09-medya";
+const SURUM = "2026-08-30-10-blok-dosya-yukleme";
 
 export async function GET() {
   return NextResponse.json({ surum: SURUM });

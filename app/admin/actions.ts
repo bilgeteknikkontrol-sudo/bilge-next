@@ -248,41 +248,57 @@ export async function deleteContentAction(formData: FormData) {
   redirect("/admin/content");
 }
 
+/**
+ * Formdan gelen dosyayi kaydeder ve adresini doner.
+ *
+ * ⚠️ Dosya secilmemis olsa bile tarayici BOS bir File nesnesi gonderiyor;
+ * boyut kontrolu olmadan bu "data:...;base64," seklinde BOZUK bir gorsel
+ * kaydediyordu. Bu yuzden `size > 0` sart.
+ *
+ * Boyut siniri 6 MB: gorsel veritabaninda base64 olarak duruyor ve base64 ham
+ * dosyayi ~%33 buyutuyor. Sinirsiz birakilirsa tek bir telefon fotografi
+ * (8-12 MB) MySQL'in `max_allowed_packet` sinirina takilip kaydi SESSIZCE
+ * dusurur.
+ *
+ * Donus: kaydedildiyse adres (`/api/gorsel/<id>`), dosya yoksa null,
+ * cok buyukse "buyuk".
+ */
+const YUKLEME_SINIRI = 6 * 1024 * 1024;
+
+async function dosyaYukle(
+  formData: FormData,
+  alan: string,
+  ad: string,
+  alt: string
+): Promise<string | null | "buyuk"> {
+  const file = formData.get(alan);
+  if (!(file && typeof file === "object" && "arrayBuffer" in file)) return null;
+  const f = file as File;
+  if (f.size === 0) return null;
+  if (f.size > YUKLEME_SINIRI) return "buyuk";
+  const buf = Buffer.from(await f.arrayBuffer());
+  const mime = f.type || "image/png";
+  const dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
+  return await saveMedia({ name: ad || f.name || "gorsel", url: dataUrl, dataUrl, alt });
+}
+
 // ---------- MEDIA ----------
 export async function saveMediaAction(formData: FormData) {
   await guard();
   const name = String(formData.get("name") || "gorsel");
   const alt = String(formData.get("alt") || "");
   const url = String(formData.get("url") || "").trim();
-  const file = formData.get("file");
-  let dataUrl: string | null = null;
-  let finalUrl = url;
-  // ⚠️ Dosya secilmemis olsa bile tarayici BOS bir File nesnesi gonderiyor.
-  // Onceden yalnizca "arrayBuffer" in file kontrolu vardi; bu bos dosyayi da
-  // gecirip "data:...;base64," seklinde BOZUK bir gorsel kaydediyordu.
-  // Bu yuzden boyut kontrolu sart.
-  if (file && typeof file === "object" && "arrayBuffer" in file && (file as File).size > 0) {
-    const f = file as File;
-    /**
-     * ⚠️ Boyut siniri: gorsel veritabaninda base64 olarak duruyor ve base64
-     * ham dosyayi ~%33 buyutuyor. Sinirsiz birakilirsa tek bir telefon
-     * fotografi (8-12 MB) tabloyu sisirir ve MySQL'in `max_allowed_packet`
-     * sinirina takilip kayit sessizce duser. 6 MB, web'de kullanilacak bir
-     * gorsel icin fazlasiyla yeterli.
-     */
-    if (f.size > 6 * 1024 * 1024) {
-      redirect("/admin/media?hata=buyuk");
-    }
-    const buf = Buffer.from(await f.arrayBuffer());
-    const mime = f.type || "image/png";
-    dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
-    finalUrl = dataUrl;
+  const yuklenen = await dosyaYukle(formData, "file", name, alt);
+  if (yuklenen === "buyuk") redirect("/admin/media?hata=buyuk");
+  if (yuklenen) {
+    revalidatePath("/", "layout");
+    redirect("/admin/media");
   }
-  if (!finalUrl) {
-    // Ne dosya ne adres verilmis: bos kayit olusturma.
+  // Dosya yok: harici adres verilmis olmali.
+  if (!url) {
     redirect("/admin/media?hata=bos");
   }
-  await saveMedia({ name, url: finalUrl, dataUrl, alt });
+  await saveMedia({ name, url, dataUrl: null, alt });
   revalidatePath("/", "layout");
   redirect("/admin/media");
 }
@@ -302,12 +318,34 @@ export async function deleteMediaAction(formData: FormData) {
 export async function saveBlokAction(formData: FormData) {
   await guard();
   const tur = String(formData.get("tur") || "referans") as BlokTuru;
+  const baslik = String(formData.get("baslik") || "").trim();
+  const mevcutGorsel = String(formData.get("gorsel") || "").trim();
+
+  /**
+   * Gorsel DOGRUDAN bu formdan yuklenebiliyor.
+   *
+   * ⚠️ Onceden tek yol suydu: Medya ekranina git, yukle, olusan adresi kopyala,
+   * buraya don, yapistir. Dort adim ve arada pano gerekiyordu; kullanici haklı
+   * olarak "gorsel ekle deyince bilgisayardan secsin" dedi. Adres alani yine
+   * duruyor (harici adres veya mevcut gorseli koruma icin) ama artik zorunlu
+   * degil: dosya secilirse yuklenip adresi otomatik yaziliyor.
+   */
+  const yuklenen = await dosyaYukle(formData, "gorselDosya", baslik || "blok-gorsel", baslik);
+  if (yuklenen === "buyuk") {
+    // donusAdresi ikinci argumani CAPA olarak ekliyor; hata mesaji icin sorgu
+    // parametresi gerekiyor, bu yuzden adres burada elle kuruluyor.
+    const d = String(formData.get("donus") || "");
+    const geri = d.startsWith("/admin/") && !d.includes("//") ? d : `/admin/bloklar?tur=${tur}`;
+    redirect(`${geri}${geri.includes("?") ? "&" : "?"}hata=buyuk#${tur}`);
+  }
+
   const blok: Blok = {
     id: String(formData.get("id") || "") || yeniId(),
     tur: BLOK_TURLERI.includes(tur) ? tur : "referans",
-    baslik: String(formData.get("baslik") || "").trim(),
+    baslik,
     metin: String(formData.get("metin") || "").trim(),
-    gorsel: String(formData.get("gorsel") || "").trim(),
+    // Yeni dosya varsa o kazanir; yoksa alanda yazan adres korunur.
+    gorsel: yuklenen || mevcutGorsel,
     url: String(formData.get("url") || "").trim(),
     sira: num(formData.get("sira")),
     aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
