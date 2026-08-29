@@ -20,7 +20,24 @@ export default async function TekliflerAdmin({
 }) {
   await guard();
   const sp = await searchParams;
-  const kayitlar = await tumTeklifler().catch(() => []);
+
+  /**
+   * ⚠️ Okuma hatasi ARTIK YUTULMUYOR.
+   *
+   * Eskiden burada `.catch(() => [])` vardi. Sonucu 2026-08-29'da ortaya cikti:
+   * veritabaninda kayit VARDI ama bu ekran "Henuz talep yok" diyordu. Hata
+   * mesaji hicbir yere ulasmiyordu — Hostinger uygulama ciktisini gunluge
+   * yazmadigi icin sunucu tarafinda da gorunmuyordu. "Kayit yok" ile
+   * "kayitlari okuyamiyorum" ayni ekrana benziyorsa teshis imkansiz hale
+   * geliyor; ikisi artik ayri gosteriliyor.
+   */
+  let kayitlar: Awaited<ReturnType<typeof tumTeklifler>> = [];
+  let okumaHatasi = "";
+  try {
+    kayitlar = await tumTeklifler();
+  } catch (e) {
+    okumaHatasi = e instanceof Error ? e.message : String(e);
+  }
   const eposta = epostaAyari();
 
   return (
@@ -97,12 +114,29 @@ export default async function TekliflerAdmin({
         )}
       </div>
 
+      {okumaHatasi && (
+        <div className="mb-5">
+          <Bilgi tur="hata">
+            <b className="block text-base">Talepler okunamadı</b>
+            <p className="mt-1">
+              Veritabanına ulaşılamadığı için liste boş görünüyor. Kayıtlarınız duruyor olabilir —
+              bu ekranın boş olması silindikleri anlamına gelmez.
+            </p>
+            <code className="mt-2 block break-all text-xs">{okumaHatasi}</code>
+          </Bilgi>
+        </div>
+      )}
+
       {kayitlar.length === 0 ? (
-        <BosDurum
-          ikon="📭"
-          baslik="Henüz talep yok"
-          aciklama="Online teklif formundan bir istek geldiğinde burada listelenecek."
-        />
+        // Okuma hatasi varken "0 talep" yazmak yaniltici olurdu; yukaridaki
+        // kirmizi kutu zaten durumu anlatiyor.
+        okumaHatasi ? null : (
+          <BosDurum
+            ikon="📭"
+            baslik="Henüz talep yok"
+            aciklama="Online teklif formundan bir istek geldiğinde burada listelenecek."
+          />
+        )
       ) : (
         <Kart baslik={`${kayitlar.length} talep`}>
           <div className="-mx-5 overflow-x-auto px-5">

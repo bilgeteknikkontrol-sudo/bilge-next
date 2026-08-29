@@ -59,10 +59,12 @@ export async function POST(req: Request) {
    * musteriye dogru soylenir ve telefon numarasi verilir.
    */
   let kaydedildi = true;
+  let kayitHata = "";
   try {
     await saveTeklif(kayit);
   } catch (e) {
     kaydedildi = false;
+    kayitHata = (e instanceof Error ? e.message : String(e)).slice(0, 300);
     console.error("[TEKLIF] Kayit hatasi:", e);
   }
 
@@ -102,6 +104,15 @@ export async function POST(req: Request) {
     );
   }
 
+  /**
+   * `kayitHata` yalnizca kayit DUSTUGUNDE dolar.
+   *
+   * ⚠️ Gerekcesi: Hostinger uygulamanin `console.error` ciktisini gunluge
+   * yazmiyor. Kayit basarisiz oldugunda geriye sadece `kaydedildi:false`
+   * kaliyordu ve sebebi ogrenmenin HICBIR yolu yoktu. Sebep olmadan bir
+   * veritabani hatasi tahminle aranir; bu projede tam olarak bu yuzden
+   * saatler kaybedildi. Musteriye gosterilen formda bu alan kullanilmiyor.
+   */
   return NextResponse.json({
     ok: true,
     mesaj: "Talebiniz alındı.",
@@ -109,5 +120,6 @@ export async function POST(req: Request) {
     raporNo,
     bildirim: bildirim.gonderildi,
     kaydedildi,
+    ...(kayitHata ? { kayitHata } : {}),
   });
 }
