@@ -1,4 +1,4 @@
-// OTOMATIK URETILDI (yazilar dizisinin ust bolumu): scratchpad/generate-final.js.
+﻿// OTOMATIK URETILDI (yazilar dizisinin ust bolumu): scratchpad/generate-final.js.
 import { KATEGORILER, type Ekipman } from "./data";
 
 export type ArticleFaq = { q: string; a: string };
@@ -6,6 +6,14 @@ export type ArticleFaq = { q: string; a: string };
 export type Article = {
   slug: string;
   title: string;
+  /**
+   * Arama sonucunda gorunecek KISA baslik. Bos birakilirsa `title` kullanilir.
+   *
+   * ⚠️ Sayfadaki H1 uzun ve aciklayici olabilir; arama sonucundaki baslik ise
+   * 60 karakteri gecmemeli, yoksa Google kirpiyor ve baslik yarim kaliyor.
+   * Bu iki ihtiyac ayni alanla karsilanamadigi icin ayrildi.
+   */
+  seoTitle?: string;
   description: string;
   category: string;
   date: string;
@@ -30,6 +38,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrol-nedir",
     title: "Periyodik Kontrol Nedir? Hangi İş Ekipmanları İçin Zorunludur?",
+    seoTitle: "Periyodik Kontrol Nedir? Hangi Ekipmanlar Zorunlu?",
     description: "Periyodik kontrol nedir, hangi iş ekipmanları için zorunludur, yasal dayanağı nedir? 6331 sayılı Kanun kapsamında sade bir rehber.",
     category: "Mevzuat",
     date: "2026-08-19",
@@ -47,6 +56,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrol-sureleri",
     title: "Periyodik Kontrol Süreleri: Hangi Ekipman Ne Sıklıkla Kontrol Edilir?",
+    seoTitle: "Periyodik Kontrol Süreleri: Hangi Ekipman Ne Sıklıkta?",
     description: "Vinç, kompresör, forklift, elektrik tesisatı, iskele ve yangın sistemleri için ekipman bazında periyodik kontrol süreleri tablosu.",
     category: "Mevzuat",
     date: "2026-08-19",
@@ -64,6 +74,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrolu-kimler-yapabilir",
     title: "Periyodik Kontrolleri Kimler Yapabilir? Yetkili Kişi ve Rapor Geçerliliği",
+    seoTitle: "Periyodik Kontrolleri Kimler Yapabilir?",
     description: "Periyodik kontrolü kimler yapabilir, raporun geçerli olması için neler gerekir, akreditasyon neden önemlidir? Kısa ve net rehber.",
     category: "Rehber",
     date: "2026-08-19",
@@ -81,6 +92,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "vinc-periyodik-kontrol",
     title: "Vinç ve Kaldırma Ekipmanlarında Periyodik Kontrol: Yük Testi ve Süreç",
+    seoTitle: "Vinç Periyodik Kontrolü: Yük Testi ve Süreç",
     description: "Vinç periyodik kontrolünde statik ve dinamik yük testi, halat ve kanca muayenesi, limit switch kontrolü nasıl yapılır? Uygulama rehberi.",
     category: "Uygulama",
     date: "2026-08-19",
@@ -98,6 +110,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "kompresor-periyodik-kontrol",
     title: "Kompresör ve Basınçlı Kap Periyodik Kontrolü: Hidrostatik Test",
+    seoTitle: "Kompresör ve Basınçlı Kap Periyodik Kontrolü",
     description: "Kompresör ve hava tankı periyodik kontrolünde hidrostatik test, emniyet valfi ve et kalınlığı ölçümü nasıl yapılır? Rehber.",
     category: "Uygulama",
     date: "2026-08-19",
@@ -115,6 +128,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "isg-denetiminde-istenen-belgeler",
     title: "İSG Denetiminde İstenen Periyodik Kontrol Belgeleri",
+    seoTitle: "İSG Denetiminde İstenen Kontrol Belgeleri",
     description: "İş güvenliği denetiminde istenen periyodik kontrol raporları, sözleşmeler ve eğitim belgelerinin tam listesi ve hazırlık önerileri.",
     category: "Rehber",
     date: "2026-08-19",
@@ -132,6 +146,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "isg-katip-periyodik-kontrol-sozlesmesi",
     title: "İSG-KATİP Periyodik Kontrol Sözleşmesi: Kimler Yapmak Zorunda, Nasıl İmzalanır?",
+    seoTitle: "İSG-KATİP Periyodik Kontrol Sözleşmesi",
     description: "Periyodik kontrol sözleşmesi İSG-KATİP üzerinden, kontrolden en geç 1 gün önce onaylanmalı. Kapsam, EKİPNET ve sözleşmesiz kontrol.",
     category: "Mevzuat",
     date: "2026-08-20",
@@ -150,6 +165,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrol-raporu-nasil-okunur",
     title: "Periyodik Kontrol Raporu Nasıl Okunur? Uygunsuzluk Çıkarsa Ne Yapılır?",
+    seoTitle: "Periyodik Kontrol Raporu Nasıl Okunur?",
     description: "Periyodik kontrol raporunun bölümleri, uygunsuzluk seviyeleri ve düzeltme sonrası yeniden kontrol süreci nasıl işler? Rehber.",
     category: "Rehber",
     date: "2026-08-20",
@@ -167,6 +183,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrole-hazirlik",
     title: "Periyodik Kontrole Hazırlık: Kontrol Gününden Önce Yapılması Gerekenler",
+    seoTitle: "Periyodik Kontrole Hazırlık: Neler Yapılmalı?",
     description: "Periyodik kontrol öncesinde hangi belgeler hazır olmalı, ekipman nasıl hazırlanır, kontrol ne kadar sürer? Hazırlık rehberi.",
     category: "Rehber",
     date: "2026-08-20",
@@ -184,6 +201,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrolde-en-sik-cikan-uygunsuzluklar",
     title: "Periyodik Kontrolde En Sık Çıkan 10 Uygunsuzluk ve Nasıl Önlenir?",
+    seoTitle: "Periyodik Kontrolde En Sık Çıkan 10 Uygunsuzluk",
     description: "Sahada en çok karşılaştığımız 10 uygunsuzluk: köprülenmiş emniyet şalteri, sökülmüş koruyucu, kopuk topraklama ve diğerleri.",
     category: "Uygulama",
     date: "2026-08-20",
@@ -201,6 +219,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "operator-belgesi-mi-periyodik-kontrol-mu",
     title: "Operatör Belgesi mi, Periyodik Kontrol mü? İkisi Arasındaki Fark",
+    seoTitle: "Operatör Belgesi mi, Periyodik Kontrol mü?",
     description: "Forklift ve vinç operatörü belgesi periyodik kontrolün yerine geçer mi? İkisi ayrı yükümlülüktür; hangisi kişiyi, hangisi makineyi belgeler.",
     category: "Rehber",
     date: "2026-08-20",
@@ -218,6 +237,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrol-yeni-yonetmelik-2025",
     title: "Periyodik Kontrolde Yeni Dönem: 23 Aralık 2025 Yönetmelik Değişikliği Neler Getirdi?",
+    seoTitle: "23 Aralık 2025 Yönetmelik Değişikliği Neler Getirdi?",
     description: "23 Aralık 2025 / 33116 sayılı değişiklik: EKİPNET, sözleşmenin 1 gün önce onaylanması, ekipman muayene kuruluşu ve 2027 akreditasyon şartı.",
     category: "Mevzuat",
     date: "2026-08-20",
@@ -236,6 +256,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "yangin-tesisati-projesi-zorunlu-mu",
     title: "Yangın Tesisatı Projesi Zorunlu mu? Kim Hazırlar, Kim Onaylar?",
+    seoTitle: "Yangın Tesisatı Projesi Zorunlu mu?",
     description: "Yangın tesisatı projesi hangi yapılarda zorunlu, kim hazırlar, itfaiye onayı nasıl alınır? Proje ile periyodik kontrolün farkı.",
     category: "Mevzuat",
     date: "2026-08-20",
@@ -253,6 +274,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "yangin-algilama-projesi-zorunlu-mu",
     title: "Yangın Algılama Projesi Zorunlu mu? Dedektör Yerleşimi Nasıl Belirlenir?",
+    seoTitle: "Yangın Algılama Projesi Zorunlu mu?",
     description: "Yangın algılama sistemi projesi hangi binalarda gerekir, dedektör yerleşimi neye göre hesaplanır, TS EN 54 ne der? Kısa rehber.",
     category: "Mevzuat",
     date: "2026-08-20",
@@ -270,6 +292,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "havalandirma-projesi-zorunlu-mu",
     title: "Havalandırma Projesi Zorunlu mu? Hangi İşletmelerde Aranır?",
+    seoTitle: "Havalandırma Projesi Zorunlu mu?",
     description: "Havalandırma projesi hangi yapılarda gerekir, duman tahliyesi ve yangın damperi nasıl planlanır? Ölçümün projeyle karşılaştırılması.",
     category: "Mevzuat",
     date: "2026-08-20",
@@ -287,6 +310,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "elektrik-tesisat-projesi-zorunlu-mu",
     title: "Elektrik Tesisat Projesi Zorunlu mu? Kim Hazırlar, Ne Zaman Güncellenir?",
+    seoTitle: "Elektrik Tesisat Projesi Zorunlu mu?",
     description: "Elektrik iç tesisat projesi hangi durumlarda gerekir, kim hazırlar, son durum projesi nedir? Topraklama ölçümüyle ilişkisi.",
     category: "Mevzuat",
     date: "2026-08-20",
@@ -304,6 +328,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrol-yaptirmamanin-cezasi",
     title: "Periyodik Kontrol Yaptırmamanın Cezası ve Sonuçları",
+    seoTitle: "Periyodik Kontrol Yaptırmamanın Cezası",
     description: "Periyodik kontrol yaptırmayan işvereni ne bekliyor? İdari para cezası, işin durdurulması, sigorta ve rücu riski tek sayfada.",
     category: "Mevzuat",
     date: "2026-08-25",
@@ -321,6 +346,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "topraklama-direnci-kac-ohm-olmali",
     title: "Topraklama Direnci Kaç Ohm Olmalı? Tek Bir Cevabı Yok",
+    seoTitle: "Topraklama Direnci Kaç Ohm Olmalı?",
     description: "Topraklama direnci için tek bir sınır değer yoktur. Değer, şebeke tipine ve koruma cihazına göre hesaplanır. Formülüyle birlikte anlatıyoruz.",
     category: "Uygulama",
     date: "2026-08-25",
@@ -338,6 +364,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "yuk-testi-nedir",
     title: "Yük Testi Nedir? Statik ve Dinamik Test Nasıl Yapılır?",
+    seoTitle: "Yük Testi Nedir? Statik ve Dinamik Test",
     description: "Kaldırma ekipmanlarında statik ve dinamik yük testi nedir, hangi yükle yapılır, neden gözle muayene yeterli değildir? Uygulama rehberi.",
     category: "Uygulama",
     date: "2026-08-25",
@@ -355,6 +382,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "celik-halat-ne-zaman-degistirilir",
     title: "Çelik Halat Ne Zaman Değiştirilir? Kullanımdan Çıkarma Kriterleri",
+    seoTitle: "Çelik Halat Ne Zaman Değiştirilir?",
     description: "Çelik halatta kopan tel sayısı, çap incelmesi, kafes bozulması ve korozyon: halatı kullanımdan çıkarma kriterleri ve muayene yöntemi.",
     category: "Uygulama",
     date: "2026-08-25",
@@ -371,6 +399,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "hidrostatik-test-nedir",
     title: "Hidrostatik Test Nedir? Basınçlı Kaplarda Nasıl Yapılır?",
+    seoTitle: "Hidrostatik Test Nedir, Nasıl Yapılır?",
     description: "Basınçlı kaplarda hidrostatik test nedir, neden su ile yapılır, hangi basınçta uygulanır? Et kalınlığı ölçümüyle ilişkisi.",
     category: "Uygulama",
     date: "2026-08-25",
@@ -388,6 +417,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "ekipnet-nedir",
     title: "EKİPNET Nedir? Periyodik Kontrol Kayıt Sistemi",
+    seoTitle: "EKİPNET Nedir? Kontrol Kayıt Sistemi",
     description: "EKİPNET nedir, hangi kayıtlar tutulur, işvereni ve muayene kuruluşunu nasıl etkiler? 23 Aralık 2025 değişikliğiyle gelen sistem.",
     category: "Mevzuat",
     date: "2026-08-25",
@@ -404,6 +434,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "kazan-dairesi-guvenlik-sartlari",
     title: "Kazan Dairesi Güvenlik Şartları: Denetimde Nelere Bakılır?",
+    seoTitle: "Kazan Dairesi Güvenlik Şartları",
     description: "Kazan dairesinde havalandırma, gaz algılama, acil durdurma ve patlama tahliyesi nasıl olmalı? Denetimde en sık çıkan eksikler.",
     category: "Rehber",
     date: "2026-08-25",
@@ -420,6 +451,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "preslerde-is-guvenligi",
     title: "Preslerde İş Güvenliği: El Kaybını Önleyen Düzenekler",
+    seoTitle: "Preslerde İş Güvenliği ve Koruyucular",
     description: "Preslerde iki el kumanda, ışık bariyeri ve durma zamanı ölçümü nasıl çalışır? El yaralanmalarını önleyen düzenekler ve sık yapılan hatalar.",
     category: "Rehber",
     date: "2026-08-25",
@@ -437,6 +469,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "rops-fops-nedir",
     title: "ROPS ve FOPS Nedir? İş Makinelerinde Kabin Koruması",
+    seoTitle: "ROPS ve FOPS Nedir? Kabin Koruması",
     description: "İş makinelerinde ROPS devrilme, FOPS düşen cisim korumasıdır. Delik açmak neden yasak, hasarlı yapı neden onarılmaz? Kısa rehber.",
     category: "Rehber",
     date: "2026-08-25",
@@ -453,6 +486,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "yangin-pompasi-haftalik-test",
     title: "Yangın Pompası Haftalık Testi Nasıl Yapılır?",
+    seoTitle: "Yangın Pompası Haftalık Testi",
     description: "Yangın pompasının haftalık çalıştırma testi nasıl yapılır, nelere bakılır, hangi kayıtlar tutulur? İşletmeler için pratik rehber.",
     category: "Uygulama",
     date: "2026-08-25",
@@ -470,6 +504,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "periyodik-kontrol-cezasi-2026",
     title: "Periyodik Kontrol Yaptırmamanın Cezası (2026 Güncel)",
+    seoTitle: "Periyodik Kontrol Cezası (2026)",
     description:
       "6331 Sayılı İSG Kanunu ve İş Ekipmanları Yönetmeliği kapsamında periyodik kontrol yaptırmamanın idari para cezası, işin durdurulması ve hukuki riskleri.",
     category: "Mevzuat",
@@ -494,6 +529,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "iso-iec-17020-2026-yenilikleri",
     title: "ISO/IEC 17020:2026 Yenilikleri ve Muayene Kuruluşlarına Etkisi",
+    seoTitle: "ISO/IEC 17020:2026 Yenilikleri",
     description:
       "Muayene kuruluşları standardının 2026 baskısında öne çıkan değişiklikler; tarafsızlık, dijital raporlama ve kapsam yönetimi.",
     category: "Standart",
@@ -516,6 +552,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "forklift-periyodik-kontrolu",
     title: "Forklift Periyodik Kontrolü: Süre, Standart ve Yük Testi",
+    seoTitle: "Forklift Periyodik Kontrolü: Süre ve Test",
     description:
       "Forklift ve transpaletlerin periyodik kontrolünde dikkat edilmesi gerekenler; TS EN ISO 3691, yük testi ve rapor süreci.",
     category: "Kaldırma Ekipmanları",
@@ -539,6 +576,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "basincli-kap-hidrostatik-test",
     title: "Basınçlı Kap Hidrostatik Testi Nedir, Nasıl Yapılır?",
+    seoTitle: "Basınçlı Kap Hidrostatik Testi",
     description:
       "Kompresör tankı, kazan ve basınçlı kaplarda hidrostatik testin prensibi, basınç değeri ve tahribatsız muayene alternatifi.",
     category: "Basınçlı Kaplar",

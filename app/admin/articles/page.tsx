@@ -77,6 +77,14 @@ export default async function ArticlesAdmin({
               <Field label="Başlık" name="title" value={item?.title} required />
               <Field label="Kategori" name="category" value={item?.category} />
             </div>
+            {/* Arama sonucu basligi: H1 uzun ve aciklayici olabilir ama title
+                etiketi 60 karakteri gecerse Google kirpar. bkz. lib/seo-baslik.ts */}
+            <Field
+              label="Arama sonucu başlığı (boş = yukarıdaki başlık)"
+              name="seoTitle"
+              value={item?.seoTitle}
+              placeholder="En fazla 60 karakter"
+            />
             <Field label="Kısa Açıklama (SEO)" name="description" value={item?.description} textarea />
             <div className="grid grid-cols-3 gap-3">
               {!item && (

@@ -68,6 +68,8 @@ export async function saveArticleAction(formData: FormData) {
   const article: Article = {
     slug,
     title,
+    // Bos birakilirsa undefined -> arama sonucunda `title` kullanilir.
+    seoTitle: String(formData.get("seoTitle") || "").trim() || undefined,
     description: String(formData.get("description") || ""),
     category: String(formData.get("category") || "Genel"),
     date: String(formData.get("date") || new Date().toISOString().slice(0, 10)),

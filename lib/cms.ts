@@ -10,6 +10,8 @@ export { isDbOn, isMysql, sql };
 export type Article = {
   slug: string;
   title: string;
+  /** Arama sonucu basligi (bos ise `title`). bkz. lib/seo-baslik.ts */
+  seoTitle?: string;
   description: string;
   category: string;
   date: string;
@@ -109,6 +111,14 @@ function ensureSchema(): Promise<void> {
       await run(s`CREATE TABLE IF NOT EXISTS site_settings (id INT PRIMARY KEY, data JSON)`);
       await run(s`CREATE TABLE IF NOT EXISTS site_content (\`key\` VARCHAR(191) PRIMARY KEY, value LONGTEXT)`);
       await run(s`CREATE TABLE IF NOT EXISTS media (id INT AUTO_INCREMENT PRIMARY KEY, name TEXT, url LONGTEXT, data_url LONGTEXT, alt TEXT, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`);
+      /**
+       * ⚠️ MySQL'de "ADD COLUMN IF NOT EXISTS" YOK; ikinci calismada
+       * "Duplicate column name" hatasi normaldir ve yutuluyor.
+       * (Ayni desen CREATE INDEX icin de kullaniliyor.)
+       * Sutun sonradan eklendi: tablo zaten olusmus kurulumlarda CREATE TABLE
+       * bir daha calismadigi icin ALTER sart.
+       */
+      await run(s`ALTER TABLE articles ADD COLUMN seo_title TEXT`).catch(() => {});
     } else {
       await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
       await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
@@ -118,6 +128,7 @@ function ensureSchema(): Promise<void> {
       await run(s`CREATE TABLE IF NOT EXISTS site_settings (id int PRIMARY KEY, data jsonb)`);
       await run(s`CREATE TABLE IF NOT EXISTS site_content (key text PRIMARY KEY, value text)`);
       await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
+      await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS seo_title text`);
     }
     await seedIfEmpty(s);
   })().catch((e) => {
@@ -386,6 +397,7 @@ function rowToArticle(r: Record<string, unknown>): Article {
   return {
     slug: String(r.slug),
     title: String(r.title),
+    seoTitle: r.seo_title ? String(r.seo_title) : undefined,
     description: String(r.description),
     category: String(r.category),
     date: String(r.date),
@@ -529,12 +541,12 @@ async function dbSaveArticle(a: Article): Promise<void> {
   const q = sql();
   await run(
     isMysql()
-      ? q`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, \`lead\`, body, faq, aktif, sira, image)
-          VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}, ${a.aktif}, ${a.sira}, ${a.image ?? null})
-          ON DUPLICATE KEY UPDATE title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}, \`lead\`=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
-      : q`INSERT INTO articles (slug, title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image)
-          VALUES (${a.slug}, ${a.title}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null})
-          ON CONFLICT (slug) DO UPDATE SET title=${a.title}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
+      ? q`INSERT INTO articles (slug, title, seo_title, description, category, date, readmin, keywords, \`lead\`, body, faq, aktif, sira, image)
+          VALUES (${a.slug}, ${a.title}, ${a.seoTitle ?? null}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}, ${a.aktif}, ${a.sira}, ${a.image ?? null})
+          ON DUPLICATE KEY UPDATE title=${a.title}, seo_title=${a.seoTitle ?? null}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}, \`lead\`=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
+      : q`INSERT INTO articles (slug, title, seo_title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image)
+          VALUES (${a.slug}, ${a.title}, ${a.seoTitle ?? null}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null})
+          ON CONFLICT (slug) DO UPDATE SET title=${a.title}, seo_title=${a.seoTitle ?? null}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
   );
 }
 

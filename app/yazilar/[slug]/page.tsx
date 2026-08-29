@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import YaziGorseli from "../../components/YaziGorseli";
 import { getArticleBySlug, getArticles } from "@/lib/cms";
+import { seoBaslik } from "@/lib/seo-baslik";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -26,7 +27,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const a = await getArticleBySlug(slug);
   if (!a) return {};
   return {
-    title: a.title,
+    // Arama sonucu basligi: `seoTitle` doluysa o, degilse H1. Marka eki
+    // yalnizca 60 karaktere sigdiginda ekleniyor — bkz. lib/seo-baslik.ts
+    title: seoBaslik(a.seoTitle?.trim() || a.title),
     description: a.description,
     alternates: { canonical: `/yazilar/${a.slug}` },
   };
