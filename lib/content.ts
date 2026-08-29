@@ -521,33 +521,100 @@ export const ARTICLES: Article[] = [
   <li><b>Hukuki sorumluluk:</b> Bir kaza durumunda "kusur" ve tazminat yükü işverene geçer; akredite rapor yoksa sorumluluk artar.</li>
   <li><b>İhale & denetim engeli:</b> Kamu ihaleleri ve tedarikçi denetimlerinde güncel periyodik kontrol raporu istenir.</li>
 </ul>
+<h2>Ceza Tutarı Neye Göre Belirlenir?</h2>
+<p>İdari para cezaları 6331 sayılı Kanun'un 26. maddesinde düzenlenmiştir ve tutarlar <b>her yıl yeniden değerleme oranında güncellenir</b>. Bu nedenle güncel tutar için Çalışma ve Sosyal Güvenlik Bakanlığı'nın ilgili yıla ait tebliğine bakılması gerekir.</p>
+<p>Cezanın büyüklüğünü belirleyen iki unsur var:</p>
+<ul>
+  <li><b>İşyerinin tehlike sınıfı:</b> az tehlikeli, tehlikeli ve çok tehlikeli sınıflar için farklı katsayılar uygulanır.</li>
+  <li><b>Aykırılığın niteliği ve süresi:</b> bazı aykırılıklarda ceza her bir ekipman için ayrı ayrı, bazılarında ise aykırılığın devam ettiği her ay için yeniden uygulanır.</li>
+</ul>
+<p>Uygulamada en sık karşılaşılan durum, tek bir denetimde birden fazla ekipmanın kontrolsüz bulunması ve cezanın ekipman sayısıyla çarpılmasıdır. Bu yüzden "bir ekipmanı atlasak ne olur" yaklaşımı, tutar açısından yanıltıcıdır.</p>
+
+<h2>Asıl Risk Ceza Değil</h2>
+<p>Deneyimimizde işletmeler için en ağır sonuç idari para cezası olmuyor. Bir iş kazası yaşandığında, kontrolsüz ekipman doğrudan <b>kusur değerlendirmesine</b> giriyor. Periyodik kontrol raporunun bulunmaması ya da süresinin geçmiş olması, işverenin gerekli tedbiri almadığı yönünde güçlü bir gösterge sayılıyor.</p>
+<p>Bunun pratik sonuçları şunlar:</p>
+<ul>
+  <li>Tazminat davalarında kusur oranının işveren aleyhine yükselmesi</li>
+  <li>Sigorta şirketinin rücu talebiyle ödediği tutarı işverenden istemesi</li>
+  <li>Ağır sonuçlu kazalarda cezai sorumluluk değerlendirmesi</li>
+</ul>
+<p>Buna karşılık, geçerli bir periyodik kontrol raporu; işverenin ekipmanı uzman bir kuruluşa muayene ettirdiğini ve tespit edilen uygunsuzlukları takip ettiğini gösteren somut bir belgedir.</p>
+
+<h2>İşin Durdurulması</h2>
+<p>Denetimde hayati tehlike tespit edilmesi hâlinde, tehlike giderilene kadar işin durdurulmasına karar verilebilir. Bu, ceza tutarından çok daha maliyetli bir sonuçtur: üretim durur, teslimat gecikir, iş gücü boşta kalır.</p>
+<p>Periyodik kontrolde sık rastladığımız ve hayati tehlike değerlendirmesine girebilecek bulgular arasında; preslerde koruyucuların devre dışı bırakılması, vinçlerde limit switch'lerin çalışmaması, basınçlı kaplarda emniyet ventilinin körlenmesi ve elektrik panolarında topraklama eksikliği yer alıyor.</p>
+
 <h2>Cezadan Korunmanın Yolu</h2>
-<p>Basit: ekipman envanterinizi çıkarın, son kontrol tarihlerini işaretleyin ve <b>TÜRKAK akredite (AB-0296-M)</b> bir kuruluşla sözleşme yapın. <a href="/hesapla">Yasal Süre Hesaplayıcı</a> aracımızla bir sonraki zorunlu tarihi 10 saniyede bulabilirsiniz.</p>
-<blockquote>Tüyo: Rapor Portalı ile tüm raporlarınızı tek ekrandan takip edin; süre dolmadan otomatik hatırlatma alın.</blockquote>
+<p>Süreç aslında sade:</p>
+<ol>
+  <li><b>Envanter çıkarın.</b> İşyerindeki tüm iş ekipmanlarını listeleyin — kolay unutulanlar: seyyar kompresörler, el aletleri için kullanılan hava tankları, depo rafları ve yangın dolapları.</li>
+  <li><b>Son kontrol tarihlerini işaretleyin.</b> Ekipmanın üzerindeki etiket ya da önceki rapor yeterli.</li>
+  <li><b>Takvime bağlayın.</b> Süresi dolmadan önce randevu planlayın; kontrolün denetim gününe denk gelmesini beklemeyin.</li>
+  <li><b>Uygunsuzlukları kapatın.</b> Rapordaki bulgular giderilmedikçe rapor tek başına koruma sağlamaz.</li>
+</ol>
+<p>Ekipmanınızın yasal kontrol süresini
+<a href="/hesapla">süre hesaplama aracıyla</a> öğrenebilir, ekipman bazında süreleri
+<a href="/periyodik-kontrol-sureleri">süreler tablosundan</a> inceleyebilirsiniz.</p>
 `,
+    faq: [
+      { q: "Periyodik kontrol cezası ne kadar?", a: "İdari para cezaları 6331 sayılı Kanun'un 26. maddesinde düzenlenir ve her yıl yeniden değerleme oranında güncellenir. Tutar, işyerinin tehlike sınıfına ve aykırılığın niteliğine göre değişir; güncel değer için ilgili yılın Bakanlık tebliğine bakılmalıdır." },
+      { q: "Ceza her ekipman için ayrı mı uygulanır?", a: "Bazı aykırılıklarda ceza her bir ekipman için ayrı ayrı uygulanabilir. Tek denetimde birden fazla kontrolsüz ekipman bulunması, toplam tutarı belirgin şekilde yükseltir." },
+      { q: "Raporum var ama süresi geçmiş, sorun olur mu?", a: "Süresi geçmiş rapor, geçerli bir periyodik kontrol sayılmaz. Denetimde kontrolsüz ekipman muamelesi görür." },
+      { q: "Kaza olursa raporun önemi nedir?", a: "Geçerli periyodik kontrol raporu, işverenin ekipmanı uzman bir kuruluşa muayene ettirdiğini gösteren somut bir belgedir. Raporun bulunmaması veya süresinin geçmiş olması, kusur değerlendirmesinde işveren aleyhine bir unsur olarak değerlendirilir." },
+    ],
   },
   {
     slug: "iso-iec-17020-2026-yenilikleri",
     title: "ISO/IEC 17020:2026 Yenilikleri ve Muayene Kuruluşlarına Etkisi",
     seoTitle: "ISO/IEC 17020:2026 Yenilikleri",
     description:
-      "Muayene kuruluşları standardının 2026 baskısında öne çıkan değişiklikler; tarafsızlık, dijital raporlama ve kapsam yönetimi.",
+      "ISO/IEC 17020:2026 27 Mart 2026'da yayımlandı. Tip A/B/C sınıflandırması değişti, tarafsızlık ve yetkinlik şartları genişledi. TÜRKAK geçiş süreci ne durumda?",
     category: "Standart",
     date: "2026-08-15",
     readMin: 7,
-    keywords: ["ISO/IEC 17020:2026", "TÜRKAK 17020", "muayene kuruluşu standardı"],
+    keywords: ["ISO/IEC 17020:2026", "TÜRKAK 17020", "muayene kuruluşu standardı", "17020 geçiş"],
     body: `
-<h2>17020 Nedir, Neden Önemli?</h2>
-<p><b>TS EN ISO/IEC 17020</b>, muayene kuruluşlarının yeterliliğini, tarafsızlığını ve tutarlılığını belirleyen temel standarttır. TÜRKAK bu standarda göre akreditasyon verir; raporun ulusal ve uluslararası geçerliliği buna bağlıdır.</p>
-<h2>2026 Baskısında Öne Çıkanlar</h2>
+<h2>Standart Yayımlandı</h2>
+<p><b>ISO/IEC 17020:2026 — Uygunluk değerlendirmesi: Muayene yapan kuruluşlar için şartlar</b> standardı <b>27 Mart 2026</b> tarihinde yayımlandı ve 2012 baskısının yerini alacak. TÜRKAK, revizyonun yayımlandığını kendi duyurusuyla bildirdi.</p>
+<p>17020, muayene kuruluşlarının yeterliliğini, tarafsızlığını ve tutarlılığını belirleyen temel standarttır. TÜRKAK akreditasyonu bu standarda göre verilir; bir periyodik kontrol raporunun ulusal ve uluslararası geçerliliği doğrudan buna bağlıdır.</p>
+
+<h2>TÜRKAK'ın Bildirdiği Başlıca Değişiklikler</h2>
 <ul>
-  <li><b>Dijital ve uzaktan muayene:</b> Belge ve veri yönetiminde dijital iz kayıtlarına vurgu artıyor.</li>
-  <li><b>Tarafsızlık yönetimi:</b> A Tipi bağımsız kuruluş olmanın kanıtı daha sıkı denetleniyor.</li>
-  <li><b>Kapsam şeffaflığı:</b> Hangi muayene alanında akredite olunduğu açıkça raporlanmalı.</li>
+  <li><b>Tarafsızlık ve gizlilik şartları güçlendirildi</b> (Madde 4). Tarafsızlığa yönelik tehditlerin tanımlanması ve yönetilmesi daha açık biçimde şart koşuluyor.</li>
+  <li><b>Personel yetkinliği, tarafsızlığı ve gizliliğine ilişkin hükümler genişletildi</b> (Madde 6.1).</li>
+  <li><b>İtiraz (7.5) ve şikâyet (7.6) prosedürleri revize edildi.</b></li>
+  <li><b>Bağımsızlık modeli yeniden yapılandırıldı:</b> önceki <b>Tip A, Tip B, Tip C</b> sınıflandırması <b>Tip A</b> ve <b>Tip A Dışı</b> (Non-Type A) olmak üzere ikiye indirildi. Kuruluşların bağımsızlık düzeylerini ve kurumsal ilişkilerini yeniden değerlendirmesi gerekiyor.</li>
 </ul>
+<p>Uluslararası akreditasyon kuruluşlarının değerlendirmelerinde ayrıca elektronik kayıtlar, uzaktan muayene ve otomatikleştirilmiş süreçlere ilişkin veri güvenliği, bütünlük, izlenebilirlik ve yazılım doğrulama gereklilikleri ile risk temelli düşüncenin yönetim sistemine yerleştirilmesi öne çıkan başlıklar arasında sayılıyor.</p>
+
+<h2>Tip A / Tip A Dışı Ayrımı Ne Anlama Geliyor?</h2>
+<p>2012 baskısında muayene kuruluşları üç tipe ayrılıyordu. Tip A, muayene ettiği ürün veya hizmetin tarafı olmayan, tamamen bağımsız üçüncü taraf kuruluşu tanımlıyordu. Tip B kendi ana kuruluşuna hizmet veren ayrı birimleri, Tip C ise muayene ettiği ürünün tasarım veya üretiminde de yer alabilen kuruluşları kapsıyordu.</p>
+<p>Yeni baskıda ayrım <b>Tip A</b> ve <b>Tip A Dışı</b> şeklinde sadeleşiyor. Pratikte bu, bağımsızlık iddiasının daha net biçimde ortaya konmasını gerektiriyor: kuruluş ya tam bağımsız üçüncü taraftır ya da değildir.</p>
+<p>İşletmeler açısından bu ayrım önemli. Periyodik kontrol raporunun bağımsız bir üçüncü taraf tarafından düzenlenmiş olması, denetimlerde ve olası bir kaza sonrası hukuki süreçte raporun ağırlığını belirleyen unsurlardan biridir.</p>
+
+<h2>Geçiş Süreci: Şu An Ne Durumda?</h2>
+<p>Bu yazının hazırlandığı tarih itibarıyla <b>TÜRKAK henüz Türkiye için geçiş takvimini ilan etmemiştir</b>. TÜRKAK, geçiş şartlarının uluslararası akreditasyon birliği tarafından belirlenmesinin ardından kendi geçiş politikasını kamuoyuna duyuracağını bildirmiştir.</p>
+<p>Uluslararası uygulamada 17025 ve benzeri standart geçişlerinde genellikle üç yıllık bir geçiş süresi tanınmakta ve süre sonunda eski baskıya göre verilen akreditasyonlar geçerliliğini yitirmektedir. Ancak Türkiye için bağlayıcı tarihler TÜRKAK duyurusuyla netleşecektir.</p>
+<p>Bu nedenle, akreditasyon kapsamıyla ilgili kesin tarih arayan işletmelerin TÜRKAK'ın resmî duyurularını takip etmesi doğru olur.</p>
+
+<h2>İşletmeler İçin Ne Değişiyor?</h2>
+<p>Kısa vadede işletmelerin periyodik kontrol yükümlülüğünde bir değişiklik yok. Kontrol süreleri ve kapsamı 6331 sayılı İş Sağlığı ve Güvenliği Kanunu ile İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği'ne göre belirlenmeye devam ediyor.</p>
+<p>Değişen şey, hizmet aldığınız muayene kuruluşunun uyması gereken şartlar. Uygulamada işletmeler için iki nokta önem taşıyor:</p>
+<ul>
+  <li><b>Kuruluşun akreditasyon kapsamı:</b> Aldığınız hizmetin kuruluşun akredite olduğu kapsam içinde olup olmadığını raporda görebilmelisiniz.</li>
+  <li><b>Bağımsızlık:</b> Muayene kuruluşunun, kontrol ettiği ekipmanın bakımını veya satışını yapan taraflarla ilişkisinin bulunmaması.</li>
+</ul>
+
 <h2>Bilge Teknik Kontrol Açısından</h2>
-<p>Kuruluşumuz <b>AB-0296-M</b> numarasıyla akreditidir. 2026 güncellemelerine uyum için raporlama süreçlerimizi dijitalleştirdik; e-imzalı raporlarınızı <a href="/portal">Rapor Portalı</a>'ndan anında görüntüleyebilirsiniz.</p>
+<p>Kuruluşumuz <b>AB-0296-M</b> numarasıyla TÜRKAK akreditasyonuna sahip A Tipi muayene kuruluşudur. Yeni baskıya ilişkin geçiş çalışmalarımız, TÜRKAK'ın ilan edeceği geçiş takvimi ve şartları doğrultusunda yürütülecektir.</p>
+<p>Akreditasyon kapsamımız ve belgelerimiz için <a href="/sertifikalar">sertifikalar sayfamıza</a>, periyodik kontrol yükümlülükleriniz için <a href="/periyodik-kontrol-sureleri">süreler tablosuna</a> göz atabilirsiniz.</p>
 `,
+    faq: [
+      { q: "ISO/IEC 17020:2026 ne zaman yayımlandı?", a: "Standart 27 Mart 2026 tarihinde yayımlandı ve ISO/IEC 17020:2012 baskısının yerini alacak." },
+      { q: "Tip A, B, C sınıflandırması kalktı mı?", a: "TÜRKAK'ın duyurusuna göre bağımsızlık modeli yeniden yapılandırıldı; önceki Tip A, B, C ayrımı Tip A ve Tip A Dışı olmak üzere ikiye indirildi. Kuruluşların bağımsızlık düzeylerini yeniden değerlendirmesi gerekiyor." },
+      { q: "Geçiş süresi ne zaman doluyor?", a: "TÜRKAK, bu yazının hazırlandığı tarih itibarıyla Türkiye için geçiş takvimini henüz ilan etmemiştir. Geçiş şartlarının uluslararası akreditasyon birliği tarafından belirlenmesinin ardından duyuru yapılacağını bildirmiştir." },
+      { q: "Bu değişiklik işletmemin periyodik kontrol yükümlülüğünü etkiler mi?", a: "Hayır. Periyodik kontrol yükümlülüğü ve süreleri 6331 sayılı Kanun ile İş Ekipmanları Yönetmeliği'ne göre belirlenir; standart revizyonu muayene kuruluşunun uyması gereken şartları değiştirir." },
+    ],
   },
   {
     slug: "forklift-periyodik-kontrolu",
@@ -561,17 +628,61 @@ export const ARTICLES: Article[] = [
     keywords: ["forklift periyodik kontrol", "transpalet muayene", "forklift yük testi"],
     body: `
 <h2>Forklift Neden Kontrol Edilir?</h2>
-<p>Forklift, transpalet ve benzeri kaldırma ekipmanları iş kazalarının sık görüldüğü makinelerdir. <b>TS EN ISO 3691</b> kapsamında yılda 1 kez muayene edilir; fren, hidrolik, mast, yük kapasitesi ve emniyet sistemleri denetlenir.</p>
-<h2>Kontrol Adımları</h2>
+<p>Forklift, iş yerlerinde en çok kullanılan ve en çok kazaya karışan kaldırma ekipmanlarından biri. Sürekli çalışması, farklı operatörlerin kullanması ve çoğu zaman dar alanlarda manevra yapması aşınmayı hızlandırıyor. Periyodik kontrol, bu aşınmanın kaza noktasına gelmeden tespit edilmesini sağlıyor.</p>
+<p>Kontroller <b>6331 sayılı İş Sağlığı ve Güvenliği Kanunu</b> ile <b>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği</b> kapsamında yürütülür. Üretici tarafından daha kısa bir süre belirtilmemişse kontrol <b>yılda en az bir kez</b> yapılır. İlgili standart <b>TS EN ISO 3691</b>'dir.</p>
+
+<h2>Kontrolde Nelere Bakılır?</h2>
+<h3>Kaldırma sistemi</h3>
 <ul>
-  <li>Görsel muayene ve eksiklik tespiti</li>
-  <li><b>Yük testi:</b> Beyan edilen yükün en az 1,25 katı ile test</li>
-  <li>Hidrolik ve elektrik sistemi kontrolü</li>
-  <li>Operatör güvenlik ekipmanları (emiş, ikaz)</li>
+  <li>Mast kızakları, zincirler ve zincir gerginliği; zincirde uzama ölçümü</li>
+  <li>Çatalların deformasyonu, topuk aşınması ve çatlak kontrolü</li>
+  <li>Hidrolik silindirlerde kaçak, hortum ve rekorlarda çatlak</li>
+  <li>Yükün kendiliğinden alçalma miktarının ölçülmesi</li>
 </ul>
-<h2>Teklif Almak İçin</h2>
-<p>Forklift, transpalet ve diğer kaldırma ekipmanlarınızı <a href="/teklif">Online Teklif</a> formundan seçip anında ön bilgi alın.</p>
+<h3>Fren ve yürüyüş</h3>
+<ul>
+  <li>Servis freni ve el freni etkinliği</li>
+  <li>Direksiyon boşluğu, tekerlek ve jant durumu</li>
+  <li>Şanzıman ve tahrik sistemi sesleri</li>
+</ul>
+<h3>Güvenlik tertibatları</h3>
+<ul>
+  <li>Koruyucu kafes (overhead guard) ve yük siperi</li>
+  <li>Korna, geri vites sesli ikazı ve çalışma lambaları</li>
+  <li>Operatör koltuğu emniyet kemeri ve koltuk şalteri</li>
+  <li>Kapasite etiketinin okunabilir ve doğru olması</li>
+</ul>
+
+<h2>Yük Testi Nasıl Yapılır?</h2>
+<p>Yük testi, forkliftin beyan edilen kapasitesini güvenle kaldırıp taşıyabildiğini doğrular. Test, ilgili standardın öngördüğü yük değeriyle ve uygun bir alanda yapılır.</p>
+<p>Testte yük kaldırılır, belirli bir süre havada tutulur ve bu sırada hidrolik sistemde kaçak olup olmadığı, yükün kendiliğinden alçalıp alçalmadığı gözlenir. Ardından yük ile fren ve manevra davranışı değerlendirilir.</p>
+<p>Test için sahada uygun ağırlıkta bir yük ve manevra alanı bulunması gerekir. Kontrol randevusu öncesinde bunu hazırlamak süreci belirgin şekilde hızlandırır.</p>
+
+<h2>Sahada En Sık Gördüğümüz Uygunsuzluklar</h2>
+<ul>
+  <li><b>Kapasite etiketinin okunamaması veya hiç bulunmaması.</b> Operatör kaldırabileceği azami yükü bilmiyorsa güvenli kullanım mümkün değil.</li>
+  <li><b>Çatal topuğunda aşınma.</b> Belirli bir orandan fazla incelmiş çatal kullanımdan çıkarılmalıdır; gözle fark edilmesi zordur, ölçüm gerekir.</li>
+  <li><b>Zincirde uzama.</b> Uzamış zincir kopma riski taşır ve mast hareketini bozar.</li>
+  <li><b>Emniyet kemerinin kullanılmaması veya sökülmesi.</b> Devrilme kazalarında en belirleyici koruma budur.</li>
+  <li><b>Hidrolik hortumlarda kaçak.</b> Küçük bir sızıntı, yük altında ani basınç kaybına dönüşebilir.</li>
+  <li><b>Geri vites ikazının çalışmaması.</b> Yaya çarpma kazalarının önemli bir bölümü bu nedenle yaşanıyor.</li>
+</ul>
+
+<h2>Transpalet ve İstif Makineleri</h2>
+<p>Manuel ve akülü transpaletler ile yaya kumandalı istif makineleri de periyodik kontrol kapsamındadır. Bu ekipmanlarda çatal, hidrolik ünite, fren ve akülü modellerde şarj sistemi ile acil stop tertibatı değerlendirilir. Küçük görünmeleri yükümlülüğü değiştirmez.</p>
+
+<h2>Kontrol Sonrası</h2>
+<p>Kontrol tamamlandığında ekipmanın kimlik bilgilerini, uygulanan kriterleri, uygunluk durumunu, varsa uygunsuzlukları ve bir sonraki muayene tarihini içeren rapor düzenlenir. Uygunsuzlukların giderilmesi işverenin sorumluluğundadır; rapor tek başına koruma sağlamaz.</p>
+<p>Forklift, transpalet ve diğer kaldırma ekipmanlarınız için
+<a href="/teklif">online teklif formundan</a> adet girerek hızlıca fiyat alabilir,
+yasal kontrol sürenizi <a href="/hesapla">süre hesaplama aracıyla</a> öğrenebilirsiniz.</p>
 `,
+    faq: [
+      { q: "Forklift periyodik kontrolü ne sıklıkla yapılır?", a: "Üretici tarafından daha kısa bir süre belirtilmemişse yılda en az bir kez yapılır." },
+      { q: "Yük testi için ne hazırlamam gerekir?", a: "Standardın öngördüğü değerde bir test yükü ve manevra yapılabilecek uygun bir alan gerekir. Bunları önceden hazırlamak kontrolü hızlandırır." },
+      { q: "Çatal ne zaman değiştirilmeli?", a: "Çatal topuğundaki aşınma belirli bir oranı geçtiğinde ekipman kullanımdan çıkarılmalıdır. Aşınma gözle zor fark edildiği için kontrolde ölçüm yapılır." },
+      { q: "Transpalet de kontrole tabi mi?", a: "Evet. Manuel ve akülü transpaletler ile yaya kumandalı istif makineleri de periyodik kontrol kapsamındadır." },
+    ],
   },
   {
     slug: "basincli-kap-hidrostatik-test",
@@ -584,13 +695,61 @@ export const ARTICLES: Article[] = [
     readMin: 5,
     keywords: ["hidrostatik test", "basınçlı kap muayene", "kompresör tankı test"],
     body: `
-<h2>Temel Prensip</h2>
-<p>Basınçlı kaplarda temel prensip olarak <b>hidrostatik test</b> yapılır. Standartlarda aksi belirtilmediği sürece işletme basıncının <b>1,5 katı</b> ile ve bir yılı aşmayan sürelerle uygulanır.</p>
-<h2>Ne Zaman Tahribatsız Muayene?</h2>
-<p>İşletme koşulları hidrostatik teste izin vermiyorsa, standartlarda belirtilen <b>tahribatsız muayene (NDT)</b> yöntemleri uygulanabilir; raporda gerekçesi belirtilir.</p>
-<h2>Kapsam</h2>
-<p>Kompresör hava tankı, buhar/kalorifer kazanı, otoklav, hidrofor ve genleşme tankı gibi ekipmanlar <b>AB-0296-M</b> kapsamımızdadır. <a href="/teklif">Teklif alın</a>.</p>
+<h2>Hidrostatik Test Nedir?</h2>
+<p>Hidrostatik test, bir basınçlı kabın işletme basıncının üzerinde bir basınca dayanıp dayanmadığını ölçen güvenlik testidir. Kap tamamen su ile doldurulur, hava tahliye edilir ve basınç kademeli olarak yükseltilir.</p>
+<p>Test sıvı ile yapılır, hava ile değil. Bunun sebebi güvenlik: sıvılar sıkıştırılamaz olduğu için bir kopma anında biriken enerji çok düşüktür ve kap yalnızca çatlar. Aynı testi basınçlı hava ile yapmak, kabı patlayıcıya çevirir — sıkıştırılmış hava kopma anında aniden genleşir. Bu fark, hidrostatik testin neden standart yöntem olduğunun temelidir.</p>
+
+<h2>Test Basıncı Ne Kadar?</h2>
+<p>Standartlarda aksi belirtilmediği sürece test, <b>işletme basıncının 1,5 katı</b> ile yapılır. Süre bakımından ise periyodik kontroller, üretici aksini belirtmedikçe <b>bir yılı aşmayan</b> aralıklarla tekrarlanır.</p>
+<p>Basınç doğrudan hedef değere çıkarılmaz; kademeli olarak yükseltilir ve her kademede kap gözlemlenir. Hedef basınçta belirli bir süre beklenir. Bu süre boyunca basınç düşüşü, sızıntı, kalıcı deformasyon ve kaynak dikişlerinde terleme aranır.</p>
+
+<h2>Test Sırasında Nelere Bakılır?</h2>
+<ul>
+  <li><b>Basınç düşüşü:</b> Manometrede kabul edilemez bir düşüş, sızdırmazlık sorununa işaret eder.</li>
+  <li><b>Kaynak dikişleri:</b> Terleme ve damlama en sık burada görülür.</li>
+  <li><b>Kalıcı deformasyon:</b> Basınç boşaltıldıktan sonra kabın ilk hâline dönmemesi ciddi bulgudur.</li>
+  <li><b>Bağlantı ve armatürler:</b> Vana, rekor ve flanşlarda sızdırmazlık.</li>
+  <li><b>Emniyet ventili:</b> Ayar basıncı ve açma davranışı ayrıca değerlendirilir.</li>
+</ul>
+<p>Test öncesinde kabın iç ve dış yüzeyi görsel muayeneden geçirilir; korozyon, çukurcuk ve mekanik hasar kaydedilir. Ayrıca kabın imalat etiketi, tasarım basıncı ve hacim bilgileri raporlanır.</p>
+
+<h2>Hidrostatik Test Yapılamıyorsa: Tahribatsız Muayene</h2>
+<p>Bazı kaplar işletme şartları gereği su ile doldurulamaz veya devreden çıkarılamaz. Örneğin sürekli proses hattındaki bir tank, izolasyonlu bir kazan ya da suyla temas etmemesi gereken bir kimyasal deposu.</p>
+<p>Bu durumlarda standartlarda tanımlı <b>tahribatsız muayene (NDT)</b> yöntemleri uygulanabilir:</p>
+<ul>
+  <li><b>Ultrasonik muayene (UT):</b> Duvar kalınlığı ölçümü ve iç kusur tespiti. Korozyon kaynaklı incelmeyi sayısal olarak gösterir.</li>
+  <li><b>Manyetik parçacık (MT):</b> Ferromanyetik malzemede yüzey ve yüzeye yakın çatlaklar.</li>
+  <li><b>Penetrant test (PT):</b> Yüzeye açık çatlaklar; manyetik olmayan malzemelerde de kullanılabilir.</li>
+  <li><b>Görsel muayene (VT):</b> Her muayenenin temeli; dış hasar, korozyon ve deformasyon.</li>
+</ul>
+<p>Uygulanan yöntem ve <b>neden hidrostatik test yerine tercih edildiği</b> raporda açıkça belirtilir. Bu gerekçenin yazılması, denetimde raporun kabul edilebilirliği açısından önemlidir. Tahribatsız muayene, TS EN ISO 9712'ye göre eğitim almış personel tarafından yapılır.</p>
+
+<h2>Hangi Ekipmanlar Kapsamda?</h2>
+<ul>
+  <li>Kompresör hava tankları ve basınçlı hava depoları</li>
+  <li>Buhar kazanları, kalorifer kazanları, kızgın yağ ve kızgın su kazanları</li>
+  <li>Hidrofor, boyler ve genleşme tankları</li>
+  <li>Otoklav ve sterilizatörler</li>
+  <li>LPG ve sınai gaz depolama tankları</li>
+  <li>Kimyasal proses tankları ve reaktörler</li>
+</ul>
+<p><b>İlgili standartlar:</b> TS 2025, TS EN 13445-5, TS EN 286-1, TS EN 12952-6, TS EN 1012-1.</p>
+
+<h2>Test Öncesi Hazırlık</h2>
+<p>Kontrolün gecikmeden tamamlanması için sahada şunların hazır olması gerekir: kabın boşaltılmış ve devreden çıkarılmış olması, imalat etiketi ve varsa önceki raporlar, su tahliyesi için uygun bir hat, ve kabın çevresinde muayene için erişilebilir alan.</p>
+<p>En sık yaşanan gecikme, kabın kontrol günü hâlâ basınç altında ve devrede olmasıdır. Randevu planlanırken bu hazırlık için süre ayrılması gerekir.</p>
+
+<h2>Kontrol Sonrası</h2>
+<p>Test sonucunda ekipmanın kimlik bilgileri, uygulanan yöntem, ölçüm değerleri, uygunluk durumu, varsa uygunsuzluklar ve bir sonraki muayene tarihi rapora işlenir. Raporun işyerinde saklanması ve denetimlerde sunulması işverenin yükümlülüğüdür.</p>
+<p>Basınçlı kaplarınız için <a href="/teklif">online teklif formundan</a> adet girerek fiyat alabilir,
+ekipman bazında yasal süreleri <a href="/periyodik-kontrol-sureleri">süreler tablosundan</a> inceleyebilirsiniz.</p>
 `,
+    faq: [
+      { q: "Hidrostatik test kaç bar basınçla yapılır?", a: "Standartlarda aksi belirtilmediği sürece işletme basıncının 1,5 katı ile yapılır. Basınç kademeli olarak yükseltilir ve hedef değerde belirli bir süre beklenir." },
+      { q: "Neden hava yerine su kullanılıyor?", a: "Sıvılar sıkıştırılamaz olduğu için kopma anında biriken enerji çok düşüktür ve kap yalnızca çatlar. Basınçlı hava ise kopma anında aniden genleşir ve kabı patlayıcıya çevirir. Güvenlik nedeniyle test sıvı ile yapılır." },
+      { q: "Kabımı devreden çıkaramıyorum, ne yapılabilir?", a: "Standartlarda tanımlı tahribatsız muayene yöntemleri (ultrasonik, manyetik parçacık, penetrant, görsel) uygulanabilir. Uygulanan yöntem ve hidrostatik test yerine tercih edilme gerekçesi raporda belirtilir." },
+      { q: "Test öncesi ne hazırlamalıyım?", a: "Kabın boşaltılıp devreden çıkarılmış olması, imalat etiketi ve önceki raporlar, su tahliyesi için uygun bir hat ve muayene için erişilebilir alan gerekir." },
+    ],
   },
 ];
 
