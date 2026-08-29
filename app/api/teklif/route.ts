@@ -34,6 +34,28 @@ export async function POST(req: Request) {
   const ref = "BLG-" + Date.now().toString(36).toUpperCase();
   const raporNo = "AB0296-" + new Date().getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000);
 
+  /**
+   * Ek bilgi sorulari (m², kat sayisi, dedektor adedi...).
+   *
+   * ⚠️ Bunlar teklif hazirlamak icin ZORUNLU bilgiler; kaybolurlarsa musteriyi
+   * arayip tek tek sormak gerekir. Sitenin PHP surumunde bu alanlar bir yol
+   * hatasi yuzunden e-postaya HIC girmiyordu ve kimse fark etmemisti — bu
+   * yuzden burada hem kayda hem e-postaya ayri ayri isleniyor.
+   */
+  const bilgiler = Array.isArray(data.bilgiler)
+    ? (data.bilgiler as unknown[])
+        .map((b) => {
+          const o = b as Record<string, unknown>;
+          return {
+            ekipman: String(o?.ekipman ?? ""),
+            soru: String(o?.soru ?? ""),
+            cevap: String(o?.cevap ?? "").trim(),
+          };
+        })
+        .filter((b) => b.soru && b.cevap)
+        .slice(0, 60)
+    : [];
+
   const kayit = {
     ref,
     raporNo,
@@ -46,7 +68,22 @@ export async function POST(req: Request) {
     tarih,
     durum: "yeni",
     gecerli: "Kontrol sonrası belirlenecek",
-    ek: String(data.not || ""),
+    /**
+     * Ek bilgiler musterinin notuyla ayni alanda saklaniyor.
+     *
+     * Neden ayri sutun acilmadi: `teklifler` tablosuna sutun eklemek MySQL'de
+     * "IF NOT EXISTS" desteklenmedigi icin ozel gecis kodu gerektiriyor ve bu
+     * bilgi yalnizca OKUNUYOR (hicbir yerde sorgulanmiyor, ayristirilmiyor).
+     * Metin olarak saklamak hem panelde hem e-postada dogru gorunuyor.
+     */
+    ek: [
+      bilgiler.length
+        ? bilgiler.map((b) => `${b.soru} ${b.cevap}`).join("\n")
+        : "",
+      String(data.not || ""),
+    ]
+      .filter(Boolean)
+      .join("\n\n"),
   };
 
   /**
@@ -76,8 +113,9 @@ export async function POST(req: Request) {
     tel: kayit.tel,
     eposta: kayit.eposta,
     bolge: kayit.bolge,
-    not: kayit.ek,
+    not: String(data.not || ""),
     ekipmanlar: kayit.ekipmanlar,
+    bilgiler,
     tarih,
   };
 

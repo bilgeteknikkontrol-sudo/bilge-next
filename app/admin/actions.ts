@@ -490,6 +490,47 @@ export async function saveSayfaIcerikAction(formData: FormData) {
   redirect(`/admin/sayfa/${sayfaId}?kaydedildi=1`);
 }
 
+// ---------- TEKLIF FORMU EK BILGI SORULARI ----------
+/**
+ * Ekipmana bagli ek bilgi sorulari (m², kat sayisi, dedektor adedi...).
+ * Panelden yonetilebilir olmasi onemli: yeni bir soru gerektiginde kod
+ * degisikligi ve dagitim beklemek gerekmesin.
+ */
+export async function saveTeklifSoruAction(formData: FormData) {
+  await guard();
+  const { soruKaydet, yeniSoruId } = await import("@/lib/teklif-sorulari");
+  const tip = String(formData.get("tip") || "metin");
+  await soruKaydet({
+    id: String(formData.get("id") || "") || yeniSoruId(),
+    ekipmanSlug: String(formData.get("ekipmanSlug") || "").trim(),
+    etiket: String(formData.get("etiket") || "").trim(),
+    tip: tip === "sayi" ? "sayi" : "metin",
+    ornek: String(formData.get("ornek") || "").trim(),
+    sira: num(formData.get("sira")),
+    aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
+  });
+  revalidatePath("/teklif");
+  redirect("/admin/teklif-sorulari?kaydedildi=1");
+}
+
+export async function deleteTeklifSoruAction(formData: FormData) {
+  await guard();
+  const { soruSil } = await import("@/lib/teklif-sorulari");
+  const id = String(formData.get("id") || "");
+  if (id) await soruSil(id);
+  revalidatePath("/teklif");
+  redirect("/admin/teklif-sorulari");
+}
+
+export async function toggleTeklifSoruAction(formData: FormData) {
+  await guard();
+  const { soruDurumDegistir } = await import("@/lib/teklif-sorulari");
+  const id = String(formData.get("id") || "");
+  if (id) await soruDurumDegistir(id);
+  revalidatePath("/teklif");
+  redirect("/admin/teklif-sorulari");
+}
+
 // ---------- SERTIFIKALARI PANELE AKTAR ----------
 /**
  * /sertifikalar sayfasi, panelde hic belge yokken koddaki varsayilan 5 belgeyi

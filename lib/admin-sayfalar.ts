@@ -274,6 +274,14 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
       { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["teklif_baslik", "teklif_giris"] },
       {
         tip: "kayit",
+        baslik: "Ek bilgi soruları",
+        aciklama:
+          "Bazı ekipmanlara teklif verebilmek için adet yetmiyor: m², kat sayısı, dedektör adedi gibi bilgiler gerekiyor. Bu sorular müşteri o ekipmanı seçtiğinde formda beliriyor.",
+        yol: "/admin/teklif-sorulari",
+        dugme: "Soruları yönet",
+      },
+      {
+        tip: "kayit",
         baslik: "Gelen teklif talepleri",
         aciklama: "Formdan gelen talepler burada listelenir.",
         yol: "/admin/teklifler",

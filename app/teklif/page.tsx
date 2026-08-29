@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TeklifForm from "../components/TeklifForm";
 import { metinleriOku } from "@/lib/sayfa-metin";
+import { sorularHaritasi } from "@/lib/teklif-sorulari";
 
 export const metadata: Metadata = {
   title: "Online Teklif & Randevu",
@@ -13,6 +14,9 @@ export const metadata: Metadata = {
 
 export default async function TeklifPage() {
   const m = await metinleriOku();
+  // Ekipmana bagli ek bilgi sorulari panelden yonetiliyor; forma prop olarak
+  // geciyor ki istemci bileseni veritabanina dokunmasin.
+  const sorular = await sorularHaritasi().catch(() => ({}));
   return (
     <>
       <Header />
@@ -23,7 +27,7 @@ export default async function TeklifPage() {
             <h1 className="mt-4 text-3xl font-black text-navy md:text-4xl">{m("teklif_baslik")}</h1>
             <p className="mt-3 text-muted">{m("teklif_giris")}</p>
           </div>
-          <TeklifForm />
+          <TeklifForm sorular={sorular} />
         </div>
       </section>
       <Footer />

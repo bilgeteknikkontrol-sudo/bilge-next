@@ -197,6 +197,8 @@ export type TeklifEposta = {
   bolge: string;
   not: string;
   ekipmanlar: string[];
+  /** Ekipmana bagli ek bilgi sorulari ve cevaplari (m², kat, dedektor...) */
+  bilgiler?: { ekipman: string; soru: string; cevap: string }[];
   tarih: string;
 };
 
@@ -279,6 +281,26 @@ export function teklifEpostaHtml(t: TeklifEposta): string {
     </td></tr>
 
     ${
+      (t.bilgiler || []).length
+        ? `<tr><td style="padding:22px 24px 4px;">
+             <div style="font:700 12px/1 Arial,Helvetica,sans-serif;color:#566b7e;letter-spacing:1px;text-transform:uppercase;">Teklif için verilen bilgiler</div>
+           </td></tr>
+           <tr><td style="padding:8px 8px 0;">
+             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e6ecf3;border-radius:10px;border-collapse:separate;overflow:hidden;">
+               ${(t.bilgiler || [])
+                 .map(
+                   (b) => `<tr>
+                     <td style="padding:9px 16px;border-bottom:1px solid #eef3f8;font:600 13px/1.4 Arial,Helvetica,sans-serif;color:#5a6b7c;width:58%;">${esc(b.soru)}<div style="font:400 11px Arial;color:#93a3b3;">${esc(b.ekipman)}</div></td>
+                     <td style="padding:9px 16px;border-bottom:1px solid #eef3f8;font:700 15px/1.4 Arial,Helvetica,sans-serif;color:#0b2a4a;">${esc(b.cevap)}</td>
+                   </tr>`
+                 )
+                 .join("")}
+             </table>
+           </td></tr>`
+        : ""
+    }
+
+    ${
       t.not
         ? `<tr><td style="padding:22px 24px 4px;">
              <div style="font:700 12px/1 Arial,Helvetica,sans-serif;color:#566b7e;letter-spacing:1px;text-transform:uppercase;">Müşteri notu</div>
@@ -318,6 +340,9 @@ export function teklifEpostaMetin(t: TeklifEposta): string {
     "",
     `Ekipmanlar (${t.ekipmanlar.length}):`,
     ...t.ekipmanlar.map((e) => `  - ${e}`),
+    ...((t.bilgiler || []).length
+      ? ["", "Teklif için verilen bilgiler:", ...(t.bilgiler || []).map((b) => `  - ${b.soru} ${b.cevap}   (${b.ekipman})`)]
+      : []),
     ...(t.not ? ["", `Not: ${t.not}`] : []),
   ].join("\n");
 }

@@ -1,12 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
+import type { TeklifSoru } from "@/lib/teklif-sorulari";
 
-export default function TeklifForm() {
-  const [selected, setSelected] = useState<string[]>([]);
+/**
+ * Secilen ekipman: adiyla birlikte ADET tutuluyor.
+ *
+ * ⚠️ Onceki hali yalnizca isim listesi (string[]) idi; musteri "3 forklift"
+ * diyemiyordu, teklif hazirlamak icin geri donup sormak gerekiyordu. Sitenin
+ * PHP surumunde adet kutusu VARDI, tasima sirasinda kayboldu.
+ */
+type Secim = { slug: string; ad: string; adet: number };
+
+export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, TeklifSoru[]> }) {
+  const [secimler, setSecimler] = useState<Record<string, Secim>>({});
+  const [cevaplar, setCevaplar] = useState<Record<string, string>>({});
+  const [arama, setArama] = useState("");
   // "sent" artik referans numarasini da tasiyor; musteri elinde bir takip
   // numarasiyla ayrilsin diye.
   const [sent, setSent] = useState<{ referans: string } | null>(null);
@@ -36,19 +48,75 @@ export default function TeklifForm() {
       "",
       `Ekipmanlar (${(p.ekipmanlar as string[]).length}):`,
       ...(p.ekipmanlar as string[]).map((e) => `- ${e}`),
+      ...(((p.bilgiler as { soru: string; cevap: string }[]) || []).length
+        ? ["", "Ek bilgiler:", ...((p.bilgiler as { soru: string; cevap: string }[]) || []).map((b) => `- ${b.soru} ${b.cevap}`)]
+        : []),
     ];
     if (p.not) satirlar.push("", `Not: ${p.not}`);
     return satirlar.join("\n");
   }
 
-  function toggle(ad: string) {
-    setSelected((s) => (s.includes(ad) ? s.filter((x) => x !== ad) : [...s, ad]));
+  const secilenler = useMemo(() => Object.values(secimler), [secimler]);
+
+  /** Secili ekipmanlarin tetikledigi sorular (tekrarsiz, ekipman sirasiyla). */
+  const acikSorular = useMemo(() => {
+    const cikti: { ekipman: string; soru: TeklifSoru }[] = [];
+    for (const s of secilenler) {
+      for (const q of sorular[s.slug] || []) cikti.push({ ekipman: s.ad, soru: q });
+    }
+    return cikti;
+  }, [secilenler, sorular]);
+
+  /**
+   * Arama kutusu: 92 ekipman 8 akordiyona dagilmis durumda. Eski formda arama
+   * yoktu ve dogru satiri bulmak icin gruplari tek tek acmak gerekiyordu.
+   */
+  const suzulmus = useMemo(() => {
+    const q = arama.trim().toLocaleLowerCase("tr");
+    if (!q) return KATEGORILER.map((k) => ({ kat: k, ekipmanlar: k.ekipmanlar }));
+    return KATEGORILER.map((k) => ({
+      kat: k,
+      ekipmanlar: k.ekipmanlar.filter((e) => e.ad.toLocaleLowerCase("tr").includes(q)),
+    })).filter((k) => k.ekipmanlar.length > 0);
+  }, [arama]);
+
+  function toggle(slug: string, ad: string) {
+    setSecimler((s) => {
+      const y = { ...s };
+      if (y[slug]) delete y[slug];
+      else y[slug] = { slug, ad, adet: 1 };
+      return y;
+    });
+  }
+
+  /** Adet kutusu: 0 veya bos yazmak secimi KALDIRIR (eski formun mantigi). */
+  function adetDegistir(slug: string, ad: string, ham: string) {
+    const n = Math.max(0, Math.floor(Number(ham) || 0));
+    setSecimler((s) => {
+      const y = { ...s };
+      if (n <= 0) delete y[slug];
+      else y[slug] = { slug, ad, adet: n };
+      return y;
+    });
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (selected.length === 0) return alert("Lütfen en az bir ekipman seçin.");
+    if (secilenler.length === 0) {
+      setHata("Lütfen en az bir ekipman seçin.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     const fd = new FormData(e.currentTarget);
+    /**
+     * Ekipmanlar metin olarak gonderiliyor: "Forklift Periyodik Kontrolü × 3".
+     *
+     * ⚠️ Bu metin HICBIR YERDE geri ayristirilmiyor; yalnizca gosterim icin.
+     * Sitenin PHP surumunde "(3 adet)" soneki bir regex ile geri sokulup
+     * cikariliyordu ve o regex ekipman adinin KENDI icindeki parantezden
+     * eslesip 18 ekipmanin adini kesiyordu. Adet ayrica `bilgiler` icinde de
+     * yapisal olarak duruyor.
+     */
     const payload = {
       firma: fd.get("firma"),
       ad: fd.get("ad"),
@@ -56,7 +124,14 @@ export default function TeklifForm() {
       eposta: fd.get("eposta"),
       bolge: fd.get("bolge"),
       not: fd.get("not"),
-      ekipmanlar: selected,
+      ekipmanlar: secilenler.map((s) => (s.adet > 1 ? `${s.ad} × ${s.adet}` : s.ad)),
+      bilgiler: acikSorular
+        .map(({ ekipman, soru }) => ({
+          ekipman,
+          soru: soru.etiket,
+          cevap: (cevaplar[soru.id] || "").trim(),
+        }))
+        .filter((b) => b.cevap !== ""),
     };
     setBusy(true);
     setHata(null);
@@ -87,35 +162,113 @@ export default function TeklifForm() {
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
       <div>
-        <h3 className="mb-3 mt-0 text-xl font-bold text-navy">1) Ekipmanları seçin</h3>
+        <h3 className="mb-3 mt-0 text-xl font-bold text-navy">1) Ekipmanları ve adetlerini girin</h3>
+
+        <input
+          type="search"
+          value={arama}
+          onChange={(ev) => setArama(ev.target.value)}
+          placeholder="Ekipman ara — örn. forklift, kazan, raf…"
+          aria-label="Ekipman ara"
+          className="mb-3 w-full rounded-lg border border-line px-3.5 py-2.5 text-sm focus:border-blue focus:ring-4 focus:ring-blue-soft"
+        />
+
         <div className="space-y-3">
-          {KATEGORILER.map((kat) => (
-            <details key={kat.baslik} className="group overflow-hidden rounded-xl border border-line">
-              <summary className="flex cursor-pointer list-none items-center justify-between bg-bgsoft px-4 py-3 font-bold text-navy">
-                <span>{kat.ikon} {kat.baslik}</span>
-                <span className="text-blue transition group-open:rotate-90">›</span>
-              </summary>
-              <div className="px-3 pb-3">
-                {kat.ekipmanlar.map((e) => (
-                  <label
-                    key={e.ad}
-                    className="flex items-center gap-3 border-b border-line py-2 last:border-0"
-                  >
-                    <input
-                      type="checkbox"
-                      className="h-[18px] w-[18px] accent-blue"
-                      checked={selected.includes(e.ad)}
-                      onChange={() => toggle(e.ad)}
-                    />
-                    <span className="flex-1 text-[.96rem]">
-                      {e.ad}{" "}
-                      <span className="text-[.8rem] text-muted">· {e.standart}</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </details>
-          ))}
+          {suzulmus.map(({ kat, ekipmanlar }) => {
+            const katSecim = ekipmanlar.filter((e) => secimler[e.slug]).length;
+            return (
+              <details
+                key={kat.baslik}
+                // Arama yapilirken gruplar acik gelsin; yoksa sonuclar gizli kalir.
+                open={Boolean(arama) || katSecim > 0}
+                className="group overflow-hidden rounded-xl border border-line"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between bg-bgsoft px-4 py-3 font-bold text-navy">
+                  <span>
+                    {kat.ikon} {kat.baslik}
+                    {katSecim > 0 && (
+                      <span className="ml-2 rounded-full bg-blue px-2 py-0.5 text-xs font-bold text-white">
+                        {katSecim}
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-blue transition group-open:rotate-90">›</span>
+                </summary>
+                <div className="px-3 pb-3">
+                  {ekipmanlar.map((e) => {
+                    const secili = Boolean(secimler[e.slug]);
+                    return (
+                      <div key={e.slug} className="border-b border-line py-2 last:border-0">
+                        <div className="flex items-center gap-3">
+                          <input
+                            id={`eq-${e.slug}`}
+                            type="checkbox"
+                            className="h-[18px] w-[18px] shrink-0 accent-blue"
+                            checked={secili}
+                            onChange={() => toggle(e.slug, e.ad)}
+                          />
+                          <label htmlFor={`eq-${e.slug}`} className="flex-1 cursor-pointer text-[.96rem]">
+                            {e.ad} <span className="text-[.8rem] text-muted">· {e.standart}</span>
+                          </label>
+                          {/* Adet kutusu yalnizca secilince cikiyor: 92 satirin
+                              hepsinde bos kutu gostermek formu okunmaz yapiyordu. */}
+                          {secili && (
+                            <span className="flex shrink-0 items-center gap-1.5">
+                              <input
+                                type="number"
+                                min={1}
+                                inputMode="numeric"
+                                aria-label={`${e.ad} adedi`}
+                                value={secimler[e.slug].adet}
+                                onChange={(ev) => adetDegistir(e.slug, e.ad, ev.target.value)}
+                                className="w-16 rounded-lg border border-line px-2 py-1.5 text-center text-sm focus:border-blue focus:ring-2 focus:ring-blue-soft"
+                              />
+                              <span className="text-xs text-muted">adet</span>
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Ekipmana ozel ek bilgi sorulari — yalnizca o ekipman
+                            secilince ve tam yaninda cikiyor. */}
+                        {secili && (sorular[e.slug] || []).length > 0 && (
+                          <div className="mt-2 space-y-2 rounded-lg border border-blue/20 bg-blue-soft/40 p-3">
+                            <p className="text-xs font-bold text-navy">
+                              Teklif için gerekli bilgiler
+                            </p>
+                            {(sorular[e.slug] || []).map((q) => (
+                              <label key={q.id} className="block">
+                                <span className="mb-1 block text-xs font-semibold text-navy">
+                                  {q.etiket}
+                                </span>
+                                <input
+                                  type={q.tip === "sayi" ? "number" : "text"}
+                                  min={q.tip === "sayi" ? 0 : undefined}
+                                  inputMode={q.tip === "sayi" ? "numeric" : undefined}
+                                  placeholder={q.ornek}
+                                  value={cevaplar[q.id] || ""}
+                                  onChange={(ev) =>
+                                    setCevaplar((c) => ({ ...c, [q.id]: ev.target.value }))
+                                  }
+                                  className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:border-blue focus:ring-2 focus:ring-blue-soft"
+                                />
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </details>
+            );
+          })}
+
+          {suzulmus.length === 0 && (
+            <p className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-muted">
+              &quot;{arama}&quot; için ekipman bulunamadı. Aramayı kısaltmayı deneyin ya da
+              aşağıdaki <b>Ek not</b> alanına yazın.
+            </p>
+          )}
         </div>
       </div>
 
@@ -147,16 +300,55 @@ export default function TeklifForm() {
             <textarea name="not" rows={3} placeholder="Ekipman adedi, aciliyet vb." className="w-full rounded-lg border border-line px-3.5 py-3 focus:border-blue focus:ring-4 focus:ring-blue-soft" />
           </div>
 
+          {/* Canli ozet: musteri gondermeden once tam olarak ne ilettigini
+              gorsun. Eksik kalan bilgi sorusu varsa burada uyariliyor. */}
           <div className="col-span-2 rounded-xl border border-dashed border-blue bg-bgsoft p-4">
-            <strong className="text-navy">Seçilen ekipman ({selected.length}):</strong>
-            {selected.length ? (
-              <ul className="mt-2 flex flex-wrap gap-2">
-                {selected.map((s) => (
-                  <li key={s} className="rounded-full border border-line bg-white px-3 py-1.5 text-sm">
-                    {s}
-                  </li>
-                ))}
-              </ul>
+            <strong className="text-navy">
+              Seçilen ekipman ({secilenler.length})
+              {secilenler.length > 0 && (
+                <span className="font-normal text-muted">
+                  {" "}
+                  · toplam {secilenler.reduce((n, s) => n + s.adet, 0)} adet
+                </span>
+              )}
+            </strong>
+            {secilenler.length ? (
+              <>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {secilenler.map((s) => (
+                    <li
+                      key={s.slug}
+                      className="rounded-full border border-line bg-white px-3 py-1.5 text-sm"
+                    >
+                      {s.ad}
+                      {s.adet > 1 && <b className="ml-1 text-blue">× {s.adet}</b>}
+                    </li>
+                  ))}
+                </ul>
+
+                {acikSorular.length > 0 && (
+                  <div className="mt-3 border-t border-line pt-3">
+                    <span className="text-sm font-bold text-navy">Ek bilgiler</span>
+                    <ul className="mt-1 space-y-0.5 text-sm">
+                      {acikSorular.map(({ soru }) => {
+                        const c = (cevaplar[soru.id] || "").trim();
+                        return (
+                          <li key={soru.id} className={c ? "text-navy" : "text-muted"}>
+                            {soru.etiket}{" "}
+                            {c ? <b>{c}</b> : <i className="text-amber-700">— boş</i>}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    {acikSorular.some(({ soru }) => !(cevaplar[soru.id] || "").trim()) && (
+                      <p className="mt-2 text-xs leading-relaxed text-amber-800">
+                        Boş bırakılan alanlar olmadan da gönderebilirsiniz; ancak bu bilgiler
+                        teklif için gerekli olduğundan sizi arayıp sormamız gerekir.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </>
             ) : (
               <p className="mt-1 text-sm text-muted">Henüz ekipman seçmediniz.</p>
             )}
