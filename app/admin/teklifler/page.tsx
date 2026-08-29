@@ -1,6 +1,7 @@
 import { guard } from "@/lib/auth";
 import { tumTeklifler } from "@/lib/store";
 import { epostaAyari } from "@/lib/eposta";
+import { hataMetni } from "@/lib/hata";
 import { testEpostaAction } from "../actions";
 import { SayfaBasligi, Kart, Buton, Bilgi, BosDurum } from "../ui";
 
@@ -36,7 +37,8 @@ export default async function TekliflerAdmin({
   try {
     kayitlar = await tumTeklifler();
   } catch (e) {
-    okumaHatasi = e instanceof Error ? e.message : String(e);
+    // Bos `message` alanina guvenilmez — bkz. lib/hata.ts
+    okumaHatasi = hataMetni(e);
   }
   const eposta = epostaAyari();
 

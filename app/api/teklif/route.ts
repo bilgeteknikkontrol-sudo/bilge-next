@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { saveTeklif } from "@/lib/store";
 import { epostaGonder, teklifEpostaHtml, teklifEpostaMetin } from "@/lib/eposta";
+import { hataMetni } from "@/lib/hata";
 
 /**
  * Online teklif formunun alicisi.
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
     await saveTeklif(kayit);
   } catch (e) {
     kaydedildi = false;
-    kayitHata = (e instanceof Error ? e.message : String(e)).slice(0, 300);
+    kayitHata = hataMetni(e);
     console.error("[TEKLIF] Kayit hatasi:", e);
   }
 
@@ -120,6 +121,7 @@ export async function POST(req: Request) {
     raporNo,
     bildirim: bildirim.gonderildi,
     kaydedildi,
-    ...(kayitHata ? { kayitHata } : {}),
+    // `hataMetni` her zaman dolu doner; kosul yalnizca "kayit basarili" halini eler.
+    ...(kaydedildi ? {} : { kayitHata }),
   });
 }
