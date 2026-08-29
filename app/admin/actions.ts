@@ -262,8 +262,19 @@ export async function saveMediaAction(formData: FormData) {
   // gecirip "data:...;base64," seklinde BOZUK bir gorsel kaydediyordu.
   // Bu yuzden boyut kontrolu sart.
   if (file && typeof file === "object" && "arrayBuffer" in file && (file as File).size > 0) {
-    const buf = Buffer.from(await (file as File).arrayBuffer());
-    const mime = (file as File).type || "image/png";
+    const f = file as File;
+    /**
+     * ⚠️ Boyut siniri: gorsel veritabaninda base64 olarak duruyor ve base64
+     * ham dosyayi ~%33 buyutuyor. Sinirsiz birakilirsa tek bir telefon
+     * fotografi (8-12 MB) tabloyu sisirir ve MySQL'in `max_allowed_packet`
+     * sinirina takilip kayit sessizce duser. 6 MB, web'de kullanilacak bir
+     * gorsel icin fazlasiyla yeterli.
+     */
+    if (f.size > 6 * 1024 * 1024) {
+      redirect("/admin/media?hata=buyuk");
+    }
+    const buf = Buffer.from(await f.arrayBuffer());
+    const mime = f.type || "image/png";
     dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
     finalUrl = dataUrl;
   }

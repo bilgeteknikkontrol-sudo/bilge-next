@@ -436,16 +436,44 @@ async function dbGetAllContent(): Promise<{ key: string; value: string }[]> {
   return rows.map((r) => ({ key: String(r.key), value: String(r.value) }));
 }
 
+/**
+ * ⚠️ `data_url` BILEREK secilmiyor.
+ *
+ * Onceden `SELECT *` yapiliyordu; yuklenen her gorselin base64 govdesi CMS
+ * durumuna giriyor ve durum HER okundugunda (her sunucu ornegi, en gec 5
+ * dakikada bir, ayrica her derlemede 46 sayfa icin) veritabanindan bastan
+ * cekiliyordu. Birkac fotograf bunu megabaytlarca gereksiz aktarima cevirir.
+ * Gorselin kendisi artik /api/gorsel/<id> ile, yalnizca istendiginde ve tek
+ * satir okunarak servis ediliyor.
+ */
 async function dbGetMedia(): Promise<MediaItem[]> {
-  const rows = await run(sql()`SELECT * FROM media ORDER BY created DESC`);
+  const rows = await run(sql()`SELECT id, name, url, alt, created FROM media ORDER BY created DESC`);
   return rows.map((r) => ({
     id: Number(r.id),
     name: String(r.name),
     url: String(r.url ?? ""),
-    dataUrl: r.data_url ? String(r.data_url) : null,
+    dataUrl: null,
     alt: String(r.alt ?? ""),
     created: String(r.created),
   }));
+}
+
+/**
+ * Tek bir gorselin ham govdesi. Yalnizca /api/gorsel/<id> kullanir.
+ * Liste sorgusu bu sutunu hic okumadigi icin buyuk veri sayfa uretimine
+ * hic girmiyor.
+ */
+export async function getMediaBytes(
+  id: number
+): Promise<{ mime: string; bytes: Buffer } | null> {
+  if (!isDbOn()) return null;
+  await ensureSchema();
+  const rows = await run(sql()`SELECT data_url FROM media WHERE id = ${id} LIMIT 1`);
+  const ham = rows.length ? String(rows[0].data_url ?? "") : "";
+  // `s` (dotAll) bayragi projenin TS hedefinde yok; [\s\S] ayni isi goruyor.
+  const m = /^data:([^;,]+);base64,([\s\S]*)$/.exec(ham);
+  if (!m) return null;
+  return { mime: m[1], bytes: Buffer.from(m[2], "base64") };
 }
 
 async function dbPersist(st: CmsState): Promise<void> {
@@ -455,7 +483,17 @@ async function dbPersist(st: CmsState): Promise<void> {
   for (const a of st.articles) await dbSaveArticle(a);
   await dbSaveSettings(st.settings);
   for (const c of st.content) await dbSetContent(c.key, c.value);
-  for (const m of st.media) await dbSaveMedia(m);
+  /**
+   * ⚠️ MEDYA BURADA YAZILMIYOR — ve bu bir eksik degil, bir HATA DUZELTMESI.
+   *
+   * Onceden burada `for (const m of st.media) await dbSaveMedia(m)` vardi.
+   * `dbSaveMedia` duz bir INSERT ve `media.id` AUTO_INCREMENT; yani upsert
+   * degil. `setState` panelde YAPILAN HER KAYITTA cagrildigi icin (ekipman,
+   * yazi, ayar, blok...) tum medya tablosu her seferinde bastan ekleniyordu:
+   * 3 gorsel varken bir ayar kaydetmek 3 kopya daha yaratiyordu ve tablo
+   * katlanarak buyuyordu. Medyanin kendi ekleme/silme yolu var (saveMedia /
+   * deleteMedia), toplu yazmada isi yok.
+   */
 }
 
 async function dbSaveEquipment(e: Equipment): Promise<void> {
@@ -520,9 +558,25 @@ async function dbSetContent(key: string, value: string): Promise<void> {
   );
 }
 
-async function dbSaveMedia(m: Omit<MediaItem, "id" | "created">): Promise<void> {
+/**
+ * Medyayi ekler ve olusan id'yi doner.
+ *
+ * ⚠️ MySQL'de `LAST_INSERT_ID()` KULLANILMIYOR: o deger BAGLANTIYA ozeldir,
+ * havuzdan (connectionLimit 2) sonraki sorgu baska bir baglantiya dusebilir ve
+ * yanlis/sifir id doner. Bunun yerine en buyuk id okunuyor.
+ */
+async function dbSaveMedia(m: Omit<MediaItem, "id" | "created">): Promise<number> {
   await ensureSchema();
-  await run(sql()`INSERT INTO media (name, url, data_url, alt) VALUES (${m.name}, ${m.url}, ${m.dataUrl ?? null}, ${m.alt})`);
+  const s = sql();
+  if (isMysql()) {
+    await run(s`INSERT INTO media (name, url, data_url, alt) VALUES (${m.name}, ${m.url}, ${m.dataUrl ?? null}, ${m.alt})`);
+    const r = await run(s`SELECT id FROM media ORDER BY id DESC LIMIT 1`);
+    return r.length ? Number(r[0].id) : 0;
+  }
+  const r = await run(
+    s`INSERT INTO media (name, url, data_url, alt) VALUES (${m.name}, ${m.url}, ${m.dataUrl ?? null}, ${m.alt}) RETURNING id`
+  );
+  return r.length ? Number(r[0].id) : 0;
 }
 
 // ---------------- PUBLIC API (backend-agnostic) ----------------
@@ -742,14 +796,41 @@ export async function getMedia(): Promise<MediaItem[]> {
   return (await getState()).media;
 }
 
-export async function saveMedia(m: Omit<MediaItem, "id" | "created">): Promise<void> {
+/**
+ * Gorseli kaydeder ve sayfalarda kullanilacak ADRESI doner.
+ *
+ * ⚠️ Dosya yuklendiginde adres artik base64 "data:" dizesi DEGIL,
+ * `/api/gorsel/<id>`. Onceki davranista panel, kopyalanacak adres olarak
+ * gorselin base64 govdesini veriyordu; o dize bloklara yapistiginda gorsel
+ * HER sayfa isteginde HTML'in icinde iniyordu — tarayici ayrica onbellege
+ * alamiyor, HTML ~1.3 kat sisiyordu. Gercek bir adres uzerinden servis
+ * edildiginde gorsel bir kez inip onbellekte kaliyor.
+ *
+ * Disaridan bir adres (https://...) verildiyse ona dokunulmuyor.
+ */
+export async function saveMedia(m: Omit<MediaItem, "id" | "created">): Promise<string> {
+  if (isDbOn()) {
+    const id = await dbSaveMedia(m);
+    if (m.dataUrl && id) {
+      const adres = `/api/gorsel/${id}`;
+      await run(sql()`UPDATE media SET url = ${adres} WHERE id = ${id}`);
+      return adres;
+    }
+    return m.url;
+  }
   const s = await getState();
   const id = s.media.reduce((mx, x) => Math.max(mx, x.id), 0) + 1;
   s.media.push({ ...m, id, created: new Date().toISOString() });
   await setState(s);
+  return m.url;
 }
 
 export async function deleteMedia(id: number): Promise<void> {
+  if (isDbOn()) {
+    await ensureSchema();
+    await run(sql()`DELETE FROM media WHERE id = ${id}`);
+    return;
+  }
   const s = await getState();
   s.media = s.media.filter((x) => x.id !== id);
   await setState(s);
