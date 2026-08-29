@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getLocationBySlug, getLocations } from "@/lib/cms";
+import { BOLGE_ICERIK } from "@/lib/bolge-icerik";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -53,6 +54,11 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
 
   const diger = (await getLocations()).filter((x) => x.slug !== l.slug).slice(0, 6);
   const ad = bolgeAdi(l);
+  /**
+   * Bolgeye ozgu zengin icerik. Yoksa sayfa eski (kisa) haliyle calismaya
+   * devam eder — panelden yeni bir bolge eklendiginde sayfa kirilmasin.
+   */
+  const zengin = BOLGE_ICERIK[l.slug];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -79,11 +85,31 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
     ],
   };
 
+  /**
+   * FAQPage schema — yalnizca sayfada GORUNEN sorularla birebir ayni.
+   * Google, yapisal veride gecen sorunun sayfada da gorunur olmasini sart
+   * kosuyor; gorunmeyen soru eklemek yaptirim sebebi.
+   */
+  const faqLd = zengin?.faq.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: zengin.faq.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null;
+
   return (
     <>
       <Header />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
       <section className="bg-gradient-to-br from-navy to-navy2 py-12 text-white">
         <div className="mx-auto max-w-[1200px] px-5">
           <nav className="mb-3 text-sm text-onnavy">
@@ -97,8 +123,13 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
       <section className="py-12">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 lg:grid-cols-[1.5fr_1fr]">
           <div>
-            <p className="text-muted">{l.intro || l.description}</p>
-            <p className="mt-3 text-muted">{ad} ve çevresinde; iş ekipmanlarınız için yerinde periyodik kontrol ve akredite rapor hizmeti sunuyoruz.</p>
+            <p className="text-muted">{zengin?.lead || l.intro || l.description}</p>
+            {!zengin && (
+              <p className="mt-3 text-muted">
+                {ad} ve çevresinde; iş ekipmanlarınız için yerinde periyodik kontrol ve akredite
+                rapor hizmeti sunuyoruz.
+              </p>
+            )}
 
             <h2 className="mt-7 text-xl font-bold text-navy">Hizmet Verdiğimiz Alanlar</h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -113,6 +144,36 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
               <li>Sanayi ve üretim tesislerine özel planlama</li>
               <li>İSG-KATİP uyumlu, e-imzalı raporlar</li>
             </ul>
+
+            {/* Bolgeye ozgu govde: her sehir icin farkli yazildi. Sekiz sayfaya
+                ayni paragrafi kopyalamak ince icerigi yinelenen icerige cevirirdi. */}
+            {zengin && (
+              <div className="prose mt-8" dangerouslySetInnerHTML={{ __html: zengin.bodyHtml }} />
+            )}
+
+            {zengin && zengin.faq.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-xl font-bold text-navy">
+                  {ad} için sık sorulan sorular
+                </h2>
+                <div className="mt-3 space-y-2">
+                  {zengin.faq.map((f) => (
+                    <details
+                      key={f.q}
+                      className="group rounded-xl border border-line bg-white px-4 py-3"
+                    >
+                      <summary className="cursor-pointer list-none font-semibold text-navy">
+                        {f.q}
+                        <span className="float-right text-blue transition group-open:rotate-45">
+                          +
+                        </span>
+                      </summary>
+                      <p className="mt-2 leading-relaxed text-muted">{f.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/teklif" className="rounded-full bg-blue px-6 py-3 font-bold text-white transition hover:-translate-y-0.5">{ad} için Teklif Al</Link>

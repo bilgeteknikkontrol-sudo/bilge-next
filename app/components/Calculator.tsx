@@ -41,6 +41,8 @@ export default function Calculator() {
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
       <div className="rounded-card border border-line bg-white p-6 shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-navy)_25%,transparent)]">
+        {/* H2: sayfa H1'den dogrudan H3'e atliyordu, ara baslik yoktu. */}
+        <h2 className="mb-4 mt-0 text-xl font-bold text-navy">Ekipmanınızın kontrol süresini hesaplayın</h2>
         <label className="mb-1.5 block text-sm font-semibold">Ekipman *</label>
         <select
           value={ad}

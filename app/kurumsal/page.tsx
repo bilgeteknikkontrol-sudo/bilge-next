@@ -9,7 +9,8 @@ import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "Kurumsal — Hakkımızda",
-  description: `${KURUM.kisaAd}, TÜRKAK akredite (${KURUM.akreditasyon}) A Tipi muayene kuruluşudur. ${KURUM.kurulus}'ten bu yana iş ekipmanlarının periyodik kontrolünde bağımsız ve tarafsız raporlar üretiyoruz.`,
+  // 160 karakter siniri: arama sonucunda kirpilmasin.
+  description: `${KURUM.kisaAd}, TÜRKAK akredite (${KURUM.akreditasyon}) A Tipi muayene kuruluşu. ${KURUM.kurulus}'ten bu yana bağımsız ve tarafsız periyodik kontrol raporları.`,
   alternates: { canonical: "/kurumsal" },
 };
 

@@ -162,7 +162,9 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
       <div>
-        <h3 className="mb-3 mt-0 text-xl font-bold text-navy">1) Ekipmanları ve adetlerini girin</h3>
+        {/* H2: sayfada baslik hiyerarsisi H1'den H3'e atliyordu; arama motoru
+            icin ara basligin bulunmasi sayfanin konusunu netlestiriyor. */}
+        <h2 className="mb-3 mt-0 text-xl font-bold text-navy">1) Ekipmanları ve adetlerini girin</h2>
 
         <input
           type="search"
@@ -273,7 +275,7 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
       </div>
 
       <div>
-        <h3 className="mb-3 mt-0 text-xl font-bold text-navy">2) İletişim bilgileri</h3>
+        <h2 className="mb-3 mt-0 text-xl font-bold text-navy">2) İletişim bilgileri</h2>
         <form onSubmit={onSubmit} className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="mb-1.5 block text-sm font-semibold">Firma adı *</label>

@@ -8,7 +8,9 @@ import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
   title: "İletişim",
-  description: `${KURUM.kisaAd} iletişim: ${ADRES_TEK_SATIR}. Telefon ${KURUM.telefon}, e-posta ${KURUM.eposta}. TÜRKAK akredite (${KURUM.akreditasyon}) muayene kuruluşu.`,
+  // ⚠️ 160 karakteri asmiyor: adresin tamami sigmadigi icin ilce/il yeterli.
+  // Uzun aciklama arama sonucunda kirpilip yarim cumleyle bitiyordu.
+  description: `${KURUM.kisaAd} iletişim: Beylikdüzü / İstanbul. Telefon ${KURUM.telefon}. TÜRKAK akredite (${KURUM.akreditasyon}) A Tipi muayene kuruluşu.`,
   alternates: { canonical: "/iletisim" },
 };
 

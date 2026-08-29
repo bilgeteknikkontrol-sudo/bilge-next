@@ -28,7 +28,8 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Periyodik Kontrol Hizmetlerimiz",
   description:
-    "Basınçlı kaplar, kaldırma ekipmanları, iş makineleri, elektrik ve yangın tesisatı dâhil tüm periyodik kontrol hizmetlerimiz. TÜRKAK akredite (AB-0296-M) muayene kuruluşu.",
+    // 160 karakter siniri.
+    "Basınçlı kaplar, kaldırma ekipmanları, iş makineleri, elektrik ve yangın tesisatı dâhil periyodik kontrol hizmetlerimiz. TÜRKAK akredite (AB-0296-M).",
   alternates: { canonical: "/ekipman" },
 };
 
