@@ -3,7 +3,7 @@ import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { BOLGELER, KURUM } from "@/lib/site-data";
-import { LOCATIONS } from "@/lib/content";
+import { getLocations } from "@/lib/cms";
 import { metinleriOku } from "@/lib/sayfa-metin";
 
 export const metadata: Metadata = {
@@ -16,8 +16,20 @@ export const metadata: Metadata = {
 export default async function BolgeIndex() {
   const m = await metinleriOku();
   const toplamIl = BOLGELER.reduce((n, b) => n + b.iller.length, 0);
-  // Ayri sayfasi olan sehirler icin il adi -> slug eslemesi
-  const sayfaliIl = new Map(LOCATIONS.filter((l) => !l.ilce).map((l) => [l.il, l.slug]));
+  /**
+   * Ayri sayfasi olan sehirler icin il adi -> slug eslemesi.
+   *
+   * ⚠️ Kaynak `getLocations()` (CMS), koddaki sabit LOCATIONS degil. Onceden
+   * dogrudan LOCATIONS okunuyordu; panelden yeni bir bolge eklendiginde
+   * `/bolge/<slug>` sayfasi olusuyor ama BU listede baglantisi cikmiyordu —
+   * sayfa yalnizca sitemap uzerinden erisilebilir kaliyordu.
+   *
+   * Ilceler disarida: bu liste il bazli, ilcelerin kendi sayfalarina il
+   * kartindan degil komsu bolge sayfalarindaki listeden gidiliyor.
+   */
+  const sayfaliIl = new Map(
+    (await getLocations()).filter((l) => !l.ilce).map((l) => [l.il, l.slug])
+  );
 
   const breadcrumbLd = {
     "@context": "https://schema.org",

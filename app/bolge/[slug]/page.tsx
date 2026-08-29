@@ -20,13 +20,28 @@ import { getLocationBySlug, getLocations } from "@/lib/cms";
  */
 export const revalidate = 300;
 
+/**
+ * Sayfanin kendi adi: ilce varsa ILCE, yoksa il.
+ *
+ * ⚠️ Onceden her yerde `l.il` yaziliyordu ve `ilce` alani hic kullanilmiyordu.
+ * Sonuc: Beylikduzu sayfasi kendini bastan asagi "Istanbul" diye tanitiyordu —
+ * baslik, H1, breadcrumb, JSON-LD, buton metni. `/bolge/istanbul` ile
+ * `/bolge/beylikduzu` AYNI title'a sahipti (144 sayfa icindeki tek kopya
+ * basliktil). Google icin bu iki sayfa birbirinin kopyasi gorunuyordu ve
+ * "Beylikduzu periyodik kontrol" aramasinda sayfanin hicbir sinyali yoktu.
+ */
+function bolgeAdi(l: { il: string; ilce?: string }): string {
+  return l.ilce || l.il;
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const l = await getLocationBySlug(slug);
   if (!l) return {};
+  const ad = bolgeAdi(l);
   return {
-    title: `${l.il} Periyodik Kontrol Hizmeti`,
-    description: `${l.il} bölgesinde periyodik teknik kontrol, muayene ve TÜRKAK akredite rapor hizmeti. ${l.description}`,
+    title: `${ad} Periyodik Kontrol Hizmeti`,
+    description: `${ad} bölgesinde periyodik teknik kontrol, muayene ve TÜRKAK akredite rapor hizmeti. ${l.description}`,
     alternates: { canonical: `/bolge/${l.slug}` },
   };
 }
@@ -37,12 +52,15 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
   if (!l) notFound();
 
   const diger = (await getLocations()).filter((x) => x.slug !== l.slug).slice(0, 6);
+  const ad = bolgeAdi(l);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: `${l.il} Periyodik Kontrol Hizmeti`,
-    areaServed: l.il,
+    name: `${ad} Periyodik Kontrol Hizmeti`,
+    // Ilce sayfalarinda hizmet alani ilcedir; ili de belirtmek arama motoruna
+    // "bu ilce su ilin icinde" bilgisini verir.
+    areaServed: l.ilce ? { "@type": "Place", name: l.ilce, containedInPlace: { "@type": "City", name: l.il } } : l.il,
     provider: {
       "@type": "ProfessionalService",
       name: "Bilge Teknik Kontrol",
@@ -57,7 +75,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://bilgekontrol.com/" },
       { "@type": "ListItem", position: 2, name: "Hizmet Bölgeleri", item: "https://bilgekontrol.com/bolge" },
-      { "@type": "ListItem", position: 3, name: l.il, item: `https://bilgekontrol.com/bolge/${l.slug}` },
+      { "@type": "ListItem", position: 3, name: ad, item: `https://bilgekontrol.com/bolge/${l.slug}` },
     ],
   };
 
@@ -69,9 +87,9 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
       <section className="bg-gradient-to-br from-navy to-navy2 py-12 text-white">
         <div className="mx-auto max-w-[1200px] px-5">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <Link href="/bolge" className="hover:text-white">Hizmet Bölgeleri</Link> / <span>{l.il}</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <Link href="/bolge" className="hover:text-white">Hizmet Bölgeleri</Link> / <span>{ad}</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">{l.il} Periyodik Kontrol Hizmeti</h1>
+          <h1 className="text-3xl font-black md:text-4xl">{ad} Periyodik Kontrol Hizmeti</h1>
           <p className="mt-2 text-onnavy">TÜRKAK akredite (AB-0296-M)</p>
         </div>
       </section>
@@ -80,7 +98,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 lg:grid-cols-[1.5fr_1fr]">
           <div>
             <p className="text-muted">{l.intro || l.description}</p>
-            <p className="mt-3 text-muted">{l.il} ve çevresinde; iş ekipmanlarınız için yerinde periyodik kontrol ve akredite rapor hizmeti sunuyoruz.</p>
+            <p className="mt-3 text-muted">{ad} ve çevresinde; iş ekipmanlarınız için yerinde periyodik kontrol ve akredite rapor hizmeti sunuyoruz.</p>
 
             <h2 className="mt-7 text-xl font-bold text-navy">Hizmet Verdiğimiz Alanlar</h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -97,7 +115,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
             </ul>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/teklif" className="rounded-full bg-blue px-6 py-3 font-bold text-white transition hover:-translate-y-0.5">{l.il} için Teklif Al</Link>
+              <Link href="/teklif" className="rounded-full bg-blue px-6 py-3 font-bold text-white transition hover:-translate-y-0.5">{ad} için Teklif Al</Link>
               <Link href="/bolge" className="rounded-full border border-line px-6 py-3 font-bold text-navy transition hover:border-blue">Diğer Bölgeler</Link>
             </div>
           </div>
@@ -106,7 +124,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
             <h3 className="text-lg font-bold text-navy">Diğer hizmet bölgeleri</h3>
             <ul className="mt-3 space-y-2">
               {diger.length ? diger.map((d) => (
-                <li key={d.slug}><Link href={`/bolge/${d.slug}`} className="text-blue hover:underline">{d.il}</Link></li>
+                <li key={d.slug}><Link href={`/bolge/${d.slug}`} className="text-blue hover:underline">{bolgeAdi(d)}</Link></li>
               )) : <li className="text-sm text-muted">Başka bölge bulunmuyor.</li>}
             </ul>
             <div className="mt-5 rounded-xl bg-white p-4 text-sm">
