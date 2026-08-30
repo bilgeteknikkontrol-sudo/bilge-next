@@ -220,11 +220,23 @@ export async function saveSettingsAction(formData: FormData) {
     const v = formData.get(`font_${key}`);
     if (v !== null && v !== "") fonts[key] = String(v);
   }
+  /**
+   * Logo ve favicon dosya secerek yuklenebiliyor.
+   * ⚠️ Onceden yalnizca adres yazilabiliyordu; gorsel eklemek icin Medya
+   * ekranina gidip adresi kopyalamak gerekiyordu. Dosya secilmezse adres
+   * alani, o da bossa mevcut deger korunur.
+   */
+  const yeniLogo = await dosyaYukle(formData, "logoDosya", "logo", "Logo");
+  const yeniFavicon = await dosyaYukle(formData, "faviconDosya", "favicon", "Favicon");
+  if (yeniLogo === "buyuk" || yeniFavicon === "buyuk") {
+    redirect("/admin/settings?hata=buyuk");
+  }
+
   const s: SiteSettings = {
     colors,
     fonts,
-    logo: String(formData.get("logo") || cur.logo),
-    favicon: String(formData.get("favicon") || cur.favicon),
+    logo: yeniLogo || String(formData.get("logo") || cur.logo),
+    favicon: yeniFavicon || String(formData.get("favicon") || cur.favicon),
     phone: String(formData.get("phone") || cur.phone),
     email: String(formData.get("email") || cur.email),
     address: String(formData.get("address") || cur.address),

@@ -7,10 +7,10 @@ import RenkPaneli from "./RenkPaneli";
 export default async function SettingsAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ kaydedildi?: string }>;
+  searchParams: Promise<{ kaydedildi?: string; hata?: string }>;
 }) {
   await guard();
-  const { kaydedildi } = await searchParams;
+  const { kaydedildi, hata } = await searchParams;
   const s = await getSettings().catch(() => null);
   if (!s) {
     return (
@@ -33,7 +33,16 @@ export default async function SettingsAdmin({
         </div>
       )}
 
-      <form action={saveSettingsAction} className="mt-6 space-y-8">
+      {hata === "buyuk" && (
+        <div className="mt-4 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <b>Görsel çok büyük.</b> En fazla 6 MB yükleyebilirsiniz. Görseli küçültüp tekrar
+          deneyin. <b>Diğer ayarlar kaydedilmedi.</b>
+        </div>
+      )}
+
+      {/* encType: logo/favicon dosya alanlari var; sunucu eylemi FormData'yi
+          coklu parca olarak almali, yoksa dosya bos gelir. */}
+      <form action={saveSettingsAction} encType="multipart/form-data" className="mt-6 space-y-8">
         {/* Renkler: gruplu, aciklamali ve canli onizlemeli panel (istemci bileseni) */}
         <RenkPaneli colors={s.colors} />
 
@@ -49,9 +58,53 @@ export default async function SettingsAdmin({
         </Section>
 
         <Section title="Logo ve sosyal medya">
-          <div className="grid grid-cols-2 gap-3">
-            <TextField name="logo" label="Logo adresi" value={s.logo} />
-            <TextField name="favicon" label="Favicon adresi" value={s.favicon} />
+          {/**
+           * ⚠️ Logo ve favicon da diger gorsel alanlari gibi DOSYA SECEREK
+           * yuklenebiliyor. Onceden yalnizca adres yazilabiliyordu; gorsel
+           * eklemek icin Medya ekranina gidip adresi kopyalamak gerekiyordu.
+           * Ayni tutarsizlik makale ve blok formlarinda da vardi, giderildi.
+           */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              { ad: "logo", etiket: "Logo", deger: s.logo, ipucu: "Tercihen SVG veya şeffaf PNG." },
+              { ad: "favicon", etiket: "Favicon", deger: s.favicon, ipucu: "Kare, en az 512×512 px." },
+            ].map((g) => (
+              <div key={g.ad} className="rounded-lg border border-slate-200 p-3">
+                <span className="text-xs font-semibold text-slate-600">{g.etiket}</span>
+
+                {g.deger && (
+                  <div className="mt-2 flex h-16 w-32 items-center justify-center overflow-hidden rounded border border-slate-200 bg-slate-50">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={g.deger} alt="" className="max-h-full max-w-full object-contain" />
+                  </div>
+                )}
+
+                <label className="mt-2 block">
+                  <span className="mb-1 block text-xs text-slate-500">Bilgisayarınızdan seçin</span>
+                  <input
+                    type="file"
+                    name={`${g.ad}Dosya`}
+                    accept="image/*"
+                    className="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-blue file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-white"
+                  />
+                  <span className="mt-1 block text-xs text-slate-400">
+                    En fazla 6 MB. {g.ipucu} Yeni dosya seçmezseniz mevcut görsel korunur.
+                  </span>
+                </label>
+
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-xs font-semibold text-slate-500">
+                    veya adres gir
+                  </summary>
+                  <input
+                    name={g.ad}
+                    defaultValue={g.deger || ""}
+                    placeholder="/img/logo.svg veya https://…"
+                    className="mt-2 w-full rounded-lg border border-slate-300 p-2 text-sm"
+                  />
+                </details>
+              </div>
+            ))}
           </div>
           <div className="mt-3">
             <label className="text-xs font-semibold text-slate-600">Sosyal medya (her satıra bir adres)</label>
@@ -91,15 +144,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div className="rounded-2xl bg-white p-5 shadow-sm">
       <h2 className="mb-3 font-bold text-slate-700">{title}</h2>
       {children}
-    </div>
-  );
-}
-
-function TextField({ name, label, value }: { name: string; label: string; value: string }) {
-  return (
-    <div>
-      <label className="text-xs font-semibold text-slate-600">{label}</label>
-      <input name={name} defaultValue={value} className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm" />
     </div>
   );
 }
