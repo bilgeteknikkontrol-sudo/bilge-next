@@ -14,10 +14,23 @@ import { bloklar } from "@/lib/bloklar";
  * liste kullanilir, yani site hicbir zaman logosuz kalmaz.
  */
 export default async function ReferansSeridi() {
-  const bloklarListesi = await bloklar("referans").catch(() => []);
+  /**
+   * ⚠️ Gorseli OLMAYAN bloklar disarida.
+   *
+   * Onceden dogrudan `b.gorsel` basiliyordu; bos oldugunda tarayiciya
+   * `<img src="">` gidiyor ve bu, gorseli bos birakmak yerine SAYFANIN
+   * KENDISINI yeniden istemek demek. Panelde gorseli bos kaydedilmis ya da
+   * medya kutuphanesinden silinmis bir logo bu duruma dusuyordu
+   * (silinmis atif artik lib/bloklar.ts icinde bos dizeye ceviriliyor).
+   * Hicbiri gecerli degilse koddaki statik listeye dusuluyor — dosyanin
+   * basindaki "site hicbir zaman logosuz kalmaz" sozu boyle korunuyor.
+   */
+  const panelLogolari = (await bloklar("referans").catch(() => [])).filter((b) =>
+    b.gorsel?.trim(),
+  );
 
-  const kaynak = bloklarListesi.length
-    ? bloklarListesi.map((b) => ({ name: b.baslik, src: b.gorsel, statik: null }))
+  const kaynak = panelLogolari.length
+    ? panelLogolari.map((b) => ({ name: b.baslik, src: b.gorsel, statik: null }))
     : REFERANSLAR.map((r) => ({ name: r.name, src: "", statik: r.logo }));
 
   // Kesintisiz dongü icin ayni liste iki kez; ikinci kopya ekran okuyucudan gizli.

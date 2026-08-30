@@ -10,7 +10,7 @@
  * JSON. Boylece hem Vercel Blob hem Postgres arka ucunda sema degisikligi
  * gerekmeden calisiyor.
  */
-import { getContent, setContent } from "./cms";
+import { getContent, setContent, getMedia } from "./cms";
 
 export const BLOK_TURLERI = ["hero", "referans", "ekip", "sertifika", "sss"] as const;
 export type BlokTuru = (typeof BLOK_TURLERI)[number];
@@ -62,11 +62,52 @@ export async function tumBloklar(): Promise<Blok[]> {
   return tumunuAyristir(await getContent(ANAHTAR));
 }
 
+/**
+ * PANELDEN SILINMIS GORSELE YAPILAN ATIFI TEMIZLER.
+ *
+ * ⚠️ NEDEN VAR: 2026-08-30'da canli anasayfada `/api/gorsel/1` isteginin 404
+ * dondugu goruldu. Hero slayt blogu, medya kutuphanesinden SILINMIS bir
+ * gorseli isaret ediyordu. Kod bunu bilmedigi icin "slayt var" sayip statik
+ * yedek gorseli atliyordu; sonuc, sitenin en gorunur alani olan anasayfa
+ * hero'sunun BOS gorunmesiydi. Tarayici konsolunda tek satirlik bir 404
+ * disinda hicbir belirti yoktu.
+ *
+ * Cozum blok okuma yolunda: gecersiz atif bos dizeye cevriliyor, boylece
+ * cagiran taraf "gorsel yok" durumunu normal sekilde ele aliyor ve varsa
+ * kendi yedegine dusuyor. Ayni koruma referans logolari, ekip fotograflari ve
+ * sertifika gorselleri icin de gecerli — hepsi ayni koleksiyondan okunuyor.
+ *
+ * ⚠️ Yalnizca `/api/gorsel/<id>` bicimindeki atiflar dogrulanir; `/img/...`,
+ * `https://...` ve `data:` adresleri oldugu gibi birakilir.
+ *
+ * ⚠️ `tumBloklar()` TEMIZLENMEZ: panelin bozuk atifi gormesi gerekiyor ki
+ * kullanici duzeltebilsin.
+ */
+const GORSEL_ATIF = /^\/api\/gorsel\/(\d+)$/;
+
+async function gecersizGorselleriTemizle(list: Blok[]): Promise<Blok[]> {
+  const atifli = list.filter((b) => GORSEL_ATIF.test(b.gorsel?.trim() ?? ""));
+  if (atifli.length === 0) return list;
+
+  // Medya listesi okunamazsa hicbir seyi silme: gecici bir hata yuzunden
+  // calisan gorselleri kaybetmek, bozuk bir atifi birakmaktan kotudur.
+  const medya = await getMedia().catch(() => null);
+  if (!medya) return list;
+
+  const idler = new Set(medya.map((m) => m.id));
+  return list.map((b) => {
+    const e = GORSEL_ATIF.exec(b.gorsel?.trim() ?? "");
+    if (e && !idler.has(Number(e[1]))) return { ...b, gorsel: "" };
+    return b;
+  });
+}
+
 /** Bir turdeki AKTIF bloklar, sira sonra baslik olarak siralanmis. */
 export async function bloklar(tur: BlokTuru): Promise<Blok[]> {
-  return (await tumBloklar())
+  const secilen = (await tumBloklar())
     .filter((b) => b.tur === tur && b.aktif)
     .sort((a, b) => a.sira - b.sira || a.baslik.localeCompare(b.baslik, "tr"));
+  return gecersizGorselleriTemizle(secilen);
 }
 
 async function yaz(list: Blok[]): Promise<void> {
