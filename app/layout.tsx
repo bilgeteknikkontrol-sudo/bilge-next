@@ -51,6 +51,28 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
+
+  /**
+   * GOOGLE SEARCH CONSOLE DOGRULAMASI
+   *
+   * ⚠️ 2026-08-30 denetiminde site Search Console'a HIC bagli degildi:
+   * ne dogrulama etiketi, ne alan adinda `google-site-verification` TXT
+   * kaydi vardi. Yani sitenin hangi aramalarda kacinci sirada ciktigi,
+   * hangi sayfalarin indekslenemedigi, hangi eski adreslerin 404 verdigi
+   * bilgisinin TAMAMI olculmuyordu. Siralama sorusunun tek %100 dogru
+   * kaynagi bu; disaridan yapilan her olcum tahmindir.
+   *
+   * Deger ortam degiskeninden okunuyor (hPanel -> Ortam degiskenleri ->
+   * GOOGLE_SITE_VERIFICATION). Boylece dogrulama kodu icin yeni bir kod
+   * dagitimi gerekmez. Tanimli degilse etiket hic basilmaz.
+   *
+   * NOT: sitede zaten GA4 kurulu (bkz. GoogleAnalytics bileseni). Ayni
+   * Google hesabi GA4 mulkunun sahibiyse Search Console dogrulamayi
+   * kendiliginden yapar ve buraya hic deger girmek gerekmez.
+   */
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 const COLOR_VAR: Record<string, string> = {
