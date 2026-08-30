@@ -258,7 +258,11 @@ export function defaultSettings(): SiteSettings {
     favicon: "/favicon.ico",
     phone: "0212 872 52 04",
     email: "info@bilgeteknikkontrol.com",
-    address: "Yakuplu Mah. 65. Sk. No:35 İç Kapı No:4, Beylikdüzü / İstanbul",
+    // ⚠️ Yalnizca SOKAK kismi ve gorunur metinle AYNI yazim. Onceden burada
+    // ", Beylikdüzü / İstanbul" da vardi ve bosluklar farkliydi; sema ilce/il'i
+    // zaten ayri alanlarda yaziyor, yani ikisi tekrar ediyor ve adres sitede iki
+    // farkli sekilde gorunuyordu. Bkz. lib/site-data.ts semaSokakAdresi().
+    address: "Yakuplu Mah. 65. Sk. No: 35 İç Kapı No: 4",
     sameAs: ["https://www.linkedin.com/company/bilgeteknikkontrol"],
     heroTitle: "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla",
     heroSubtitle:

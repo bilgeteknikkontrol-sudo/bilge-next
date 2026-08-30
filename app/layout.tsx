@@ -7,7 +7,7 @@ import CerezOnay from "./components/CerezOnay";
 import WhatsappButon from "./components/WhatsappButon";
 import "./globals.css";
 import { getSettings } from "@/lib/cms";
-import { KURUM, BOLGELER } from "@/lib/site-data";
+import { KURUM, BOLGELER, semaSokakAdresi } from "@/lib/site-data";
 
 /**
  * Kok duzen onbellekleniyor (ISR).
@@ -135,7 +135,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      streetAddress: settings?.address || "Yakuplu Mah. 65. Sk. No:35 İç Kapı No:4",
+      // ⚠️ Gorunur metinle AYNI yazim, ilce/il tekrari olmadan.
+      // Gerekcesi lib/site-data.ts semaSokakAdresi() basinda.
+      streetAddress: semaSokakAdresi(settings?.address),
       addressLocality: "Beylikdüzü",
       addressRegion: "İstanbul",
       addressCountry: "TR",

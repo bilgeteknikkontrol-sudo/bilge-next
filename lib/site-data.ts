@@ -138,3 +138,52 @@ export const KURUM = {
 
 /** Tam posta adresi, tek satir. */
 export const ADRES_TEK_SATIR = `${KURUM.adres}, ${KURUM.ilce} / ${KURUM.il}`;
+
+/**
+ * ADRESIN SOKAK KISMI — yapisal veri (schema.org) icin.
+ *
+ * ⚠️ NEDEN VAR: 2026-08-30 denetiminde sitenin adresi IKI FARKLI SEKILDE
+ * yazildigi goruldu:
+ *
+ *   Gorunur metin (153 sayfa) : Yakuplu Mah. 65. Sk. No: 35 İç Kapı No: 4
+ *   Kurumsal sema (153 sayfa) : Yakuplu Mah. 65. Sk. No:35 İç Kapı No:4
+ *
+ * Yani ziyaretcinin gordugu adres ile Google'a gonderilen adres ayni degildi.
+ * `/iletisim` ve `/kurumsal` sayfalarinda durum daha keskindi: ayni sayfada
+ * iki ayri sema, ayni isletmenin adresini farkli yaziyordu. Isletme adi,
+ * adres ve telefonun her yerde birebir ayni olmasi yerel aramada guven
+ * sinyali; iki yazim bu sinyali zayiflatiyordu.
+ *
+ * Sebep iki ayri kaynakti: gorunur metin `KURUM.adres` sabitinden,
+ * `app/layout.tsx` semasi ise veritabanindaki `settings.address` alanindan
+ * okuyordu. Ikisi farkli tohumlanmisti.
+ *
+ * ⚠️ Ayrica `settings.address` degeri ", Beylikdüzü / İstanbul" kismini da
+ * iceriyordu; sema zaten `addressLocality` ve `addressRegion` alanlarini ayri
+ * yaziyor, yani ilce ve il IKI KEZ gonderiliyordu.
+ *
+ * Bu yardimci ikisini de cozuyor:
+ *  - Paneldeki adres bosSA kod sabitine duser.
+ *  - Panel degeri ilce/il de iceriyorsa o kisim atilir (tekrar onlenir).
+ *  - Panel degeri, kod sabitiyle AYNI adresin farkli yazimiysa (yalnizca
+ *    bosluk/noktalama farki) kanonik yazim kullanilir — gorunur metinle
+ *    birebir ayni olur.
+ *  - Panelden GERCEKTEN baska bir adres girilmisse o kazanir; boylece
+ *    tasinma durumunda panel hala calisir.
+ */
+function adresSadelestir(s: string): string {
+  return s.toLocaleLowerCase("tr").replace(/[\s.,:/-]/g, "");
+}
+
+export function semaSokakAdresi(panelAdresi?: string | null): string {
+  const ham = panelAdresi?.trim();
+  if (!ham) return KURUM.adres;
+
+  // Sondaki ", Beylikdüzü / İstanbul" gibi ilce/il ekini at.
+  const ilceIl = new RegExp(`,\\s*${KURUM.ilce}\\s*/\\s*${KURUM.il}\\s*$`, "i");
+  const sokak = ham.replace(ilceIl, "").trim();
+  if (!sokak) return KURUM.adres;
+
+  // Ayni adresin farkli yazimi ise gorunur metindeki yazimi kullan.
+  return adresSadelestir(sokak) === adresSadelestir(KURUM.adres) ? KURUM.adres : sokak;
+}

@@ -304,7 +304,18 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
         alanlar: [
           { ad: "phone", etiket: "Telefon" },
           { ad: "email", etiket: "E-posta" },
-          { ad: "address", etiket: "Adres", uzun: true },
+          {
+            ad: "address",
+            etiket: "Adres",
+            uzun: true,
+            /**
+             * ⚠️ Bu alan yalnizca arama motorlarina gonderilen yapisal veriyi
+             * besliyor; sayfalarda GORUNEN adres koddaki sabitten geliyor
+             * (lib/site-data.ts KURUM.adres). Bunu yazmazsak kullanici burayi
+             * degistirip sitede hicbir sey degismeyince sasiriyor.
+             */
+            not: "Yalnızca sokak/cadde kısmını yazın — ilçe ve il ayrıca gönderiliyor. Sayfalarda görünen adres buradan gelmez; onun için geliştiriciye söyleyin.",
+          },
         ],
       },
     ],
