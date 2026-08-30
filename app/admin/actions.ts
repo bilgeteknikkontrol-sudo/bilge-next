@@ -66,6 +66,19 @@ export async function saveArticleAction(formData: FormData) {
   const slugRaw = String(formData.get("slug") || "");
   const title = String(formData.get("title") || "");
   const slug = slugRaw.trim() ? slugRaw.trim() : slugify(title) || `makale-${Date.now()}`;
+
+  /**
+   * Yazi gorseli DOGRUDAN bu formdan yuklenebiliyor.
+   *
+   * ⚠️ Onceden tek yol Medya ekranina gidip yukleyip adresi kopyalamakti.
+   * Blok (slayt) formunda dosya secme zaten vardi; makale formunda olmamasi
+   * tutarsizdi. Dosya secilmezse alanda yazan adres korunur.
+   */
+  const yuklenenGorsel = await dosyaYukle(formData, "gorselDosya", title || slug, title);
+  if (yuklenenGorsel === "buyuk") {
+    redirect(`/admin/articles?edit=${encodeURIComponent(slug)}&hata=buyuk`);
+  }
+
   const article: Article = {
     slug,
     title,
@@ -84,8 +97,9 @@ export async function saveArticleAction(formData: FormData) {
     faq: parseFaq(String(formData.get("faq") || "")),
     aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
     sira: num(formData.get("sira")),
-    // Bos birakilirsa undefined -> sayfada slug eslesmeli varsayilan gorsel kullanilir
-    image: String(formData.get("image") || "").trim() || undefined,
+    // Yeni dosya varsa o kazanir; yoksa alanda yazan adres korunur.
+    // Ikisi de bossa undefined -> sayfada slug eslesmeli varsayilan gorsel kullanilir.
+    image: yuklenenGorsel || String(formData.get("image") || "").trim() || undefined,
   };
   await saveArticle(article);
   revalidatePath("/");

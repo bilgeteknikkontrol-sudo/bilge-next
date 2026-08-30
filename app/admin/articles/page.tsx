@@ -6,7 +6,7 @@ import { guard } from "@/lib/auth";
 export default async function ArticlesAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ edit?: string; new?: string; aktarildi?: string }>;
+  searchParams: Promise<{ edit?: string; new?: string; aktarildi?: string; hata?: string }>;
 }) {
   await guard();
   const sp = await searchParams;
@@ -23,6 +23,13 @@ export default async function ArticlesAdmin({
           + Yeni
         </Link>
       </div>
+
+      {sp.hata === "buyuk" && (
+        <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+          <b>Görsel çok büyük.</b> En fazla 6 MB. Görseli küçültüp (tercihen WebP, 1600 px
+          genişlik) tekrar deneyin. <b>Diğer alanlar kaydedilmedi.</b>
+        </p>
+      )}
 
       {sp.aktarildi && (
         <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
@@ -88,7 +95,9 @@ export default async function ArticlesAdmin({
 
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <h2 className="font-bold text-slate-700">{item || isNew ? "Düzenle" : "Yeni Makale"}</h2>
-          <form action={saveArticleAction} className="mt-4 space-y-3">
+          {/* encType: gorsel dosya alani var; sunucu eylemi FormData'yi coklu
+              parca olarak almali, yoksa dosya bos gelir. */}
+          <form action={saveArticleAction} encType="multipart/form-data" className="mt-4 space-y-3">
             {/* ⚠️ Adres alani onceden "slug2" adiyla gonderiliyordu ama
                 saveArticleAction "slug" okuyor; yani yazilan adres SESSIZCE
                 yok sayiliyor, her zaman baslikten uretiliyordu.
@@ -130,23 +139,52 @@ export default async function ArticlesAdmin({
             <Field label="Anahtar kelimeler (virgülle)" name="keywords" value={item?.keywords?.join(", ")} />
 
             {/* Yazi gorseli — bos birakilirsa slug'a gore varsayilan gorsel kullanilir */}
-            <div>
-              <label className="text-xs font-semibold text-slate-600">Görsel adresi</label>
-              <input
-                name="image"
-                defaultValue={item?.image || ""}
-                placeholder="/img/ornek.webp  ·  https://…  ·  Medya Kütüphanesi'nden kopyalanan adres"
-                className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm"
-              />
-              <p className="mt-1 text-xs text-slate-500">
-                Boş bırakırsanız yazının kendi varsayılan görseli kullanılır. Görsel yüklemek için{" "}
-                <a href="/admin/media" className="font-semibold text-blue underline">
-                  Medya Kütüphanesi
-                </a>
-                &apos;ni kullanıp adresi buraya yapıştırın.
-              </p>
+            {/**
+             * ⚠️ Onceden yalnizca ADRES alani vardi: gorsel eklemek icin Medya
+             * ekranina gidip yukleyip adresi kopyalayip buraya donmek
+             * gerekiyordu. Blok (slayt) formunda dosya secme zaten vardi;
+             * makale formunda olmamasi tutarsizdi. Ayni `dosyaYukle` yardimcisi
+             * burada da kullaniliyor.
+             */}
+            <div className="rounded-lg border border-slate-200 p-3">
+              <span className="text-xs font-semibold text-slate-600">Yazı görseli</span>
+
+              <label className="mt-2 block">
+                <span className="mb-1 block text-xs text-slate-500">Bilgisayarınızdan seçin</span>
+                <input
+                  type="file"
+                  name="gorselDosya"
+                  accept="image/*"
+                  className="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-blue file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-white"
+                />
+                <span className="mt-1 block text-xs text-slate-400">
+                  En fazla 6 MB. Tercihen WebP, 1600 px genişlik.
+                  {item?.image
+                    ? " Yeni dosya seçmezseniz mevcut görsel korunur."
+                    : " Boş bırakırsanız yazının kendi varsayılan görseli kullanılır."}
+                </span>
+              </label>
+
+              <details className="mt-3">
+                <summary className="cursor-pointer text-xs font-semibold text-slate-500">
+                  veya adres gir (harici görsel)
+                </summary>
+                <input
+                  name="image"
+                  defaultValue={item?.image || ""}
+                  placeholder="/img/ornek.webp veya https://…"
+                  className="mt-2 w-full rounded-lg border border-slate-300 p-2 text-sm"
+                />
+                <span className="mt-1 block text-xs text-slate-500">
+                  <a href="/admin/media" className="font-semibold text-blue underline">
+                    Medya Kütüphanesi
+                  </a>
+                  &apos;ne yüklediğiniz bir görselin adresini de yapıştırabilirsiniz.
+                </span>
+              </details>
+
               {item?.image && (
-                <div className="mt-2 h-24 w-40 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                <div className="mt-3 h-24 w-40 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={item.image} alt="" className="h-full w-full object-cover" />
                 </div>
