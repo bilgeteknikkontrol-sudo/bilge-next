@@ -8,6 +8,7 @@ import {
   getArticles,
   deleteArticle,
   saveEquipment,
+  getEquipment,
   deleteEquipment,
   saveLocation,
   deleteLocation,
@@ -157,6 +158,10 @@ export async function saveEquipmentAction(formData: FormData) {
     aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
     sira: num(formData.get("sira")),
     image: yuklenen || String(formData.get("image") || "").trim() || undefined,
+    // Bos birakilan alan koddaki varsayilana duser (bkz. app/ekipman/[slug]).
+    lead: String(formData.get("lead") || "").trim() || undefined,
+    body: String(formData.get("body") || "").trim() || undefined,
+    faq: parseFaq(String(formData.get("faq") || "")),
   };
   await saveEquipment(e);
   revalidatePath("/");
@@ -527,6 +532,44 @@ export async function saveSayfaIcerikAction(formData: FormData) {
 
   revalidatePath("/", "layout");
   redirect(`/admin/sayfa/${sayfaId}?kaydedildi=1`);
+}
+
+// ---------- HIZMET METINLERINI KODDAN AKTAR ----------
+/**
+ * Koddaki hizmet sayfasi metinlerini (lib/ekipman-icerik.ts) veritabanina
+ * kopyalar, boylece panelden DUZENLENEBILIR hale gelirler.
+ *
+ * ⚠️ Bu olmadan panel alanlari BOS gorunur ve kullanicinin sayfa dolusu metni
+ * sifirdan yazmasi gerekirdi. Kullanici "bu yazilari nerede duzenleyebilirim"
+ * diye sordugunda sorun tam olarak buydu: metin kodda, panelde gorunmuyor.
+ *
+ * Yalnizca ALANI BOS OLAN kayitlara yaziyor; panelden daha once duzenlenmis
+ * bir hizmetin metnini EZMIYOR. Bu yuzden birden fazla kez calistirmak
+ * guvenli.
+ */
+export async function hizmetMetinleriniAktarAction() {
+  await guard();
+  const { EKIPMAN_ICERIK } = await import("@/lib/ekipman-icerik");
+  const hepsi = await getEquipment().catch(() => []);
+
+  let aktarilan = 0;
+  for (const e of hepsi) {
+    const k = EKIPMAN_ICERIK[e.slug];
+    if (!k) continue;
+    const bosLead = !e.lead?.trim();
+    const bosBody = !e.body?.trim();
+    const bosFaq = !e.faq?.length;
+    if (!bosLead && !bosBody && !bosFaq) continue;
+    await saveEquipment({
+      ...e,
+      lead: bosLead ? k.lead : e.lead,
+      body: bosBody ? k.bodyHtml : e.body,
+      faq: bosFaq ? k.faq : e.faq,
+    });
+    aktarilan++;
+  }
+  revalidatePath("/", "layout");
+  redirect(`/admin/equipment?aktarildi=${aktarilan}`);
 }
 
 // ---------- YAZILARI KODDAN AKTAR ----------

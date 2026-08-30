@@ -48,6 +48,19 @@ export type Equipment = {
    * hizmetin gorseli olmuyordu ve degistirmenin tek yolu kod dagitimiydi.
    */
   image?: string;
+  /**
+   * Hizmet sayfasinin METNI — giris, govde ve SSS.
+   *
+   * ⚠️ Bunlar da onceden yalnizca kodda (`lib/ekipman-icerik.ts`) duruyordu.
+   * Hizmet sayfasinda sayfa dolusu metin vardi ama panelde yalnizca ad,
+   * kategori, standart ve periyot alanlari goruluyordu; kullanici "bu yazilari
+   * nerede duzenleyebilirim" diye sordu ve duzenleyebilecegi bir yer yoktu.
+   *
+   * Bos birakilirsa koddaki varsayilan icerik kullanilmaya devam eder.
+   */
+  lead?: string;
+  body?: string;
+  faq?: { q: string; a: string }[];
 };
 
 export type Location = {
@@ -129,6 +142,9 @@ function ensureSchema(): Promise<void> {
        */
       await run(s`ALTER TABLE articles ADD COLUMN seo_title TEXT`).catch(() => {});
       await run(s`ALTER TABLE equipment ADD COLUMN image LONGTEXT`).catch(() => {});
+      await run(s`ALTER TABLE equipment ADD COLUMN \`lead\` TEXT`).catch(() => {});
+      await run(s`ALTER TABLE equipment ADD COLUMN body LONGTEXT`).catch(() => {});
+      await run(s`ALTER TABLE equipment ADD COLUMN faq JSON`).catch(() => {});
     } else {
       await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
       await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
@@ -140,6 +156,9 @@ function ensureSchema(): Promise<void> {
       await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
       await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS seo_title text`);
       await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS image text`);
+      await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS lead text`);
+      await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS body text`);
+      await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS faq jsonb`);
     }
     await seedIfEmpty(s);
   })().catch((e) => {
@@ -388,6 +407,9 @@ function rowToEquipment(r: Record<string, unknown>): Equipment {
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
     image: r.image ? String(r.image) : undefined,
+    lead: r.lead ? String(r.lead) : undefined,
+    body: r.body ? String(r.body) : undefined,
+    faq: jsonDizi<{ q: string; a: string }>(r.faq),
   };
 }
 
@@ -525,12 +547,12 @@ async function dbSaveEquipment(e: Equipment): Promise<void> {
   const q = sql();
   await run(
     isMysql()
-      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image)
-          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null})
-          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}`
-      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image)
-          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null})
-          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}`
+      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image, \`lead\`, body, faq)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null}, ${e.lead ?? null}, ${e.body ?? null}, ${JSON.stringify(e.faq ?? [])})
+          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}, \`lead\`=${e.lead ?? null}, body=${e.body ?? null}, faq=${JSON.stringify(e.faq ?? [])}`
+      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image, lead, body, faq)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null}, ${e.lead ?? null}, ${e.body ?? null}, ${JSON.stringify(e.faq ?? [])}::jsonb)
+          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}, lead=${e.lead ?? null}, body=${e.body ?? null}, faq=${JSON.stringify(e.faq ?? [])}::jsonb`
   );
 }
 

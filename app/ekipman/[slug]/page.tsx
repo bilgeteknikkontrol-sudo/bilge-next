@@ -46,7 +46,26 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
   const e = await getEquipmentBySlug(slug);
   if (!e) notFound();
 
-  const icerik = EKIPMAN_ICERIK[slug];
+  /**
+   * Sayfa metni: PANELDEN gelen doluysa o, degilse koddaki varsayilan.
+   *
+   * ⚠️ Onceden yalnizca koddaki `EKIPMAN_ICERIK` vardi. Hizmet sayfasinda
+   * sayfa dolusu metin goruluyordu ama panelde bunlari duzenleyecek hicbir
+   * alan yoktu; degistirmenin tek yolu kod dagitimiydi.
+   *
+   * Alanlar TEK TEK karsilastiriliyor: kullanici yalnizca girisi degistirmis
+   * olabilir, o zaman govde ve SSS koddaki haliyle kalmali.
+   */
+  const kodIcerik = EKIPMAN_ICERIK[slug];
+  const panelDolu = Boolean(e.lead?.trim() || e.body?.trim() || e.faq?.length);
+  const icerik =
+    kodIcerik || panelDolu
+      ? {
+          lead: e.lead?.trim() || kodIcerik?.lead || "",
+          bodyHtml: e.body?.trim() || kodIcerik?.bodyHtml || "",
+          faq: (e.faq?.length ? e.faq : kodIcerik?.faq) ?? [],
+        }
+      : undefined;
   const gorsel = EKIPMAN_GORSEL[slug];
   const foto = EKIPMAN_FOTO[slug];
 
@@ -73,7 +92,9 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
     name: `${e.ad} Periyodik Kontrolü`,
     serviceType: "Periyodik Muayene",
     category: e.kategori,
-    description: icerik?.seoDesc || undefined,
+    // seoDesc yalnizca kod icerigin de var; panelden gelen metin bu alani
+    // tasimadigi icin dogrudan koddaki kaynaktan okunuyor.
+    description: kodIcerik?.seoDesc || undefined,
     provider: {
       "@type": "ProfessionalService",
       name: KURUM.ad,

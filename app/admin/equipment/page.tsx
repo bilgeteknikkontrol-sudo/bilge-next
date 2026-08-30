@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { getEquipment, getEquipmentBySlug } from "@/lib/cms";
-import { saveEquipmentAction, deleteEquipmentAction } from "../actions";
+import { saveEquipmentAction, deleteEquipmentAction, hizmetMetinleriniAktarAction } from "../actions";
 import { guard } from "@/lib/auth";
 
 export default async function EquipmentAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ edit?: string; new?: string; hata?: string }>;
+  searchParams: Promise<{ edit?: string; new?: string; hata?: string; aktarildi?: string }>;
 }) {
   await guard();
   const sp = await searchParams;
@@ -30,6 +30,39 @@ export default async function EquipmentAdmin({
           + Yeni hizmet
         </Link>
       </div>
+
+      {sp.aktarildi && (
+        <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          ✓ {sp.aktarildi} hizmetin sayfa metni panele aktarıldı. Artık aşağıdaki formdan
+          düzenleyebilirsiniz.
+        </p>
+      )}
+
+      {/**
+       * ⚠️ Hizmet sayfasi metinleri kodda (lib/ekipman-icerik.ts) duruyor.
+       * Bu dugme onlari veritabanina kopyalar; ancak ondan sonra panelden
+       * duzenlenebilir hale gelirler. Yoksa alanlar bos gorunur ve kullanici
+       * sayfa dolusu metni sifirdan yazmak zorunda kalir.
+       */}
+      <details className="mt-4 rounded-xl border border-blue/30 bg-blue-soft/50 p-4">
+        <summary className="cursor-pointer text-sm font-bold text-navy">
+          Sayfa metinlerini panele aktar
+        </summary>
+        <p className="mt-2 text-sm leading-relaxed text-navy">
+          Hizmet sayfalarındaki uzun metinler (giriş, gövde, sık sorulan sorular) şu an kod
+          içinde tanımlı ve panelde <b>boş görünüyor</b>. Bu düğme onları panele kopyalar;
+          ardından buradan düzenleyebilirsiniz.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-navy">
+          <b>Güvenli:</b> yalnızca boş olan alanları doldurur, panelden daha önce
+          düzenlediğiniz metinleri <b>ezmez</b>. Birden fazla kez çalıştırabilirsiniz.
+        </p>
+        <form action={hizmetMetinleriniAktarAction} className="mt-3">
+          <button className="rounded-lg bg-blue px-4 py-2 text-sm font-bold text-white hover:brightness-110">
+            Aktar
+          </button>
+        </form>
+      </details>
 
       {sp.hata === "buyuk" && (
         <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -129,6 +162,66 @@ export default async function EquipmentAdmin({
                 />
               </details>
             </div>
+
+            {/**
+             * ⚠️ SAYFA METNI ALANLARI: onceden panelde YOKTU. Hizmet sayfasinda
+             * sayfa dolusu metin goruluyordu ama duzenlenecek bir yer yoktu;
+             * icerik yalnizca kodda (lib/ekipman-icerik.ts) duruyordu ve
+             * degistirmenin tek yolu kod dagitimiydi.
+             *
+             * Bos birakilan alan koddaki varsayilana duser — alanlar tek tek
+             * degerlendirildigi icin yalnizca girisi degistirip govdeyi
+             * oldugu gibi birakmak mumkun.
+             */}
+            <details className="rounded-lg border border-slate-200 p-3" open={Boolean(item?.lead || item?.body)}>
+              <summary className="cursor-pointer text-xs font-bold text-navy">
+                Sayfa metni (giriş, gövde, SSS)
+              </summary>
+              <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                Hizmet sayfasında görünen yazılar. <b>Boş bırakılan alan</b>, sitedeki mevcut
+                (kod içindeki) metniyle görünmeye devam eder. Mevcut metni düzenlemek için önce
+                yukarıdaki <b>&quot;Sayfa metinlerini panele aktar&quot;</b> düğmesini kullanın.
+              </p>
+
+              <label className="mt-3 block">
+                <span className="text-xs font-semibold text-slate-600">Giriş yazısı</span>
+                <textarea
+                  name="lead"
+                  rows={3}
+                  defaultValue={item?.lead || ""}
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm"
+                />
+              </label>
+
+              <label className="mt-3 block">
+                <span className="text-xs font-semibold text-slate-600">Gövde (HTML)</span>
+                <textarea
+                  name="body"
+                  rows={12}
+                  defaultValue={item?.body || ""}
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 font-mono text-xs"
+                />
+                <span className="mt-1 block text-xs text-slate-400">
+                  Başlık için &lt;h2&gt;, paragraf için &lt;p&gt;, liste için &lt;ul&gt;&lt;li&gt;
+                  kullanın.
+                </span>
+              </label>
+
+              <label className="mt-3 block">
+                <span className="text-xs font-semibold text-slate-600">
+                  Sık sorulan sorular
+                </span>
+                <textarea
+                  name="faq"
+                  rows={6}
+                  defaultValue={JSON.stringify(item?.faq || [], null, 0)}
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 font-mono text-xs"
+                />
+                <span className="mt-1 block text-xs text-slate-400">
+                  JSON dizisi ya da satır satır: bir satır soru, bir satır cevap.
+                </span>
+              </label>
+            </details>
 
             <button className="rounded-lg bg-blue px-5 py-2.5 font-bold text-white hover:brightness-110">
               Kaydet
