@@ -6,16 +6,27 @@ import { BOLGELER, KURUM } from "@/lib/site-data";
 import { getLocations } from "@/lib/cms";
 import { metinleriOku } from "@/lib/sayfa-metin";
 
+/**
+ * ⚠️ Aciklamadaki rakamlar ELLE yazilmisti ("7 bölge, 20 şehir") ve listeden
+ * kopmustu: Tekirdağ eklendiginde sehir sayisi degisti ama arama sonucunda
+ * gorunen metin eski kaldi. Artik listeden hesaplaniyor, bir daha bayatlamaz.
+ * (Ayni sayilar sayfanin ust bandinda zaten hesaplanarak gosteriliyordu —
+ * meta aciklamasi tek elle yazilan yerdi.)
+ */
+const SEHIR_SAYISI = BOLGELER.reduce((n, b) => n + b.iller.length, 0);
+
 export const metadata: Metadata = {
   title: "Hizmet Bölgelerimiz",
   description:
-    "İstanbul merkezli, Türkiye genelinde periyodik teknik kontrol ve muayene hizmeti. 7 bölge, 20 şehirde yerinde akredite muayene.",
+    `İstanbul merkezli, Türkiye genelinde periyodik teknik kontrol ve muayene hizmeti. ` +
+    `${BOLGELER.length} bölge, ${SEHIR_SAYISI} şehirde yerinde akredite muayene.`,
   alternates: { canonical: "/bolge" },
 };
 
 export default async function BolgeIndex() {
   const m = await metinleriOku();
-  const toplamIl = BOLGELER.reduce((n, b) => n + b.iller.length, 0);
+  // Ayni sayi meta aciklamasinda da kullaniliyor; tek kaynak yukarida.
+  const toplamIl = SEHIR_SAYISI;
   /**
    * Ayri sayfasi olan sehirler icin il adi -> slug eslemesi.
    *

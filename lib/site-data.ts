@@ -39,6 +39,14 @@ export const BOLGELER: Bolge[] = [
       { il: "Kocaeli", aciklama: "Yoğun ağır sanayi ve otomotiv üretim tesislerinin bulunduğu bölgede basınçlı kap, kaldırma ekipmanı ve elektrik tesisatı kontrolleri." },
       { il: "Bursa", aciklama: "Otomotiv, tekstil ve makine imalat sektörlerinde makine-tezgah ve iş ekipmanı periyodik kontrolleri." },
       { il: "Balıkesir", aciklama: "Gıda ve enerji sektörü tesislerinde periyodik teknik kontrol ve elektrik ölçümleri." },
+      /**
+       * ⚠️ Tekirdağ BU LISTEDE YOKTU ama `/bolge/tekirdag` sayfası ve CMS
+       * kaydı vardı. Sonuç: sayfa canlıda duruyor, `/bolge` listesinden ona
+       * hiç link verilmiyor ve kurumsal yapısal veride hizmet verilen iller
+       * arasında geçmiyordu — yani Google için Tekirdağ'da hizmet
+       * vermiyormuşuz gibi görünüyordu. 2026-08-30 tam taramasında bulundu.
+       */
+      { il: "Tekirdağ", aciklama: "Çorlu ve Çerkezköy hattındaki tekstil, gıda ve plastik üretim tesislerinde periyodik kontrol ve raf sistemi muayeneleri." },
     ],
   },
   {
