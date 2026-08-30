@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 // Analytics dogrudan degil, cerez onayina bagli sarmalayici uzerinden yuklenir.
 import AnalyticsOnayli from "./components/AnalyticsOnayli";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import CerezOnay from "./components/CerezOnay";
 import WhatsappButon from "./components/WhatsappButon";
 import "./globals.css";
@@ -199,6 +200,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           bilesen yalnizca Vercel ortaminda basiliyor.
         */}
         {process.env.VERCEL ? <AnalyticsOnayli /> : null}
+
+        {/**
+         * GA4 — barindirmadan bagimsiz, her ortamda calisir.
+         *
+         * ⚠️ Olcum kimligi ortam degiskeninden okunuyor; tanimli degilse
+         * varsayilan olarak sitenin mevcut mulku kullaniliyor. Boylece
+         * degistirmek icin kod dagitimi gerekmez (hPanel -> Ortam degiskenleri
+         * -> NEXT_PUBLIC_GA_ID). `NEXT_PUBLIC_` oneki sart: deger tarayiciya
+         * gonderilecek.
+         */}
+        <GoogleAnalytics id={process.env.NEXT_PUBLIC_GA_ID || "G-GX722H5K2F"} />
       </body>
     </html>
   );
