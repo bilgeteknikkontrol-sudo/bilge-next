@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { getArticles, getArticleBySlug } from "@/lib/cms";
-import { saveArticleAction, deleteArticleAction } from "../actions";
+import { saveArticleAction, deleteArticleAction, yazilariKoddanAktarAction } from "../actions";
 import { guard } from "@/lib/auth";
 
 export default async function ArticlesAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ edit?: string; new?: string }>;
+  searchParams: Promise<{ edit?: string; new?: string; aktarildi?: string }>;
 }) {
   await guard();
   const sp = await searchParams;
@@ -23,6 +23,40 @@ export default async function ArticlesAdmin({
           + Yeni
         </Link>
       </div>
+
+      {sp.aktarildi && (
+        <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          ✓ {sp.aktarildi} yazı koddaki güncel metinle değiştirildi.
+        </p>
+      )}
+
+      {/**
+       * ⚠️ lib/content.ts yalnizca ILK KURULUM TOHUMUDUR. Veritabani bir kez
+       * doldurulduktan sonra site yazilari ORADAN okur; kod dosyasindaki
+       * degisiklikler canliya yansimaz. 2026-08-30'da dort yazi genisletilip
+       * otuz yaziya kisa arama basligi eklendi ama canlida hicbir sey
+       * degismedi — sebebi buydu. Bu dugme koddaki guncel metinleri aktarir.
+       */}
+      <details className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-4">
+        <summary className="cursor-pointer text-sm font-bold text-amber-900">
+          Koddaki güncel yazı metinlerini aktar
+        </summary>
+        <p className="mt-2 text-sm leading-relaxed text-amber-900">
+          Yazılar veritabanından okunur. Geliştirme sırasında kod içindeki metinler
+          güncellendiğinde bu değişiklikler <b>kendiliğinden canlıya yansımaz</b>; aşağıdaki
+          düğmeyle aktarılması gerekir.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-amber-900">
+          <b>Dikkat:</b> Kodda tanımlı yazıların başlık, açıklama ve gövde metinleri koddaki
+          hâliyle değiştirilir — o yazılarda panelden yaptığınız düzenlemeler kaybolur.
+          Sıralama ve yayın durumu korunur. Kodda bulunmayan yazılara dokunulmaz.
+        </p>
+        <form action={yazilariKoddanAktarAction} className="mt-3">
+          <button className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:brightness-110">
+            Aktar
+          </button>
+        </form>
+      </details>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
         <div className="rounded-2xl bg-white p-5 shadow-sm">

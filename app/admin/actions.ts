@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { verifyPassword, createSession, destroySession, isAuthenticated } from "@/lib/auth";
 import {
   saveArticle,
+  getArticles,
   deleteArticle,
   saveEquipment,
   deleteEquipment,
@@ -490,6 +491,43 @@ export async function saveSayfaIcerikAction(formData: FormData) {
 
   revalidatePath("/", "layout");
   redirect(`/admin/sayfa/${sayfaId}?kaydedildi=1`);
+}
+
+// ---------- YAZILARI KODDAN AKTAR ----------
+/**
+ * Kod icindeki guncel yazi metinlerini veritabanina aktarir.
+ *
+ * ⚠️ NEDEN GEREKLI: `lib/content.ts` yalnizca ILK KURULUM TOHUMUDUR
+ * (`seedIfEmpty`). Veritabani bir kez doldurulduktan sonra site yazilari
+ * ORADAN okur; kod dosyasindaki degisiklikler canliya HIC yansimaz.
+ *
+ * 2026-08-30'da bu tam olarak yasandi: dort ince yazi genisletildi ve otuz
+ * yaziya kisa arama basligi (`seoTitle`) eklendi, derleme ve dagitim sorunsuz
+ * gecti, ama canlida hicbir sey degismedi — veritabanindaki eski satirlar
+ * okunuyordu.
+ *
+ * ⚠️ Bu islem, kodda tanimli slug'lara sahip yazilarin PANELDEKI halini
+ * KODDAKI haliyle degistirir. O yazilarda panelden yapilmis duzenlemeler
+ * kaybolur. Kodda bulunmayan yazilara dokunulmaz.
+ */
+export async function yazilariKoddanAktarAction() {
+  await guard();
+  const { ARTICLES } = await import("@/lib/content");
+  const mevcut = await getArticles(false).catch(() => []);
+  const siraMap = new Map(mevcut.map((a) => [a.slug, a.sira]));
+  const aktifMap = new Map(mevcut.map((a) => [a.slug, a.aktif]));
+
+  for (const [i, a] of ARTICLES.entries()) {
+    await saveArticle({
+      ...a,
+      // Panelden yapilmis siralama ve yayin durumu KORUNUYOR; yalnizca metin
+      // alanlari koddaki haliyle degistiriliyor.
+      sira: siraMap.get(a.slug) ?? i,
+      aktif: aktifMap.get(a.slug) ?? true,
+    });
+  }
+  revalidatePath("/", "layout");
+  redirect("/admin/articles?aktarildi=" + ARTICLES.length);
 }
 
 // ---------- TEKLIF TALEPLERI ----------
