@@ -5,7 +5,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getLocationBySlug, getLocations, getEquipment } from "@/lib/cms";
 import { BOLGE_ICERIK } from "@/lib/bolge-icerik";
-import { BOLGE_EKIPMAN, VARSAYILAN_BOLGE_EKIPMAN } from "@/lib/icerik-baglari";
+import { BOLGE_EKIPMAN, VARSAYILAN_BOLGE_EKIPMAN, hizmetBasligi } from "@/lib/icerik-baglari";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -170,7 +170,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
                         href={`/ekipman/${e.slug}`}
                         className="block rounded-xl border border-line bg-white px-4 py-3 transition hover:border-blue"
                       >
-                        <span className="font-semibold text-navy">{e.ad} Periyodik Kontrolü</span>
+                        <span className="font-semibold text-navy">{hizmetBasligi(e.ad)}</span>
                         <span className="mt-0.5 block text-xs text-muted">
                           {e.standart} · {e.periyot === 1 ? "aylık" : `${e.periyot} ayda bir`}
                         </span>

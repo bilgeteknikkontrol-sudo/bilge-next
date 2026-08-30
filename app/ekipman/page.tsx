@@ -9,6 +9,7 @@ import { EKIPMAN_ICERIK } from "@/lib/ekipman-icerik";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
 import { metinleriOku } from "@/lib/sayfa-metin";
+import { hizmetBasligi } from "@/lib/icerik-baglari";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -83,7 +84,9 @@ export default async function EkipmanIndex() {
     itemListElement: hepsi.map((e, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: `${e.ad} Periyodik Kontrolü`,
+      // Bazi kayitlarin adinda zaten hizmet ifadesi var; ek kosulsuz
+      // eklenirse "... Periyodik Kontrolü Periyodik Kontrolü" cikiyor.
+      name: hizmetBasligi(e.ad),
       url: `https://bilgekontrol.com/ekipman/${e.slug}`,
     })),
   };

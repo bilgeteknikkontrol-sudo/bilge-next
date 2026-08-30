@@ -6,7 +6,7 @@ import Footer from "../../components/Footer";
 import YaziGorseli from "../../components/YaziGorseli";
 import { getArticleBySlug, getArticles, getEquipment } from "@/lib/cms";
 import { seoBaslik } from "@/lib/seo-baslik";
-import { YAZI_EKIPMAN } from "@/lib/icerik-baglari";
+import { YAZI_EKIPMAN, hizmetBasligi } from "@/lib/icerik-baglari";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -169,7 +169,7 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
                     href={`/ekipman/${h.slug}`}
                     className="font-bold text-blue hover:underline"
                   >
-                    {h.ad} Periyodik Kontrolü →
+                    {hizmetBasligi(h.ad)} →
                   </Link>
                 </li>
               ))}

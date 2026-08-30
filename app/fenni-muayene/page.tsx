@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getEquipment, type Equipment } from "@/lib/cms";
 import { KURUM } from "@/lib/site-data";
+import { sadeAd } from "@/lib/icerik-baglari";
 
 /**
  * "FENNI MUAYENE" MERKEZ SAYFASI
@@ -192,7 +193,7 @@ export default async function FenniMuayenePage() {
                           href={`/ekipman/${e.slug}`}
                           className="inline-block rounded-full border border-line bg-white px-3 py-1 text-sm text-ink transition hover:border-blue hover:text-blue"
                         >
-                          {e.ad} fenni muayenesi
+                          {sadeAd(e.ad)} fenni muayenesi
                         </Link>
                       </li>
                     ))}

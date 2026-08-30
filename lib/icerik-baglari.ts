@@ -109,6 +109,58 @@ export const VARSAYILAN_BOLGE_EKIPMAN = [
 ];
 
 /**
+ * HIZMET BASLIGI — "{ad} Periyodik Kontrolü" kalibinin cift yazma hatasi.
+ *
+ * ⚠️ Ekipman kayitlarinin bir kismi ADINDA zaten hizmet ifadesi tasiyor
+ * ("Forklift Periyodik Kontrolü", "Basınçlı Kapların Kontrolü", "Mekanik
+ * Periyodik Kontrol"). Sablon bunlarin sonuna kosulsuz "Periyodik Kontrolü"
+ * ekliyordu ve 2026-08-30 denetiminde 92 ekipman sayfasinin 63'unde H1 soyle
+ * cikiyordu:
+ *
+ *     Forklift Periyodik Kontrolü Periyodik Kontrolü
+ *     Buhar Kazanı Periyodik Kontrolü Periyodik Kontrolü
+ *     Havalandırma Kontrolü Periyodik Kontrolü
+ *
+ * Title etiketleri `seoTitle` alanindan geldigi icin dogruydu; bozuk olan
+ * yalnizca H1'di — yani sayfanin en gorunur basligi. Google bu tur tekrari
+ * otomatik anahtar kelime doldurmasi sayar; kullaniciya da bakimsiz gorunur.
+ *
+ * Ayrica bazi kayitlar hic "kontrol" hizmeti degil ("Eğitim Hizmetleri",
+ * "Patlamadan Korunma Dokümanı", "Makina Yerleşim Projesi") — onlara ek
+ * yapistirilmasi anlamca da yanlisti.
+ */
+const HIZMET_EKI = "Periyodik Kontrolü";
+
+/**
+ * Adin sonu zaten tamamlanmis bir hizmet adi mi?
+ * Turkce ekleri de kapsar: kontrol / kontrolu / kontroller, muayene(si),
+ * test(i), olcum(u/leri), proje(si), dokuman(i), hizmet(leri).
+ */
+const ZATEN_HIZMET_ADI =
+  /(kontrol|kontrolü|kontrolu|kontrolleri|muayene|muayenesi|test|testi|ölçümü|ölçümleri|projesi|dokümanı|hizmetleri)$/i;
+
+/** Ekipman adindan sayfa/H1 basligi uretir; ek yalnizca gerekiyorsa eklenir. */
+export function hizmetBasligi(ad: string): string {
+  const temiz = ad.trim();
+  return ZATEN_HIZMET_ADI.test(temiz) ? temiz : `${temiz} ${HIZMET_EKI}`;
+}
+
+/**
+ * Ekipmanin SADE adi: sonundaki hizmet ifadesi atilir.
+ * "Forklift Periyodik Kontrolü" -> "Forklift"
+ * Es anlamli adlari uretirken gerekli; yoksa "Forklift Periyodik Kontrolü
+ * Fenni Muayenesi" gibi anlamsiz dizeler cikiyor.
+ */
+export function sadeAd(ad: string): string {
+  return (
+    ad
+      .trim()
+      .replace(/\s*(periyodik\s+)?(kontrolleri|kontrolü|kontrolu|kontrol|muayenesi|muayene)$/i, "")
+      .trim() || ad.trim()
+  );
+}
+
+/**
  * "Fenni muayene" — mevzuattaki adi periyodik kontrol olan islemin sahada ve
  * aramalarda hala en cok kullanilan adi.
  *
@@ -121,9 +173,10 @@ export const VARSAYILAN_BOLGE_EKIPMAN = [
  * veride `alternateName`.
  */
 export function esAnlamliAdlar(ekipmanAdi: string): string[] {
+  const sade = sadeAd(ekipmanAdi);
   return [
-    `${ekipmanAdi} Fenni Muayenesi`,
-    `${ekipmanAdi} Periyodik Muayenesi`,
-    `${ekipmanAdi} Muayene Raporu`,
+    `${sade} Fenni Muayenesi`,
+    `${sade} Periyodik Muayenesi`,
+    `${sade} Muayene Raporu`,
   ];
 }

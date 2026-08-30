@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getEquipmentBySlug, getEquipment, getLocations, getArticles } from "@/lib/cms";
-import { EKIPMAN_YAZI, esAnlamliAdlar } from "@/lib/icerik-baglari";
+import { EKIPMAN_YAZI, esAnlamliAdlar, hizmetBasligi, sadeAd } from "@/lib/icerik-baglari";
 // Ekipmana ozel uzun icerik ve gorseller CMS'te tutulmuyor; slug uzerinden
 // statik kaynaklardan geliyor. Panelden eklenen yeni bir ekipmanin slug'i
 // bu kaynaklarda yoksa sayfa genel metinle calismaya devam eder.
@@ -34,10 +34,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!e) return {};
   const icerik = EKIPMAN_ICERIK[slug];
   return {
-    title: icerik?.seoTitle || `${e.ad} Periyodik Kontrolü`,
+    title: icerik?.seoTitle || hizmetBasligi(e.ad),
     description:
       icerik?.seoDesc ||
-      `${e.ad} periyodik kontrolü ${e.standart} kapsamında TÜRKAK akredite (${KURUM.akreditasyon}) muayene kuruluşu tarafından yapılır.`,
+      `${sadeAd(e.ad)} periyodik kontrolü ${e.standart} kapsamında TÜRKAK akredite (${KURUM.akreditasyon}) muayene kuruluşu tarafından yapılır.`,
     alternates: { canonical: `/ekipman/${e.slug}` },
   };
 }
@@ -103,7 +103,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: `${e.ad} Periyodik Kontrolü`,
+    name: hizmetBasligi(e.ad),
     // Sahada ve aramalarda kullanilan es anlamli adlar. Ayri kopya sayfa
     // acmadan ayni sorgulari karsilamanin dogru yolu — bkz. icerik-baglari.ts
     alternateName: esAnlamliAdlar(e.ad),
@@ -131,7 +131,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://bilgekontrol.com/" },
       { "@type": "ListItem", position: 2, name: "Hizmetlerimiz", item: "https://bilgekontrol.com/ekipman" },
-      { "@type": "ListItem", position: 3, name: `${e.ad} Periyodik Kontrolü`, item: `https://bilgekontrol.com/ekipman/${e.slug}` },
+      { "@type": "ListItem", position: 3, name: hizmetBasligi(e.ad), item: `https://bilgekontrol.com/ekipman/${e.slug}` },
     ],
   };
 
@@ -174,7 +174,12 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
             <Link href="/ekipman" className="hover:text-white">Hizmetlerimiz</Link>{" "}/{" "}
             <span>{e.kategori}</span>
           </nav>
-          <h1 className="max-w-3xl text-3xl font-black leading-tight md:text-4xl">{e.ad} Periyodik Kontrolü</h1>
+          {/*
+            ⚠️ Burada "{e.ad} Periyodik Kontrolü" yaziyordu ve 92 sayfanin
+            63'unde baslik "Forklift Periyodik Kontrolü Periyodik Kontrolü"
+            diye cift cikiyordu — bkz. hizmetBasligi().
+          */}
+          <h1 className="max-w-3xl text-3xl font-black leading-tight md:text-4xl">{hizmetBasligi(e.ad)}</h1>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-onnavy">
             <span>🛡️ TÜRKAK akredite · {KURUM.akreditasyon}</span>
             <span>📋 {e.standart}</span>
@@ -297,7 +302,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
             {bolgeler.length > 0 && (
               <div className="mt-10 rounded-card border border-line bg-bgsoft p-6">
                 <h2 className="text-lg font-bold text-navy">
-                  {e.ad} periyodik kontrolü verdiğimiz bölgeler
+                  {sadeAd(e.ad)} periyodik kontrolü verdiğimiz bölgeler
                 </h2>
                 <p className="mt-1 text-sm text-muted">
                   Ekiplerimiz ekipmanınızın bulunduğu tesise gelir; muayene yerinde yapılır.
@@ -358,7 +363,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
                 */}
                 <div className="flex justify-between gap-3">
                   <dt className="text-muted">Diğer adı</dt>
-                  <dd className="text-right font-semibold text-navy">{e.ad} fenni muayenesi</dd>
+                  <dd className="text-right font-semibold text-navy">{sadeAd(e.ad)} fenni muayenesi</dd>
                 </div>
               </dl>
             </div>
