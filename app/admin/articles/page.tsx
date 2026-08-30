@@ -176,9 +176,9 @@ export default async function ArticlesAdmin({
                   className="mt-2 w-full rounded-lg border border-slate-300 p-2 text-sm"
                 />
                 <span className="mt-1 block text-xs text-slate-500">
-                  <a href="/admin/media" className="font-semibold text-blue underline">
+                  <Link href="/admin/media" className="font-semibold text-blue underline">
                     Medya Kütüphanesi
-                  </a>
+                  </Link>
                   &apos;ne yüklediğiniz bir görselin adresini de yapıştırabilirsiniz.
                 </span>
               </details>

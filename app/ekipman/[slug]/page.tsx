@@ -121,7 +121,29 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
         identifier: KURUM.akreditasyon,
       },
     },
-    areaServed: "TR",
+    /**
+     * ⚠️ Onceden yalnizca "TR" yaziyordu. Sitenin en degerli sorgu tipi
+     * hizmet+sehir birlesimi ("forklift periyodik kontrol Istanbul"); arama
+     * motoruna bu hizmetin hangi yerlerde verildigini soylemeden o sorgulara
+     * girmek zor. Liste CMS'ten geliyor, sabit degil: panelden bir bolge
+     * eklenince buraya da kendiliginden yansir.
+     */
+    areaServed: [
+      { "@type": "Country", name: "Türkiye" },
+      // ⚠️ "Türkiye geneli" kaydi disarida: ustteki Country girdisi onu zaten
+      // karsiliyor, City olarak yazilirsa "Türkiye adinda bir sehir" demis olurduk.
+      ...bolgeler
+        .filter((b) => b.il !== "Türkiye")
+        .map((b) =>
+        b.ilce
+          ? {
+              "@type": "Place",
+              name: b.ilce,
+              containedInPlace: { "@type": "City", name: b.il },
+            }
+          : { "@type": "City", name: b.il },
+      ),
+    ],
     url: `https://bilgekontrol.com/ekipman/${e.slug}`,
   };
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { guard } from "@/lib/auth";
 import { tumSorular } from "@/lib/teklif-sorulari";
 import { KATEGORILER } from "@/lib/data";
@@ -196,12 +197,12 @@ export default async function TeklifSorulariAdmin({
             <div className="flex gap-3 pt-1">
               <Buton type="submit">{duzenlenen ? "Değişikliği kaydet" : "Ekle"}</Buton>
               {duzenlenen && (
-                <a
+                <Link
                   href="/admin/teklif-sorulari"
                   className="self-center text-sm font-semibold text-slate-500 hover:underline"
                 >
                   Vazgeç
-                </a>
+                </Link>
               )}
             </div>
           </form>

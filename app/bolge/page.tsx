@@ -27,9 +27,32 @@ export default async function BolgeIndex() {
    * Ilceler disarida: bu liste il bazli, ilcelerin kendi sayfalarina il
    * kartindan degil komsu bolge sayfalarindaki listeden gidiliyor.
    */
+  const tumBolgeler = (await getLocations().catch(() => [])).filter((l) => l.aktif);
   const sayfaliIl = new Map(
-    (await getLocations()).filter((l) => !l.ilce).map((l) => [l.il, l.slug])
+    tumBolgeler.filter((l) => !l.ilce).map((l) => [l.il, l.slug])
   );
+
+  /**
+   * ILCE SAYFALARI — il kartlarindan AYRI bir bolum.
+   *
+   * ⚠️ Ustteki liste il bazli oldugu icin ilceler ona hic girmiyordu. 2026-08-30'da
+   * sekiz Istanbul ilce sayfasi acilinca sorun gorunur hale geldi: `/bolge`
+   * sitenin bolge merkezi ama Esenyurt, Tuzla, Umraniye sayfalarina oradan
+   * gidilemiyordu. (Ic link aliyorlardi — 92 ekipman sayfasinin her biri tum
+   * bolgelere link veriyor — ama gezinme akisinda kayiptilar.)
+   *
+   * Ile gore gruplaniyor: ileride baska bir ilin ilceleri eklenirse
+   * kendiliginden kendi basligi altinda cikar.
+   */
+  const ilceler = tumBolgeler.filter((l) => l.ilce);
+  const ilceGruplari = [
+    ...ilceler
+      .reduce((m, l) => {
+        (m.get(l.il) ?? m.set(l.il, []).get(l.il)!).push(l);
+        return m;
+      }, new Map<string, typeof ilceler>())
+      .entries(),
+  ];
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -104,6 +127,31 @@ export default async function BolgeIndex() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          ))}
+
+          {/* Ilce sayfalari — il kartlari il bazli oldugu icin ayri bolum. */}
+          {ilceGruplari.map(([il, liste]) => (
+            <div key={il}>
+              <h2 className="text-2xl font-black text-navy">{il} ilçeleri</h2>
+              <p className="mt-2 max-w-3xl text-muted">
+                {il}&apos;un tamamında yerinde muayene yapıyoruz. Aşağıdaki ilçeler için,
+                bölgedeki sanayi yapısına ve orada en çok kontrol edilen ekipmanlara
+                göre hazırlanmış ayrı sayfalarımız var.
+              </p>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {liste.map((l) => (
+                  <Link
+                    key={l.slug}
+                    href={`/bolge/${l.slug}`}
+                    className="group rounded-xl border border-line bg-white p-5 transition hover:border-blue"
+                  >
+                    <span className="block font-bold text-navy group-hover:text-blue">{l.ilce}</span>
+                    <span className="mt-1 block text-sm text-muted">{l.intro || l.description}</span>
+                    <span className="mt-2 block text-xs font-bold text-blue">Ayrıntılı sayfa →</span>
+                  </Link>
+                ))}
               </div>
             </div>
           ))}
