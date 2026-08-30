@@ -100,6 +100,42 @@ export const BOLGE_EKIPMAN: Record<string, string[]> = {
     "kaldirma-iletme", "basincli-kaplar", "elektrik-tesisat", "yangin-tesisati",
     "is-makineleri", "makina-tezgah", "is-hijyeni-olcumleri", "egitim",
   ],
+
+  /* ---- Istanbul ilceleri: liste ilcenin sanayi profiline gore secildi.
+     Sekiz ilceye ayni listeyi vermek, sayfalari birbirinin kopyasi
+     haline getirirdi — bkz. lib/bolge-icerik.ts basindaki gerekce. ---- */
+  esenyurt: [
+    "raf-sistemleri", "forklift", "transpalet", "kompresor-hava-tanki",
+    "yangin-tesisati", "sprinkler-yagmurlama-sistemi", "elektrik-tesisat", "havalandirma",
+  ],
+  basaksehir: [
+    "makina-tezgah", "torna-tezgahi", "freze-tezgahi", "eksantrik-pres",
+    "dairesel-testere", "serit-testere", "kompresor-hava-tanki", "elektrik-tesisat",
+  ],
+  arnavutkoy: [
+    "raf-sistemleri", "forklift", "buhar-kazani", "kompresor-hava-tanki",
+    "yangin-tesisati", "sprinkler-yagmurlama-sistemi", "yangin-pompasi", "makina-tezgah",
+  ],
+  avcilar: [
+    "kaldirma-iletme", "sapan-ve-kaldirma-aksesuarlari", "forklift", "mobil-vinc",
+    "konveyor-bantli-iletme", "elektrik-tesisat", "topraklama-olcumu", "yangin-algilama",
+  ],
+  tuzla: [
+    "basincli-kaplar", "mobil-vinc", "monoray-vinc", "sapan-ve-kaldirma-aksesuarlari",
+    "kizgin-yag-kazani", "patlamadan-korunma", "kaynak-makinasi", "elektrik-tesisat",
+  ],
+  umraniye: [
+    "torna-tezgahi", "freze-tezgahi", "isleme-merkezi-cnc", "abkant-pres",
+    "giyotin-makas", "monoray-vinc", "kompresor-hava-tanki", "makinalarda-elektriksel-kontrol",
+  ],
+  pendik: [
+    "hidrolik-pres", "eksantrik-pres", "kaynak-makinasi", "punta-tabanca",
+    "konveyor-bantli-iletme", "forklift", "raf-sistemleri", "kompresor-hava-tanki",
+  ],
+  buyukcekmece: [
+    "plastik-enjeksiyon-makinesi", "buhar-kazani", "kalorifer-kazani", "isi-degistirici-esanjor",
+    "kompresor-hava-tanki", "raf-sistemleri", "forklift", "yangin-dolabi-ve-hidrant",
+  ],
 };
 
 /** Bolge tablosunda karsiligi olmayan yeni bir sehir eklenirse kullanilir. */

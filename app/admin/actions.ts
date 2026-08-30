@@ -11,6 +11,7 @@ import {
   getEquipment,
   deleteEquipment,
   saveLocation,
+  getLocations,
   deleteLocation,
   saveSettings,
   getSettings,
@@ -607,6 +608,40 @@ export async function yazilariKoddanAktarAction() {
   }
   revalidatePath("/", "layout");
   redirect("/admin/articles?aktarildi=" + ARTICLES.length);
+}
+
+// ---------- BOLGELERI KODDAN AKTAR ----------
+/**
+ * Koddaki bolge listesini veritabanina aktarir.
+ *
+ * ⚠️ NEDEN GEREKLI: `lib/content.ts` icindeki LOCATIONS yalnizca ilk kurulum
+ * tohumudur; `seedIfEmpty()` tablolari bir kez doldurduktan sonra bolgeler
+ * VERITABANINDAN okunur. Yani koda yeni bir ilce eklemek canliya HIC
+ * yansimaz — makale metinlerinde defalarca yasanan durumun aynisi.
+ * Makaleler ve sertifikalar icin bu dugme zaten vardi, bolgeler icin yoktu;
+ * 2026-08-30'da sekiz Istanbul ilcesi eklenirken acildi.
+ *
+ * ⚠️ Panelden yapilmis duzenlemeler KORUNUR: yalnizca kodda olup
+ * veritabaninda OLMAYAN bolgeler eklenir. Mevcut bir kaydin metnine
+ * dokunulmaz — aksi halde panelden yazilmis bir bolge tanitimi sessizce
+ * koddaki haliyle ezilirdi.
+ */
+export async function bolgeleriKoddanAktarAction() {
+  await guard();
+  const { LOCATIONS } = await import("@/lib/content");
+  const mevcut = await getLocations().catch(() => []);
+  const varOlan = new Set(mevcut.map((l) => l.slug));
+
+  let eklenen = 0;
+  let sira = mevcut.length;
+  for (const l of LOCATIONS) {
+    if (varOlan.has(l.slug)) continue;
+    await saveLocation({ ...l, ilce: l.ilce, aktif: true, sira: sira++ });
+    eklenen++;
+  }
+
+  revalidatePath("/", "layout");
+  redirect(`/admin/locations?aktarildi=${eklenen}`);
 }
 
 // ---------- TEKLIF TALEPLERI ----------

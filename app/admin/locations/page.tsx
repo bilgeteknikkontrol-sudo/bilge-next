@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { getLocations, getLocationBySlug } from "@/lib/cms";
-import { saveLocationAction, deleteLocationAction } from "../actions";
+import { saveLocationAction, deleteLocationAction, bolgeleriKoddanAktarAction } from "../actions";
 import { guard } from "@/lib/auth";
 
 export default async function LocationsAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ edit?: string; new?: string }>;
+  searchParams: Promise<{ edit?: string; new?: string; aktarildi?: string }>;
 }) {
   await guard();
   const sp = await searchParams;
@@ -18,10 +18,32 @@ export default async function LocationsAdmin({
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-black tracking-tight text-navy">Bölgeler</h1>
-        <Link href="/admin/locations?new=1" className="rounded-lg bg-blue px-4 py-2 text-sm font-semibold text-white hover:brightness-110">
-          + Yeni
-        </Link>
+        <div className="flex items-center gap-2">
+          {/*
+            Koddaki bolge listesini veritabanina tasir. Yeni ilce sayfalari
+            kodda yaziliyor ama LOCATIONS yalnizca ilk kurulum tohumu oldugu
+            icin canliya kendiliginden yansimiyor — bkz. actions.ts
+            bolgeleriKoddanAktarAction. Panelden yapilmis duzenlemeler
+            korunur; yalnizca EKSIK bolgeler eklenir.
+          */}
+          <form action={bolgeleriKoddanAktarAction}>
+            <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+              Koddaki bölgeleri aktar
+            </button>
+          </form>
+          <Link href="/admin/locations?new=1" className="rounded-lg bg-blue px-4 py-2 text-sm font-semibold text-white hover:brightness-110">
+            + Yeni
+          </Link>
+        </div>
       </div>
+
+      {sp.aktarildi && (
+        <p className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+          {sp.aktarildi === "0"
+            ? "Koddaki bölgelerin tamamı zaten kayıtlı; yeni ekleme yapılmadı."
+            : `${sp.aktarildi} bölge eklendi. Mevcut kayıtlara dokunulmadı.`}
+        </p>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
         <div className="rounded-2xl bg-white p-5 shadow-sm">

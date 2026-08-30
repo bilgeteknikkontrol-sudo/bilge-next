@@ -168,6 +168,19 @@ const nextConfig = {
       },
 
       ...eskiAdresYonlendirmeleri(),
+
+      /**
+       * ⚠️ Ekipmanin slug'i `makina-tezgah`, ama bolge sayfasi metinlerinde
+       * bes ayri yerde `makina-ve-tezgah` yaziliyordu — hepsi 404 veren ic
+       * linklerdi (2026-08-30 tam link taramasinda bulundu). Metinler
+       * duzeltildi; bu yonlendirme, CMS'te saklanan ya da disaridan gelen
+       * eski yazimlar icin duruyor.
+       */
+      {
+        source: "/ekipman/makina-ve-tezgah",
+        destination: "/ekipman/makina-tezgah",
+        permanent: true,
+      },
       {
         source: "/:path*",
         has: [{ type: "host", value: "bilgeteknikkontrol.com" }],

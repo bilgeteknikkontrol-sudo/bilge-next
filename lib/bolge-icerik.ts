@@ -65,7 +65,7 @@ export const BOLGE_ICERIK: Record<string, BolgeIcerik> = {
 <p>İstanbul'un sanayisi tek bir sektöre yaslanmadığı için kontrol talebi de
 geniş bir yelpazeye yayılıyor. İkitelli, Dudullu ve Beylikdüzü hattındaki
 imalat işletmelerinde <a href="/ekipman/basincli-kaplar">basınçlı kaplar</a>,
-kompresörler ve <a href="/ekipman/makina-ve-tezgah">makine tezgâhları</a>;
+kompresörler ve <a href="/ekipman/makina-tezgah">makine tezgâhları</a>;
 Tuzla ve çevresindeki tersane bölgesinde kaldırma ekipmanları ve vinçler;
 Hadımköy–Çatalca aksındaki depolama tesislerinde ise
 <a href="/ekipman/forklift">forkliftler</a> ve
@@ -103,7 +103,7 @@ ${ORTAK_DAYANAK}
 işletmeleri; metal işleme, plastik enjeksiyon, ambalaj ve mobilya
 üretiminde yoğunlaşıyor. Bu yapı, kontrol taleplerini de belirliyor:
 kompresör ve hava tankları, presler,
-<a href="/ekipman/makina-ve-tezgah">makine tezgâhları</a> ve
+<a href="/ekipman/makina-tezgah">makine tezgâhları</a> ve
 <a href="/ekipman/elektrik-tesisat">elektrik tesisatı ölçümleri</a> en sık
 istenen kontroller.</p>
 <p>E-5 ve TEM aksındaki depolama tesislerinde ise
@@ -128,13 +128,322 @@ ${ORTAK_DAYANAK}
     ],
   },
 
+  /* ------------------------------------------------------------------ *
+   * ISTANBUL ILCELERI
+   *
+   * ⚠️ NEDEN YALNIZCA SEKIZ ILCE: kullanici "tum Istanbul'da hizmet
+   * veriyoruz" dedi, ama 39 ilcenin hepsine sayfa acmak dogru degil.
+   * Birbirinin kopyasi ilce sayfalari tam olarak Google'in "kapi sayfasi"
+   * (doorway page) sayip yaptirim uyguladigi seydir — rakiplerden
+   * teknikperiyodikkontrol.com'un dustugu tuzak. Sayfa yalnizca HAKKINDA
+   * AYIRT EDICI SEY YAZILABILEN ilceler icin acildi: gercek bir sanayi
+   * kimligi, bilinen bir organize sanayi bolgesi ya da belirgin bir uretim
+   * yogunlugu olanlar. Kalan ilceleri /bolge/istanbul sayfasi karsiliyor.
+   *
+   * ⚠️ Organize sanayi bolgesi adlari dogrulandi (Istanbul'da dokuz OSB var:
+   * Beylikduzu, Ikitelli, Dudullu, Anadolu Yakasi, Birlik, Tuzla, Deri,
+   * Tuzla Kimya, Biyoteknoloji Ihtisas). Dogrulanmayan hicbir OSB adi
+   * yazilmadi. Firmanin bu ilcelerde OFISI oldugu iddia EDILMIYOR — merkez
+   * Beylikduzu'nde, hizmet yerinde veriliyor.
+   * ------------------------------------------------------------------ */
+
+  esenyurt: {
+    lead: "Esenyurt, İstanbul'un depolama ve dağıtım merkezi. TEM ve E-5 aksındaki antrepolar, soğuk hava depoları ve tekstil–gıda üretim tesisleri, ilçedeki kontrol taleplerinin büyük bölümünü oluşturuyor.",
+    bodyHtml: `
+<h2>Esenyurt'ta Hangi Ekipmanlar Öne Çıkıyor?</h2>
+<p>Depolama ağırlıklı bir ilçe olduğu için Esenyurt'ta en sık talep edilen
+kontroller <a href="/ekipman/raf-sistemleri">raf sistemleri</a>,
+<a href="/ekipman/forklift">forklift</a> ve
+<a href="/ekipman/transpalet">transpalet</a> muayeneleri. Yüksek irtifalı
+depo raflarında, çerçeve ayaklarının forklift çarpması sonucu eğilmesi en sık
+karşılaştığımız uygunsuzluk; bu hasar gözle fark edilmeyecek kadar küçük
+göründüğünde bile taşıma kapasitesini ciddi biçimde düşürüyor.</p>
+<p>Soğuk hava depolarında <a href="/ekipman/kompresor-hava-tanki">kompresör ve
+hava tankı</a> kontrolleri, üretim tesislerinde ise
+<a href="/ekipman/elektrik-tesisat">elektrik tesisatı ölçümleri</a> ve
+<a href="/ekipman/yangin-tesisati">yangın tesisatı</a> muayenesi ön planda.
+Depo yapılarında yangın yükünün yüksek olması, sprinkler ve yangın pompası
+kontrollerini de kritik hale getiriyor.</p>
+
+<h2>Merkezimize En Yakın İkinci İlçe</h2>
+<p>Merkez ofisimiz Beylikdüzü Yakuplu'da bulunuyor; Esenyurt sınır komşusu.
+Bu yakınlık, özellikle denetim öncesi eksik fark edilen raporlar veya yeni
+kurulan bir hattın devreye alma kontrolü gibi acil taleplerde kısa vadeli
+randevu verebilmemizi sağlıyor.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "Esenyurt'taki depoma kaç kişilik ekip geliyor?", a: "Ekipman çeşidine göre değişir. Yalnızca raf ve forklift kontrolü için tek mühendis yeterli olur; elektrik ölçümleri ve yangın tesisatı da varsa farklı branşlardan mühendisler görevlendirilir. Ekipman listenizi ilettiğinizde kaç kişi geleceğini ve süreyi baştan bildiririz." },
+      { q: "Depo raflarının kontrolü için depoyu boşaltmam gerekir mi?", a: "Hayır. Raf sistemi kontrolü yüklü durumda yapılır; zaten rafın gerçek çalışma koşulunda değerlendirilmesi gerekir. Yalnızca kontrol sırasında forklift trafiğinin geçici olarak durdurulması istenir." },
+      { q: "Kiraladığım depoda ekipmanlar mal sahibine ait, kontrolü kim yaptırır?", a: "Yükümlülük, ekipmanı çalıştıran işverendedir. Mülkiyet kimde olursa olsun, işyerinde kullanılan ekipmanın periyodik kontrolünü yaptırmak ve raporu işyerinde bulundurmak sizin sorumluluğunuzdadır." },
+      { q: "Aynı gün rapor alabilir miyim?", a: "Saha kontrolü tamamlandıktan sonra rapor hazırlanıp e-imzalanır. Standart teslim süresi birkaç iş günüdür; denetim tarihi yaklaşmışsa bunu baştan belirtmenizi rica ederiz, önceliklendirebiliyoruz." },
+    ],
+  },
+
+  basaksehir: {
+    lead: "Başakşehir, İkitelli Organize Sanayi Bölgesi'ni barındırıyor — Türkiye'nin en büyük küçük sanayi kompleksi. Ahşap işleme, matbaa, plastik ve metal imalatının bir arada olduğu bu yapı, tezgâh ve pres kontrollerini öne çıkarıyor.",
+    bodyHtml: `
+<h2>İkitelli OSB'nin Ekipman Profili</h2>
+<p>İkitelli'de binlerce küçük ve orta ölçekli atölye yan yana çalışıyor.
+Ağaç işleme atölyelerinde <a href="/ekipman/dairesel-testere">dairesel
+testere</a>, <a href="/ekipman/serit-testere">şerit testere</a> ve
+<a href="/ekipman/planya-ve-kalinlik-makinesi">planya–kalınlık makinesi</a>;
+metal işleme atölyelerinde <a href="/ekipman/torna-tezgahi">torna</a>,
+<a href="/ekipman/freze-tezgahi">freze</a> ve
+<a href="/ekipman/eksantrik-pres">eksantrik pres</a> en sık kontrol edilen
+ekipmanlar.</p>
+<p>Küçük atölyelerde en sık gördüğümüz uygunsuzluk, koruyucuların üretimi
+yavaşlattığı gerekçesiyle sökülmüş olması — özellikle preslerde ve dairesel
+testerelerde. Bu, hem periyodik kontrolde uygunsuzluk sebebi hem de iş
+kazalarının en yaygın kaynağı. Konuyu ayrıntılı ele aldığımız
+<a href="/yazilar/preslerde-is-guvenligi">preslerde iş güvenliği</a> yazımızı
+inceleyebilirsiniz.</p>
+
+<h2>Küçük İşletme, Aynı Yükümlülük</h2>
+<p>İkitelli'deki işletmelerin çoğu az sayıda personelle çalışıyor ve sık
+karşılaştığımız soru "bu ölçekte kontrol gerekir mi" oluyor. Gerekiyor:
+periyodik kontrol yükümlülüğü işletme büyüklüğüne değil, kullanılan ekipmana
+bağlı. Tek bir <a href="/ekipman/kompresor-hava-tanki">kompresör</a> ya da tek
+bir <a href="/ekipman/hidrolik-pres">pres</a> de kapsama giriyor.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "İkitelli'de birden fazla atölye aynı anda kontrol ettirebilir mi?", a: "Evet ve bunu öneriyoruz. Aynı blokta veya yakın adaslarda birden çok işletme aynı güne planlandığında saha süresi verimli kullanılır. Komşu işletmelerle birlikte talep oluşturabilirsiniz." },
+      { q: "Atölyemde sadece torna ve kompresör var, ikisi için ayrı ayrı mı ücret alınıyor?", a: "Fiyatlandırma ekipman türü ve adedine göre yapılır. İki ekipman için tek saha ziyareti yeterli olduğundan toplam maliyet, ayrı ayrı çağırmaya göre belirgin şekilde düşük olur. Ekipman listenizi online teklif formundan iletebilirsiniz." },
+      { q: "Ahşap işleme makinelerinde neye bakılıyor?", a: "Koruyucuların varlığı ve işlevselliği, acil durdurma tertibatı, testere gerginliği ve bıçak durumu, toz emiş bağlantısı ve elektriksel güvenlik başlıca kontrol noktalarıdır. Koruyucusu sökülmüş bir makine uygunsuzluk olarak raporlanır." },
+      { q: "Kiracıyım, iş yerini devrettiğimde rapor geçerli kalır mı?", a: "Rapor ekipmana ve o ekipmanı çalıştıran işverene düzenlenir. İşletme devrinde yeni işveren kendi sorumluluğu altında kontrolü yeniletmelidir; ekipman yer değiştirmişse zaten yeniden kontrol gerekir." },
+    ],
+  },
+
+  arnavutkoy: {
+    lead: "Arnavutköy ve Hadımköy hattı, İstanbul'un büyük ölçekli üretim ve antrepo bölgesi. TEM, Kuzey Marmara Otoyolu ve İstanbul Havalimanı bağlantıları, bölgeyi lojistik tesisleri için cazip kılıyor.",
+    bodyHtml: `
+<h2>Hadımköy Hattındaki Tesis Yapısı</h2>
+<p>Bölgede tekstil, plastik, ambalaj, makine ve otomotiv yan sanayi üreticileri
+ile büyük ölçekli antrepolar bir arada. Bu karma yapı, tek bir tesiste birden
+çok ekipman ailesinin kontrol edilmesi anlamına geliyor: üretim hattında
+<a href="/ekipman/makina-tezgah">tezgâhlar</a> ve
+<a href="/ekipman/kompresor-hava-tanki">basınçlı hava sistemi</a>, depo
+tarafında <a href="/ekipman/raf-sistemleri">raf sistemleri</a> ve
+<a href="/ekipman/forklift">forkliftler</a>, kazan dairesinde
+<a href="/ekipman/buhar-kazani">buhar kazanı</a>.</p>
+<p>Gümrüklü ve yanıcı madde antrepolarında
+<a href="/ekipman/yangin-tesisati">yangın tesisatı</a>,
+<a href="/ekipman/sprinkler-yagmurlama-sistemi">sprinkler sistemi</a> ve
+<a href="/ekipman/yangin-pompasi">yangın pompası</a> kontrolleri ayrı bir
+önem taşıyor. Yangın pompalarında haftalık çalıştırma testinin kayıt altına
+alınmaması, denetimlerde sık karşılaşılan bir eksiklik —
+<a href="/yazilar/yangin-pompasi-haftalik-test">bu testin nasıl yapılması
+gerektiğini</a> ayrıca anlattık.</p>
+
+<h2>Büyük Tesiste Kontrol Planlaması</h2>
+<p>Yüzlerce ekipmanı olan tesislerde kontrolleri tek güne sıkıştırmak yerine
+ekipman ailelerine göre bölmek daha verimli oluyor. Üretimin durmasını
+gerektiren testleri planlı duruşlara denk getirmek, hem hattı aksatmıyor hem
+de kontrolün eksiksiz yapılmasına imkân veriyor. Ekipman envanterinizi
+ilettiğinizde böyle bir takvim öneriyoruz.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "Tesisimizde 200'den fazla ekipman var, kontrol ne kadar sürer?", a: "Ekipman dağılımına bağlı. Bu ölçekte genellikle birkaç güne yayılan bir takvim çıkarıyor, farklı branşlardan mühendisleri paralel çalıştırıyoruz. Envanterinizi ilettiğinizde net gün sayısını baştan paylaşırız." },
+      { q: "Üretimi durdurmadan kontrol yapılabilir mi?", a: "Çoğu kontrol üretim sırasında yapılabilir. Ancak yük testi gerektiren kaldırma ekipmanları ve bazı basınçlı kap muayeneleri ekipmanın devre dışı olmasını gerektirir. Bu kalemleri planlı duruşlarınıza denk getirecek şekilde programlıyoruz." },
+      { q: "Antrepomuzda yanıcı madde var, ek bir kontrol gerekiyor mu?", a: "Yanıcı ve parlayıcı madde bulunan alanlarda patlayıcı ortam değerlendirmesi ve buna bağlı ekipman uygunluğu ayrı bir konudur. Patlamadan korunma kapsamındaki incelemeler için ayrı bir hizmet kalemimiz bulunuyor." },
+      { q: "İstanbul Havalimanı çevresindeki tesislere de geliyor musunuz?", a: "Evet. Arnavutköy, Hadımköy ve havalimanı çevresindeki tüm sanayi ve lojistik tesislerine yerinde hizmet veriyoruz." },
+    ],
+  },
+
+  avcilar: {
+    lead: "Avcılar, Ambarlı Limanı'na komşu olması nedeniyle elleçleme ve depolama ağırlıklı bir ilçe. Kaldırma ekipmanları ve kaldırma aksesuarları, buradaki kontrol taleplerinin merkezinde.",
+    bodyHtml: `
+<h2>Liman Çevresinde Kaldırma Ekipmanları</h2>
+<p>Ambarlı hattındaki depolama ve elleçleme tesislerinde
+<a href="/ekipman/kaldirma-iletme">kaldırma ve iletme ekipmanları</a>,
+<a href="/ekipman/forklift">forklift</a>,
+<a href="/ekipman/mobil-vinc">mobil vinç</a> ve
+<a href="/ekipman/sapan-ve-kaldirma-aksesuarlari">sapan ile kaldırma
+aksesuarları</a> yoğun biçimde kullanılıyor. Bu ekipmanlarda kontrol sıklığı
+kadar kullanım şiddeti de belirleyici: sürekli yük altında çalışan bir sapan,
+takvim dolmadan da kullanım dışı bırakılmayı gerektirebilir.</p>
+<p>Kaldırma aksesuarlarında en sık gördüğümüz uygunsuzluk, çelik halatlarda
+kopan tel sayısının sınırı aşmasına rağmen kullanıma devam edilmesi.
+<a href="/yazilar/celik-halat-ne-zaman-degistirilir">Çelik halatın ne zaman
+değiştirilmesi gerektiğini</a> ölçütleriyle birlikte anlattık.
+Yük testi gerektiren kontroller için
+<a href="/yazilar/yuk-testi-nedir">yük testi nedir</a> yazımız da yardımcı
+olabilir.</p>
+
+<h2>Üniversite ve Kurumsal Tesisler</h2>
+<p>İlçede sanayi dışında büyük kurumsal binalar ve eğitim tesisleri de var.
+Bu yapılarda <a href="/ekipman/elektrik-tesisat">elektrik tesisatı</a>,
+<a href="/ekipman/topraklama-olcumu">topraklama ölçümü</a>,
+<a href="/ekipman/yangin-algilama">yangın algılama sistemleri</a> ve
+<a href="/ekipman/havalandirma">havalandırma tesisatı</a> kontrolleri
+gündeme geliyor.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "Sapan ve zincir takımlarının kontrolü ayrı ayrı mı yapılıyor?", a: "Her kaldırma aksesuarı ayrı bir ekipman olarak değerlendirilir ve kimliklendirilir. Ancak saha ziyareti tek seferde yapılır; adet arttıkça birim maliyet düşer. Takım sayısını teklif formunda belirtmeniz yeterli." },
+      { q: "Vinçte yük testi için ağırlık siz mi getiriyorsunuz?", a: "Test yükünün sağlanması genellikle işletmeye aittir; sahada mevcut yükler ya da su torbası benzeri çözümler kullanılabilir. Ekipmanın kapasitesini bildirdiğinizde hangi yöntemin uygun olacağını birlikte planlarız." },
+      { q: "Topraklama ölçümü ne sıklıkta yapılmalı?", a: "İşyerlerinde topraklama tesisatı ölçümleri yılda bir kez yapılır. Ölçüm sonucunda bulunması gereken direnç değeri tesisin türüne göre değişir; bu konuyu ayrı bir yazıda ele aldık." },
+      { q: "Ambarlı'daki tesisimize hafta sonu gelebilir misiniz?", a: "Üretim veya elleçmenin durmadığı tesislerde hafta sonu ve mesai dışı planlama yapabiliyoruz. Talebinizi iletirken bunu belirtmeniz yeterli." },
+    ],
+  },
+
+  tuzla: {
+    lead: "Tuzla, İstanbul'un en yoğun sanayi ilçesi: tersaneler bölgesinin yanı sıra Tuzla Organize Sanayi, Kimya Organize Sanayi, Deri Organize Sanayi ve Birlik Organize Sanayi bölgeleri burada bulunuyor.",
+    bodyHtml: `
+<h2>Tersane ve Ağır Sanayi Ekipmanları</h2>
+<p>Tersanelerde <a href="/ekipman/mobil-vinc">mobil vinç</a>,
+<a href="/ekipman/monoray-vinc">monoray vinç ve kren</a>,
+<a href="/ekipman/sapan-ve-kaldirma-aksesuarlari">kaldırma aksesuarları</a> ve
+<a href="/ekipman/kaynak-makinasi">kaynak makineleri</a> ağır kullanım
+altında çalışıyor. Deniz ortamının korozyon etkisi, özellikle çelik halat ve
+sapanlarda aşınmayı hızlandırdığı için bu ekipmanlarda kontrol aralığının
+takvimle sınırlı tutulmaması gerekiyor.</p>
+<p>Kimya ve boya tesislerinde <a href="/ekipman/basincli-kaplar">basınçlı
+kaplar</a>, <a href="/ekipman/kizgin-yag-kazani">kızgın yağ kazanları</a> ve
+<a href="/ekipman/patlamadan-korunma">patlamadan korunma</a> kapsamındaki
+incelemeler öne çıkıyor. Basınçlı kaplarda hidrostatik test gerektiren
+durumları <a href="/yazilar/basincli-kap-hidrostatik-test">ayrı bir yazıda</a>
+ele aldık.</p>
+
+<h2>Dört OSB, Farklı Kontrol İhtiyacı</h2>
+<p>Tuzla'daki organize sanayi bölgeleri farklı sektörlerde ihtisaslaşmış
+durumda; bu da kontrol profilini değiştiriyor. Deri sanayinde kimyasal işlem
+tankları ve havalandırma, kimya sanayinde patlayıcı ortam ve basınçlı
+sistemler, genel imalatta ise
+<a href="/ekipman/makina-tezgah">tezgâh</a> ve
+<a href="/ekipman/elektrik-tesisat">elektrik tesisatı</a> kontrolleri
+belirleyici oluyor.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "Tersanede çalışan vinçlerin kontrolü kaç ayda bir?", a: "Kaldırma ve iletme ekipmanlarında kontrol periyodu, imalatçı veya standart aksini belirtmedikçe yılda en az bir kezdir. Ancak deniz ortamı ve ağır kullanım nedeniyle tersane ekipmanlarında ara muayeneler ve kaldırma aksesuarlarının daha sık gözden geçirilmesi önerilir." },
+      { q: "Basınçlı kaba hidrostatik test her kontrolde yapılır mı?", a: "Hayır. Hidrostatik test belirli koşullarda gerekir: ekipmanın ilk kullanımı, önemli bir tamir veya değişiklik sonrası ya da ilgili standardın öngördüğü aralıklarla. Rutin periyodik kontrolde öncelik görsel ve fonksiyonel muayenededir." },
+      { q: "Patlayıcı ortam olan tesiste kontrol nasıl yapılıyor?", a: "Patlayıcı ortam sınıflandırması yapılmış alanlarda kullanılan ekipmanların bu ortama uygun olması gerekir. Kontrol sırasında ekipmanın sertifikasyonu, koruma sınıfı ve tesisin bölge sınıflandırmasıyla uyumu birlikte değerlendirilir." },
+      { q: "Beylikdüzü'nden Tuzla'ya geliyor musunuz?", a: "Evet. Merkezimiz Beylikdüzü'nde olmakla birlikte İstanbul'un iki yakasına da yerinde hizmet veriyoruz. Anadolu yakasındaki tesisler için saha planlamasını günlük programa göre yapıyoruz." },
+    ],
+  },
+
+  umraniye: {
+    lead: "Ümraniye, Dudullu Organize Sanayi Bölgesi'ni barındıran, Anadolu yakasının en yoğun imalat ilçesi. Metal işleme, makine imalatı ve otomotiv yan sanayi ağırlıklı bu yapı tezgâh ve kaldırma kontrollerini öne çıkarıyor.",
+    bodyHtml: `
+<h2>Dudullu OSB'nin Kontrol Profili</h2>
+<p>Dudullu'da talaşlı imalat ve sac işleme yoğun. En sık kontrol ettiğimiz
+ekipmanlar <a href="/ekipman/torna-tezgahi">torna tezgâhları</a>,
+<a href="/ekipman/freze-tezgahi">freze tezgâhları</a>,
+<a href="/ekipman/isleme-merkezi-cnc">CNC işleme merkezleri</a>,
+<a href="/ekipman/abkant-pres">abkant presler</a> ve
+<a href="/ekipman/giyotin-makas">giyotin makaslar</a>.</p>
+<p>Atölye içi malzeme taşımada <a href="/ekipman/monoray-vinc">monoray
+vinçler</a> ve <a href="/ekipman/forklift">forkliftler</a>, üretim
+altyapısında ise <a href="/ekipman/kompresor-hava-tanki">kompresör ve hava
+tankı</a> ile <a href="/ekipman/elektrik-tesisat">elektrik tesisatı</a>
+kontrolleri gündemde. Tezgâhlarda en sık gördüğümüz uygunsuzluk, acil
+durdurma butonunun işlevini yitirmiş olması — kontrol sırasında mutlaka
+fonksiyonel olarak denenir.</p>
+
+<h2>Makine Yerleşimi ve Elektriksel Güvenlik</h2>
+<p>Yoğun makine parkı olan atölyelerde yerleşim düzeni ve makineler arası
+güvenli mesafe ayrı bir başlık. Ayrıca
+<a href="/ekipman/makinalarda-elektriksel-kontrol">makinelerde elektriksel
+kontrol</a> ve <a href="/ekipman/topraklama-olcumu">topraklama ölçümü</a>,
+tezgâh yoğunluğunun yüksek olduğu bu bölgede sık talep edilen hizmetler
+arasında.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "CNC tezgâhında periyodik kontrol neyi kapsıyor?", a: "Koruyucu kapakların ve kapı kilitlerinin işlevi, acil durdurma tertibatı, elektriksel güvenlik, hidrolik ve pnömatik sistemlerin sızdırmazlığı ve güvenlik işaretleri başlıca kontrol noktalarıdır. Tezgâhın işleme hassasiyeti kalibrasyon konusudur, periyodik kontrolün kapsamına girmez." },
+      { q: "Atölyemde 30 tezgâh var, hepsi tek raporda mı gösteriliyor?", a: "Her ekipman için ayrı bir muayene kaydı düzenlenir; bunlar tek bir dosyada toplanabilir. Böylece denetimde hem toplu liste hem de ekipman bazında rapor sunabilirsiniz." },
+      { q: "Monoray vincin yük testi için hattı durdurmam gerekir mi?", a: "Yük testi sırasında vincin çalışma alanının boşaltılması gerekir. Genellikle kısa süreli bir duruş yeterli olur; hattın tamamının durdurulması gerekmez. Planlamayı sizin vardiya düzeninize göre yapıyoruz." },
+      { q: "Kompresör hava tankının kontrolü kaç yılda bir?", a: "Basınçlı kaplarda kontrol periyodu, standart veya imalatçı aksini belirtmedikçe yılda bir kezdir. Ekipmanınıza özel süreyi süre hesaplama aracımızdan görebilirsiniz." },
+    ],
+  },
+
+  pendik: {
+    lead: "Pendik, otomotiv yan sanayi, makine imalatı ve Sabiha Gökçen çevresindeki lojistik tesisleriyle Anadolu yakasının önemli üretim ilçelerinden biri.",
+    bodyHtml: `
+<h2>Otomotiv Yan Sanayi ve İmalat</h2>
+<p>Pendik'teki üretim tesislerinde <a href="/ekipman/hidrolik-pres">hidrolik
+presler</a>, <a href="/ekipman/eksantrik-pres">eksantrik presler</a>,
+<a href="/ekipman/kaynak-makinasi">kaynak makineleri</a> ve
+<a href="/ekipman/punta-tabanca">punta kaynak tabancaları</a> yaygın.
+Seri üretim yapan tesislerde preslerin sürekli çalışması, koruyucu
+tertibatların ve iki el kumanda sistemlerinin işlevselliğini kritik hale
+getiriyor.</p>
+<p>Malzeme akışında <a href="/ekipman/konveyor-bantli-iletme">konveyör ve
+bantlı iletim sistemleri</a>, <a href="/ekipman/forklift">forklift</a> ve
+<a href="/ekipman/monoray-vinc">monoray vinçler</a>; altyapıda ise
+<a href="/ekipman/kompresor-hava-tanki">basınçlı hava sistemi</a> ve
+<a href="/ekipman/elektrik-tesisat">elektrik tesisatı</a> kontrolleri
+gündemde.</p>
+
+<h2>Havalimanı Çevresi Lojistik Tesisleri</h2>
+<p>Sabiha Gökçen çevresindeki depo ve dağıtım merkezlerinde
+<a href="/ekipman/raf-sistemleri">raf sistemleri</a>,
+<a href="/ekipman/transpalet">transpalet</a> ve
+<a href="/ekipman/yangin-tesisati">yangın tesisatı</a> kontrolleri öne
+çıkıyor. Yüksek raflı depolarda yangın yükü nedeniyle sprinkler sistemlerinin
+düzenli kontrolü ayrıca önemli.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "Preslerde iki el kumanda sistemi kontrol ediliyor mu?", a: "Evet. İki el kumanda tertibatının senkronizasyonu, kilitlenmesi ve tek elle çalıştırılmaya karşı korunması kontrol noktalarındandır. Bu tertibatın devre dışı bırakılmış olması ciddi bir uygunsuzluktur." },
+      { q: "Ana sanayiye tedarikçiyiz, raporlarımız denetimlerde kabul ediliyor mu?", a: "Raporlarımız TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu sıfatıyla düzenlenir ve e-imzalıdır. Hem kamu denetimlerinde hem de ana sanayi tedarikçi denetimlerinde kullanılmak üzere hazırlanır." },
+      { q: "Vardiya düzenimiz var, gece kontrol yapılabilir mi?", a: "Kesintisiz çalışan tesislerde vardiya arası veya gece planlaması yapabiliyoruz. Talebinizi iletirken çalışma düzeninizi belirtmeniz yeterli." },
+      { q: "Konveyör hattının kontrolü nasıl yapılıyor?", a: "Acil durdurma halatı ve butonlarının işlevi, sıkışma noktalarındaki koruyucular, bant gerginliği, tahrik ünitesi ve elektriksel güvenlik değerlendirilir. Uzun hatlarda acil durdurma erişilebilirliği en sık rastlanan eksikliktir." },
+    ],
+  },
+
+  buyukcekmece: {
+    lead: "Büyükçekmece, E-5 ve TEM aksı boyunca uzanan imalat ve depolama tesisleriyle Beylikdüzü hattının doğal devamı. Ambalaj, gıda ve plastik üretimi ilçedeki kontrol taleplerini şekillendiriyor.",
+    bodyHtml: `
+<h2>Üretim ve Depolama Bir Arada</h2>
+<p>Ambalaj ve plastik üretim tesislerinde
+<a href="/ekipman/plastik-enjeksiyon-makinesi">plastik enjeksiyon
+makineleri</a>, <a href="/ekipman/kompresor-hava-tanki">kompresör ve hava
+tankları</a> ile <a href="/ekipman/kalorifer-kazani">kazan daireleri</a>
+kontrol kapsamında. Gıda üretiminde ise
+<a href="/ekipman/buhar-kazani">buhar kazanı</a> ve
+<a href="/ekipman/isi-degistirici-esanjor">ısı değiştirici</a> muayeneleri
+öne çıkıyor.</p>
+<p>Depolama tarafında <a href="/ekipman/raf-sistemleri">raf sistemleri</a>,
+<a href="/ekipman/forklift">forklift</a> ve
+<a href="/ekipman/yangin-dolabi-ve-hidrant">yangın dolabı ve hidrant</a>
+kontrolleri talep ediliyor. Kazan dairelerinde en sık karşılaştığımız
+eksiklik, emniyet ventilinin ayar mühürünün bozulmuş olması ve havalandırma
+menfezlerinin kapatılması — <a href="/yazilar/kazan-dairesi-guvenlik-sartlari">kazan
+dairesi güvenlik şartlarını</a> ayrı bir yazıda topladık.</p>
+
+<h2>Merkeze Yakınlık</h2>
+<p>Büyükçekmece, merkez ofisimizin bulunduğu Beylikdüzü'ne komşu. Bu hattaki
+işletmelere kısa vadede randevu verebiliyor, denetim öncesi acil taleplerde
+hızlı dönüş yapabiliyoruz.</p>
+${ORTAK_SUREC}
+${ORTAK_DAYANAK}
+`,
+    faq: [
+      { q: "Buhar kazanı kontrolünde kazanı soğutmam gerekir mi?", a: "İç muayene gerektiren durumlarda kazanın devre dışı bırakılması ve soğutulması gerekir. Rutin periyodik kontrolde ise emniyet donanımının fonksiyon testi, manometre ve emniyet ventili kontrolü ağırlıklıdır. Kapsamı ekipmanın durumuna göre birlikte belirleriz." },
+      { q: "Gıda üretimindeyiz, hijyen kurallarımız var. Ekibiniz uyuyor mu?", a: "Evet. Üretim alanına giriş kurallarınızı önceden bildirdiğinizde gerekli kişisel koruyucu donanım ve hijyen prosedürlerine uygun şekilde saha çalışması yapıyoruz." },
+      { q: "Plastik enjeksiyon makinesinde neye bakılıyor?", a: "Kalıp koruma kapaklarının kilitlenmesi, acil durdurma tertibatı, hidrolik sistemin sızdırmazlığı, sıcak yüzey korumaları ve elektriksel güvenlik başlıca kontrol noktalarıdır." },
+      { q: "Yangın dolaplarının kontrolü ne sıklıkta yapılır?", a: "Yangın söndürme tesisatı bileşenlerinde kontrol periyodu yılda bir kezdir; bazı bileşenlerde imalatçı daha sık kontrol öngörebilir. Yangın pompalarında ayrıca haftalık çalıştırma testi istenir." },
+    ],
+  },
+
   ankara: {
     lead: "Ankara sanayisi; OSTİM, İvedik ve Sincan organize sanayi bölgeleri etrafında şekilleniyor. Makine imalatı, savunma sanayi tedarik zinciri ve metal işleme ağırlıklı bu yapı, tezgâh ve kaldırma ekipmanı kontrollerini öne çıkarıyor.",
     bodyHtml: `
 <h2>Ankara'da Yoğunlaşan Kontroller</h2>
 <p>OSTİM ve İvedik'teki işletmelerin büyük bölümü makine imalatı, talaşlı
 üretim ve metal şekillendirme yapıyor. Bu tesislerde
-<a href="/ekipman/makina-ve-tezgah">tezgâh ve pres kontrolleri</a>,
+<a href="/ekipman/makina-tezgah">tezgâh ve pres kontrolleri</a>,
 kompresör ve hava tankı muayeneleri ile
 <a href="/ekipman/elektrik-tesisat">elektrik tesisatı ve topraklama
 ölçümleri</a> en sık talep edilen hizmetler.</p>
@@ -237,7 +546,7 @@ ${ORTAK_DAYANAK}
 <h2>Otomotiv Yan Sanayide Kontrol</h2>
 <p>Otomotiv tedarik zincirindeki işletmelerde
 <a href="/ekipman/hidrolik-pres">hidrolik ve eksantrik presler</a>,
-kaynak makineleri, <a href="/ekipman/makina-ve-tezgah">talaşlı imalat
+kaynak makineleri, <a href="/ekipman/makina-tezgah">talaşlı imalat
 tezgâhları</a> ve kaldırma ekipmanları yoğun kullanılıyor. Preslerde çift el
 kumanda, koruyucu ve acil stop tertibatlarının çalışması kontrolün en kritik
 bölümü; bu tertibatların devre dışı bırakılması sahada en sık rastladığımız
@@ -271,7 +580,7 @@ ${ORTAK_DAYANAK}
 kazanları, <a href="/ekipman/basincli-kaplar">basınçlı kaplar</a> ve
 kompresörler kontrol kapsamının başında geliyor. Kimya tesislerinde ayrıca
 proses tankları ve depolama kapları değerlendiriliyor.</p>
-<p>Ambalaj ve gıda üretiminde ise <a href="/ekipman/makina-ve-tezgah">üretim
+<p>Ambalaj ve gıda üretiminde ise <a href="/ekipman/makina-tezgah">üretim
 hattı makineleri</a>, <a href="/ekipman/forklift">forkliftler</a> ve
 <a href="/ekipman/raf-sistemleri">raf sistemleri</a> öne çıkıyor. Depolama
 alanı geniş olan tesislerde raf sistemlerinin hasar sınıflandırması düzenli
