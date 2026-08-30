@@ -1,0 +1,129 @@
+/**
+ * ICERIK BAGLARI — hizmet / rehber / bolge sayfalarini birbirine baglar.
+ *
+ * ⚠️ NEDEN VAR: 2026-08-30 denetiminde site 144 sayfaya ulasmisti ama sayfa
+ * gruplari birbirine HIC baglanmiyordu:
+ *
+ *   - Ekipman sayfasi yalnizca AYNI KATEGORIDEKI ekipmanlara link veriyordu.
+ *     Hicbir ekipman sayfasindan bir bolge sayfasina ya da konuyu anlatan
+ *     rehber yaziya gecis yoktu.
+ *   - Bolge sayfalarinda tek bir hizmet linki bile yoktu; "Hizmet Verdigimiz
+ *     Alanlar" basligi altindakiler tiklanamayan etiketlerdi.
+ *   - Yazilar yalnizca baska yazilara baglaniyordu.
+ *
+ * Iki sonucu vardi. Birincisi, ic link gucu ekipman sayfalarina hic akmiyordu.
+ * Ikincisi ve daha kotusu, YAMYAMLASMA: `/yazilar/forklift-periyodik-kontrolu`
+ * ile `/ekipman/forklift` neredeyse ayni baslikla ("Forklift Periyodik
+ * Kontrolu") ayni aramaya giriyor, Google hangisini gosterecegini bilemiyor
+ * ve ikisi birden zayifliyordu. Ayni cakisma vinc, kompresor, basincli kap ve
+ * topraklama icin de vardi.
+ *
+ * Cozum sayfayi silmek degil, ROLLERI AYIRMAK: rehber yazi bilgilendirir ve
+ * ilgili hizmet sayfasina belirgin bir baglantiyla gonderir; hizmet sayfasi
+ * satis yapar ve derinlesmek isteyeni yaziya gonderir. Google icin de hangi
+ * sayfanin ticari hedef oldugu boylece netlesir.
+ */
+
+/** Rehber yazi slug'i -> anlattigi konunun hizmet (ekipman) sayfalari. */
+export const YAZI_EKIPMAN: Record<string, string[]> = {
+  "forklift-periyodik-kontrolu": ["forklift", "istif-makinasi", "transpalet"],
+  "vinc-periyodik-kontrol": ["mobil-vinc", "monoray-vinc", "kaldirma-iletme"],
+  "kompresor-periyodik-kontrol": ["kompresor-hava-tanki", "basincli-kaplar"],
+  "basincli-kap-hidrostatik-test": ["basincli-kaplar", "kompresor-hava-tanki"],
+  "hidrostatik-test-nedir": ["basincli-kaplar", "buhar-kazani"],
+  "topraklama-direnci-kac-ohm-olmali": ["topraklama-olcumu", "elektrik-tesisat"],
+  "yuk-testi-nedir": ["kaldirma-iletme", "mobil-vinc"],
+  "celik-halat-ne-zaman-degistirilir": ["sapan-ve-kaldirma-aksesuarlari", "monoray-vinc"],
+  "kazan-dairesi-guvenlik-sartlari": ["buhar-kazani", "kalorifer-kazani", "sicak-su-ve-kizgin-su-kazani"],
+  "preslerde-is-guvenligi": ["hidrolik-pres", "eksantrik-pres", "abkant-pres"],
+  "rops-fops-nedir": ["is-makineleri", "kazici-yukleyici"],
+  "yangin-pompasi-haftalik-test": ["yangin-pompasi", "sprinkler-yagmurlama-sistemi"],
+  "yangin-tesisati-projesi-zorunlu-mu": ["yangin-tesisati", "yangin-dolabi-ve-hidrant"],
+  "yangin-algilama-projesi-zorunlu-mu": ["yangin-algilama", "duman-tahliye-sistemi"],
+  "havalandirma-projesi-zorunlu-mu": ["havalandirma", "duman-tahliye-sistemi"],
+  "elektrik-tesisat-projesi-zorunlu-mu": ["elektrik-tesisat", "makinalarda-elektriksel-kontrol"],
+  "periyodik-kontrol-yaptirmamanin-cezasi": ["mekanik-periyodik-kontrol"],
+  "periyodik-kontrol-cezasi-2026": ["mekanik-periyodik-kontrol"],
+  "isg-denetiminde-istenen-belgeler": ["mekanik-periyodik-kontrol", "elektrik-tesisat"],
+};
+
+/**
+ * Tersi: ekipman slug'i -> o ekipmani anlatan rehber yazilar.
+ * YAZI_EKIPMAN tek kaynak; bu tablo ondan uretiliyor ki ikisi birbirinden
+ * kopmasin.
+ */
+export const EKIPMAN_YAZI: Record<string, string[]> = Object.entries(YAZI_EKIPMAN).reduce(
+  (acc, [yazi, ekipmanlar]) => {
+    for (const e of ekipmanlar) (acc[e] ??= []).push(yazi);
+    return acc;
+  },
+  {} as Record<string, string[]>,
+);
+
+/**
+ * Bolge sayfasinda one cikarilacak hizmetler.
+ *
+ * Sehre gore secildi: Kocaeli agir sanayi ve liman, Bursa otomotiv/tekstil
+ * uretim, Beylikduzu depolama ve lojistik agirlikli. Ayni listeyi sekiz
+ * sayfaya kopyalamak, bolge sayfalarini birbirinin kopyasi haline getirirdi.
+ */
+export const BOLGE_EKIPMAN: Record<string, string[]> = {
+  istanbul: [
+    "forklift", "kaldirma-iletme", "basincli-kaplar", "elektrik-tesisat",
+    "yangin-tesisati", "raf-sistemleri", "havalandirma", "topraklama-olcumu",
+  ],
+  beylikduzu: [
+    "forklift", "transpalet", "raf-sistemleri", "kompresor-hava-tanki",
+    "elektrik-tesisat", "yangin-dolabi-ve-hidrant", "istif-makinasi", "topraklama-olcumu",
+  ],
+  ankara: [
+    "kaldirma-iletme", "basincli-kaplar", "elektrik-tesisat", "topraklama-olcumu",
+    "yangin-algilama", "buhar-kazani", "forklift", "havalandirma",
+  ],
+  izmir: [
+    "basincli-kaplar", "buhar-kazani", "kaldirma-iletme", "mobil-vinc",
+    "yangin-tesisati", "elektrik-tesisat", "forklift", "kompresor-hava-tanki",
+  ],
+  kocaeli: [
+    "basincli-kaplar", "buhar-kazani", "kizgin-yag-kazani", "mobil-vinc",
+    "is-makineleri", "kaldirma-iletme", "elektrik-tesisat", "patlamadan-korunma",
+  ],
+  bursa: [
+    "makina-tezgah", "hidrolik-pres", "eksantrik-pres", "kaldirma-iletme",
+    "elektrik-tesisat", "kompresor-hava-tanki", "forklift", "havalandirma",
+  ],
+  tekirdag: [
+    "basincli-kaplar", "buhar-kazani", "is-makineleri", "raf-sistemleri",
+    "forklift", "elektrik-tesisat", "kaldirma-iletme", "yangin-tesisati",
+  ],
+  "turkiye-geneli": [
+    "kaldirma-iletme", "basincli-kaplar", "elektrik-tesisat", "yangin-tesisati",
+    "is-makineleri", "makina-tezgah", "is-hijyeni-olcumleri", "egitim",
+  ],
+};
+
+/** Bolge tablosunda karsiligi olmayan yeni bir sehir eklenirse kullanilir. */
+export const VARSAYILAN_BOLGE_EKIPMAN = [
+  "kaldirma-iletme", "forklift", "basincli-kaplar", "elektrik-tesisat",
+  "yangin-tesisati", "makina-tezgah",
+];
+
+/**
+ * "Fenni muayene" — mevzuattaki adi periyodik kontrol olan islemin sahada ve
+ * aramalarda hala en cok kullanilan adi.
+ *
+ * ⚠️ 2026-08-30 denetiminde sitenin 144 sayfasinin HICBIRINDE bu ifade
+ * gecmiyordu. Rakiplerden teknikperiyodikkontrol.com ayni ekipman icin
+ * "Fenni Muayene" / "Periyodik Muayene" / "Periyodik Kontrol" diye ayri ayri
+ * sayfalar acmis durumda. Ayni oyunu oynayip ucer kopya sayfa uretmek dogru
+ * degil (Google bunu kapi sayfasi sayar); dogru olan es anlamliyi mevcut
+ * sayfada dogal sekilde karsilamak: kunyede gorunur bir satir ve yapisal
+ * veride `alternateName`.
+ */
+export function esAnlamliAdlar(ekipmanAdi: string): string[] {
+  return [
+    `${ekipmanAdi} Fenni Muayenesi`,
+    `${ekipmanAdi} Periyodik Muayenesi`,
+    `${ekipmanAdi} Muayene Raporu`,
+  ];
+}

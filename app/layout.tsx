@@ -99,6 +99,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     name: "Bilge Teknik Kontrol",
     legalName: "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti.",
     url: "https://bilgekontrol.com",
+    /**
+     * ⚠️ Kurulus yili ve logo yoktu. Ikisi de E-E-A-T (deneyim/uzmanlik/
+     * otorite/guvenilirlik) sinyali: 2014'ten beri faaliyette olan bir
+     * kurulusun bunu arama motoruna soylememesi karsiliksiz kayip.
+     * Yil lib/site-data.ts KURUM.kurulus'tan — tek kaynak.
+     */
+    foundingDate: KURUM.kurulus,
+    logo: "https://bilgekontrol.com/icon.png",
+    image: "https://bilgekontrol.com/opengraph-image",
     telephone: settings?.phone || "+902128725204",
     email: settings?.email || "info@bilgeteknikkontrol.com",
     priceRange: "$$",

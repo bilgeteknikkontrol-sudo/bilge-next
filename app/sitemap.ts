@@ -32,6 +32,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: base + "/", lastModified: now, changeFrequency: "weekly", priority: 1 },
     { url: base + "/ekipman", lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: base + "/periyodik-kontrol-sureleri", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    // "Fenni muayene" — periyodik kontrolun sahadaki yaygin adi. Terimi
+    // karsilayan tek sayfa; ayni zamanda 90+ ekipman sayfasina link dagitiyor.
+    { url: base + "/fenni-muayene", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: base + "/teklif", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: base + "/bolge", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: base + "/hesapla", lastModified: now, changeFrequency: "monthly", priority: 0.8 },

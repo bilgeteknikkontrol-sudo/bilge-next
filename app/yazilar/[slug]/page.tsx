@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import YaziGorseli from "../../components/YaziGorseli";
-import { getArticleBySlug, getArticles } from "@/lib/cms";
+import { getArticleBySlug, getArticles, getEquipment } from "@/lib/cms";
 import { seoBaslik } from "@/lib/seo-baslik";
+import { YAZI_EKIPMAN } from "@/lib/icerik-baglari";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -42,12 +43,34 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
 
   const related = (await getArticles(true)).filter((x) => x.slug !== a.slug).slice(0, 3);
 
+  /**
+   * YAZI -> HIZMET SAYFASI — bkz. lib/icerik-baglari.ts
+   *
+   * ⚠️ Bazi yazilar hizmet sayfasiyla AYNI aramaya giriyordu:
+   * `/yazilar/forklift-periyodik-kontrolu` ile `/ekipman/forklift` neredeyse
+   * ayni baslikta. Google hangisinin hedef sayfa oldugunu bilemedigi icin
+   * ikisi de zayifliyordu (yamyamlasma). Yaziyi silmek yerine ROLLERI
+   * ayirmak dogru: yazi bilgilendirir ve okuyucuyu belirgin sekilde hizmet
+   * sayfasina gonderir.
+   */
+  const hizmetSluglari = YAZI_EKIPMAN[a.slug] ?? [];
+  const hizmetler = hizmetSluglari.length
+    ? (await getEquipment().catch(() => []))
+        .filter((e) => hizmetSluglari.includes(e.slug) && e.aktif)
+        // Siralama tabloda yazildigi gibi kalsin: ilk sirada yazinin asil konusu var.
+        .sort((x, y) => hizmetSluglari.indexOf(x.slug) - hizmetSluglari.indexOf(y.slug))
+    : [];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: a.title,
     description: a.description,
     datePublished: a.date,
+    // ⚠️ Yoktu. Google, tarihi olmayan rehber icerigi "ne zaman yazildigi
+    // belirsiz" sayiyor; guncellik bu konuda (mevzuat degisiyor) siralama
+    // sinyali. Yazinin kendi tarihi tek kaynak.
+    dateModified: a.date,
     author: { "@type": "Organization", name: "Bilge Teknik Kontrol" },
     publisher: { "@type": "Organization", name: "Bilge Teknik Kontrol" },
     mainEntityOfPage: `https://bilgekontrol.com/yazilar/${a.slug}`,
@@ -123,6 +146,34 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
                 </details>
               ))}
             </div>
+          </section>
+        )}
+
+        {/*
+          Yazinin anlattigi konunun HIZMET sayfasi. Okuyucu icin dogal bir
+          sonraki adim; arama motoru icin de "ticari hedef sayfa bu" sinyali.
+        */}
+        {hizmetler.length > 0 && (
+          <section className="mt-10 rounded-card border border-blue/30 bg-blue-soft/40 p-6">
+            <h2 className="text-lg font-bold text-navy">
+              Bu kontrolü sizin için yapalım
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              TÜRKAK akredite (AB-0296-M) muayene kuruluşu olarak yerinde muayene ve
+              İSG-KATİP uyumlu e-imzalı rapor:
+            </p>
+            <ul className="mt-3 space-y-2">
+              {hizmetler.map((h) => (
+                <li key={h.slug}>
+                  <Link
+                    href={`/ekipman/${h.slug}`}
+                    className="font-bold text-blue hover:underline"
+                  >
+                    {h.ad} Periyodik Kontrolü →
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

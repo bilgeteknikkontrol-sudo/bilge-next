@@ -1,6 +1,81 @@
 // @ts-check
 
 /**
+ * ESKI ADRESLER -> YENI ADRESLER (kalici 301)
+ *
+ * ⚠️ NEDEN VAR: bilgekontrol.com iki kez bastan yazildi (statik .html -> PHP ->
+ * Next.js) ve HICBIR yonlendirme birakilmadi. 2026-08-30 denetiminde Google'in
+ * hala indeksinde tuttugu eski adreslerin tamami 404 donuyordu:
+ *
+ *   /kurumsal.html          404   (Google arama sonucunda hala GORUNUYOR)
+ *   /index.php              404
+ *   /hizmetlerimiz.php      404
+ *   /blog.php               404
+ *   /forklift               404   (PHP surumunde ekipman sayfalari KOKTE idi)
+ *   /buhar-kazani           404
+ *
+ * Yani 2014'ten beri biriken ne kadar baglanti ve siralama gucu varsa
+ * tamami cope gitti. Siteyi teknik olarak ne kadar iyilestirirsek
+ * iyilestirelim, bu kayip telafi edilmeden rakiplerin onune gecilemez.
+ *
+ * Buradaki tablo, slug'i DEGISEN adresler icindir. Slug'i ayni kalanlar
+ * (yazilar ve ekipmanlar) `app/[slug]/page.tsx` icinde CMS'e bakilarak
+ * cozuluyor — boylece panelden eklenen yeni icerik de otomatik kapsanir.
+ */
+const ESKI_SAYFALAR = {
+  // Kurumsal sayfalar
+  index: "/",
+  kurumsal: "/kurumsal",
+  teknik: "/kurumsal",
+  iletisim: "/iletisim",
+  referanslar: "/referanslar",
+  "cerez-politikasi": "/cerez-politikasi",
+  sss: "/sss",
+  // Akreditasyon/belge sayfalari tek bir sertifikalar sayfasinda toplandi
+  akreditasyon: "/sertifikalar",
+  belgeler: "/sertifikalar",
+  // Hizmet listeleri
+  hizmetlerimiz: "/ekipman",
+  "hizmet-detay": "/ekipman",
+  detay: "/ekipman",
+  "hizmet-bolgelerimiz": "/bolge",
+  blog: "/yazilar",
+  // Teklif akisi: eski "zorunlu ekipman listesi" formunun yerini online teklif aldi
+  "zorunlu-ekipman-listesi": "/teklif",
+  // Kategori/hizmet sayfalari -> yeni ekipman adresleri
+  egitimler: "/ekipman/egitim",
+  "basincli-kaplar": "/ekipman/basincli-kaplar",
+  "basincli-kapilar": "/ekipman/basincli-kaplar", // eski statik surumdeki yazim hatasi
+  "elektrik-olcumleri": "/ekipman/elektrik-tesisat",
+  "elektirik-olcumleri": "/ekipman/elektrik-tesisat", // eski statik surumdeki yazim hatasi
+  "havalandirma-kontrolu": "/ekipman/havalandirma",
+  "is-hijyeni-olcumleri": "/ekipman/is-hijyeni-olcumleri",
+  "is-makineleri": "/ekipman/is-makineleri",
+  "kaldirma-araclari": "/ekipman/kaldirma-iletme",
+  "makina-ve-tezgah": "/ekipman/makina-tezgah",
+  "patlamadan-korunma-dokumani": "/ekipman/patlamadan-korunma",
+  "patlamadan-karuma-dokumani": "/ekipman/patlamadan-korunma", // eski statik surumdeki yazim hatasi
+  "raf-sistemleri-kontrolu": "/ekipman/raf-sistemleri",
+  "yangin-algilama-uyari-sistemleri": "/ekipman/yangin-algilama",
+  "yangin-tesisati-kontrol": "/ekipman/yangin-tesisati",
+  "yuruyen-merdivenleri": "/ekipman/yuruyen-merdiven",
+  // ⚠️ Ayni slug hem yazi hem sayfa olarak var. Yasal sureler tablosu daha
+  // guclu sayfa oldugu icin eski adres yaziya degil ona gidiyor.
+  "periyodik-kontrol-sureleri": "/periyodik-kontrol-sureleri",
+};
+
+/** ESKI_SAYFALAR tablosunu `.php` ve `.html` uzantili iki kurala acar. */
+function eskiAdresYonlendirmeleri() {
+  return Object.entries(ESKI_SAYFALAR).flatMap(([ad, hedef]) =>
+    ["php", "html"].map((uzanti) => ({
+      source: `/${ad}.${uzanti}`,
+      destination: hedef,
+      permanent: true,
+    })),
+  );
+}
+
+/**
  * ⚠️ Bu dosya bilerek .ts DEGIL .js.
  *
  * Hostinger'in derleme sunucusunda glibc 2.28 var; Next.js 16'nin yerel SWC
@@ -91,6 +166,8 @@ const nextConfig = {
         destination: "/periyodik-kontrol-sureleri",
         permanent: true,
       },
+
+      ...eskiAdresYonlendirmeleri(),
       {
         source: "/:path*",
         has: [{ type: "host", value: "bilgeteknikkontrol.com" }],

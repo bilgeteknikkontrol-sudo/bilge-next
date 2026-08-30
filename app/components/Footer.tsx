@@ -13,6 +13,9 @@ const KURUMSAL = [
   { href: "/sertifikalar", label: "Akreditasyon & Sertifikalar" },
   { href: "/bolge", label: "Hizmet Bölgeleri" },
   { href: "/sss", label: "Sık Sorulan Sorular" },
+  // "Fenni muayene" terimini karsilayan merkez sayfa. Her sayfadan link
+  // aldigi icin taranmasi ve indekslenmesi hizlanir.
+  { href: "/fenni-muayene", label: "Fenni Muayene Nedir?" },
   { href: "/yazilar", label: "Bilgi Merkezi" },
   { href: "/iletisim", label: "İletişim" },
 ];

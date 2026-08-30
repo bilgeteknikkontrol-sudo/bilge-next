@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { getLocationBySlug, getLocations } from "@/lib/cms";
+import { getLocationBySlug, getLocations, getEquipment } from "@/lib/cms";
 import { BOLGE_ICERIK } from "@/lib/bolge-icerik";
+import { BOLGE_EKIPMAN, VARSAYILAN_BOLGE_EKIPMAN } from "@/lib/icerik-baglari";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -59,6 +60,24 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
    * devam eder — panelden yeni bir bolge eklendiginde sayfa kirilmasin.
    */
   const zengin = BOLGE_ICERIK[l.slug];
+
+  /**
+   * BOLGEDE ONE CIKAN HIZMETLER — bkz. lib/icerik-baglari.ts
+   *
+   * ⚠️ Bu sayfada daha once TEK BIR hizmet linki bile yoktu: "Hizmet
+   * Verdigimiz Alanlar" altindakiler tiklanamayan etiketlerdi. Oysa sitenin
+   * en degerli sorgu tipi hizmet+sehir birlesimi ("forklift periyodik kontrol
+   * Istanbul"); iki sayfa grubunu birbirine baglamadan o sorgulara girmek
+   * mumkun degil.
+   *
+   * Siralama BOLGE_EKIPMAN'daki oncelige gore; alfabetik degil, cunku listeyi
+   * sehrin sanayi profili belirliyor (Kocaeli agir sanayi, Bursa uretim...).
+   */
+  const oncelik = BOLGE_EKIPMAN[l.slug] ?? VARSAYILAN_BOLGE_EKIPMAN;
+  const tumEkipman = await getEquipment().catch(() => []);
+  const oneCikan = oncelik
+    .map((s) => tumEkipman.find((e) => e.slug === s && e.aktif))
+    .filter((e): e is NonNullable<typeof e> => Boolean(e));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -137,6 +156,33 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
                 <span key={h} className="rounded-full bg-blue-soft px-3 py-1 text-sm font-semibold text-blue">{h}</span>
               ))}
             </div>
+
+            {/* Bolge -> hizmet baglantilari; sayfanin en degerli kismi. */}
+            {oneCikan.length > 0 && (
+              <section className="mt-8">
+                <h2 className="text-xl font-bold text-navy">
+                  {ad} bölgesinde en çok talep edilen periyodik kontroller
+                </h2>
+                <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {oneCikan.map((e) => (
+                    <li key={e.slug}>
+                      <Link
+                        href={`/ekipman/${e.slug}`}
+                        className="block rounded-xl border border-line bg-white px-4 py-3 transition hover:border-blue"
+                      >
+                        <span className="font-semibold text-navy">{e.ad} Periyodik Kontrolü</span>
+                        <span className="mt-0.5 block text-xs text-muted">
+                          {e.standart} · {e.periyot === 1 ? "aylık" : `${e.periyot} ayda bir`}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/ekipman" className="mt-3 inline-block text-sm font-bold text-blue hover:underline">
+                  {ad} için tüm kontrol hizmetleri →
+                </Link>
+              </section>
+            )}
 
             <h2 className="mt-7 text-xl font-bold text-navy">Neden Bölgenizde Bilge?</h2>
             <ul className="mt-3 list-disc space-y-1 pl-6 text-muted">

@@ -4,7 +4,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { getEquipmentBySlug, getEquipment } from "@/lib/cms";
+import { getEquipmentBySlug, getEquipment, getLocations, getArticles } from "@/lib/cms";
+import { EKIPMAN_YAZI, esAnlamliAdlar } from "@/lib/icerik-baglari";
 // Ekipmana ozel uzun icerik ve gorseller CMS'te tutulmuyor; slug uzerinden
 // statik kaynaklardan geliyor. Panelden eklenen yeni bir ekipmanin slug'i
 // bu kaynaklarda yoksa sayfa genel metinle calismaya devam eder.
@@ -86,10 +87,26 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
     .filter((x) => x.kategori === e.kategori && x.slug !== e.slug && x.aktif)
     .slice(0, 6);
 
+  /**
+   * IC BAGLANTI AGI — bkz. lib/icerik-baglari.ts
+   *
+   * ⚠️ Bu sayfa daha once YALNIZCA ayni kategorideki ekipmanlara link
+   * veriyordu. Bir bolge sayfasina ya da konuyu anlatan rehber yaziya hicbir
+   * gecis yoktu; siteyi olusturan uc sayfa grubu birbirinden kopuktu.
+   */
+  const bolgeler = (await getLocations().catch(() => [])).filter((b) => b.aktif);
+  const yaziSluglari = EKIPMAN_YAZI[slug] ?? [];
+  const ilgiliYazilar = yaziSluglari.length
+    ? (await getArticles(true).catch(() => [])).filter((a) => yaziSluglari.includes(a.slug))
+    : [];
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
     name: `${e.ad} Periyodik Kontrolü`,
+    // Sahada ve aramalarda kullanilan es anlamli adlar. Ayri kopya sayfa
+    // acmadan ayni sorgulari karsilamanin dogru yolu — bkz. icerik-baglari.ts
+    alternateName: esAnlamliAdlar(e.ad),
     serviceType: "Periyodik Muayene",
     category: e.kategori,
     // seoDesc yalnizca kod icerigin de var; panelden gelen metin bu alani
@@ -245,6 +262,60 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
               <Link href="/teklif" className="btn-primary">Bu Ekipman İçin Teklif Al →</Link>
               <Link href="/hesapla" className="btn-ghost">Süremi Hesapla</Link>
             </div>
+
+            {/*
+              ILGILI REHBER YAZILAR — bkz. lib/icerik-baglari.ts
+
+              ⚠️ Bazi yazilarin basligi bu sayfayla neredeyse ayniydi
+              (`/yazilar/forklift-periyodik-kontrolu` ile `/ekipman/forklift`
+              ikisi de "Forklift Periyodik Kontrolu"). Google hangisini
+              gosterecegini bilemedigi icin ikisi birden zayifliyordu. Burada
+              rollerin ayrildigi acikca yaziliyor: derinlemesine anlatim
+              yazida, hizmet bu sayfada.
+            */}
+            {ilgiliYazilar.length > 0 && (
+              <div className="mt-12">
+                <h2 className="text-2xl font-black text-navy">Bu konuyu ayrıntılı anlatan rehberler</h2>
+                <ul className="mt-4 space-y-3">
+                  {ilgiliYazilar.map((y) => (
+                    <li key={y.slug} className="rounded-xl border border-line bg-white p-4">
+                      <Link href={`/yazilar/${y.slug}`} className="font-bold text-navy hover:text-blue">
+                        {y.title}
+                      </Link>
+                      <p className="mt-1 text-sm text-muted">{y.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/*
+              HIZMET BOLGELERI — "forklift periyodik kontrol Istanbul" gibi
+              hizmet+sehir aramalari, sitenin en degerli sorgu tipi. Bu iki
+              sayfa grubu daha once birbirine hic baglanmiyordu.
+            */}
+            {bolgeler.length > 0 && (
+              <div className="mt-10 rounded-card border border-line bg-bgsoft p-6">
+                <h2 className="text-lg font-bold text-navy">
+                  {e.ad} periyodik kontrolü verdiğimiz bölgeler
+                </h2>
+                <p className="mt-1 text-sm text-muted">
+                  Ekiplerimiz ekipmanınızın bulunduğu tesise gelir; muayene yerinde yapılır.
+                </p>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {bolgeler.map((b) => (
+                    <li key={b.slug}>
+                      <Link
+                        href={`/bolge/${b.slug}`}
+                        className="inline-block rounded-full border border-line bg-white px-3 py-1 text-sm font-semibold text-navy transition hover:border-blue hover:text-blue"
+                      >
+                        {b.ilce || b.il}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <aside className="space-y-5 lg:sticky lg:top-36 lg:self-start">
@@ -274,9 +345,20 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
                     {e.periyot === 1 ? "Aylık" : `${e.periyot} ayda bir`}
                   </dd>
                 </div>
-                <div className="flex justify-between gap-3">
+                <div className="flex justify-between gap-3 border-b border-line pb-2">
                   <dt className="text-muted">Akreditasyon</dt>
                   <dd className="text-right font-semibold text-navy">{KURUM.akreditasyon}</dd>
+                </div>
+                {/*
+                  ⚠️ "Fenni muayene", mevzuattaki adi periyodik kontrol olan
+                  islemin sahada hala en cok kullanilan adi — ve sitenin 144
+                  sayfasinin HICBIRINDE gecmiyordu. Rakipler ayni ekipman icin
+                  "fenni muayene" adiyla ayri kopya sayfalar aciyor; dogrusu
+                  es anlamliyi mevcut sayfada dogal sekilde karsilamak.
+                */}
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted">Diğer adı</dt>
+                  <dd className="text-right font-semibold text-navy">{e.ad} fenni muayenesi</dd>
                 </div>
               </dl>
             </div>
