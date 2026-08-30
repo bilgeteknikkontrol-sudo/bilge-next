@@ -19,6 +19,16 @@ const ISLER = ADMIN_SAYFALAR.map((sy) => ({
   ikon: sy.ikon,
   baslik: sy.ad,
   not: sy.aciklama,
+  /**
+   * ⚠️ Sitedeki adres de gosteriliyor.
+   *
+   * Kartlarda yalnizca panel adi vardi ve panel adi sitedeki adresle her zaman
+   * ortusmuyor: `/kurumsal` sayfasi panelde "Hakkimizda", `/ekipman` sayfasi
+   * "Hizmetlerimiz", `/yazilar` sayfasi "Bilgi Merkezi" adiyla duruyor.
+   * Kullanici 2026-08-30'da `/kurumsal` sayfasini panelde ARAYIP BULAMADI.
+   * Adres kartta yazinca hangi karta tiklanacagi tahmin gerektirmiyor.
+   */
+  yol: sy.yol,
 }));
 
 export default async function Panel() {
@@ -88,7 +98,10 @@ export default async function Panel() {
           >
             <span aria-hidden className="text-2xl leading-none">{i.ikon}</span>
             <span className="min-w-0">
-              <span className="block font-bold text-navy group-hover:text-blue">{i.baslik}</span>
+              <span className="flex flex-wrap items-baseline gap-x-2">
+                <span className="font-bold text-navy group-hover:text-blue">{i.baslik}</span>
+                <span className="font-mono text-xs text-slate-400">{i.yol}</span>
+              </span>
               <span className="mt-0.5 block text-sm leading-snug text-slate-500">{i.not}</span>
             </span>
           </Link>
