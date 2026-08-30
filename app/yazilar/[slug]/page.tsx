@@ -63,11 +63,38 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
     ],
   };
 
+  /**
+   * ⚠️ SSS'ler VERIDE VARDI AMA SAYFADA HIC BASILMIYORDU.
+   *
+   * 30 yazinin tamaminda `faq` alani dolu; sablon bu alani hic kullanmiyordu.
+   * Yani hem okuyucu icin hazir cevaplar hem de 30 sayfalik FAQPage zengin
+   * sonuc firsati bosa gidiyordu. 2026-08-30 denetiminde fark edildi.
+   *
+   * Schema, sayfada GORUNEN sorularla birebir ayni olmak zorunda; Google
+   * gorunmeyen soruyu yaptirim sebebi sayiyor. Bu yuzden ayni dizi hem
+   * akordiyonu hem JSON-LD'yi besliyor.
+   */
+  const sss = a.faq ?? [];
+  const faqLd = sss.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: sss.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null;
+
   return (
     <>
       <Header />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
       <article className="mx-auto max-w-[820px] px-5 py-12">
         <nav className="mb-4 text-sm text-muted">
           <Link href="/yazilar" className="hover:text-blue">Bilgi Merkezi</Link> / <span className="text-navy">{a.category}</span>
@@ -78,6 +105,27 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         {a.lead && <p className="mt-4 text-lg text-muted">{a.lead}</p>}
         <YaziGorseli slug={a.slug} cmsImage={a.image} bicim="makale" oncelikli />
         <div className="prose mt-6 max-w-none text-ink" dangerouslySetInnerHTML={{ __html: a.body }} />
+
+        {sss.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-xl font-bold text-navy">Sık sorulan sorular</h2>
+            <div className="mt-3 space-y-2">
+              {sss.map((f) => (
+                <details
+                  key={f.q}
+                  className="group rounded-xl border border-line bg-white px-4 py-3"
+                >
+                  <summary className="cursor-pointer list-none font-semibold text-navy">
+                    {f.q}
+                    <span className="float-right text-blue transition group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="mt-2 leading-relaxed text-muted">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
         <div className="mt-10 rounded-card border border-line bg-bgsoft p-6">
           <h3 className="text-lg font-bold text-navy">Periyodik kontrolünüzü erteleyeyim mi?</h3>
           <p className="mt-2 text-sm text-muted">2 dakikada online teklif alın veya yasal sürenizi hesaplayın.</p>
