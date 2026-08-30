@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ReferansSeridi from "./components/ReferansSeridi";
 import HeroSlayt from "./components/HeroSlayt";
-import { getSettings, getEquipment, type Equipment } from "@/lib/cms";
+import { getSettings, getEquipment, getLocations, type Equipment } from "@/lib/cms";
 import { bloklar } from "@/lib/bloklar";
 // CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
 import { EKIPMAN_GORSEL } from "@/lib/images";
@@ -75,6 +75,8 @@ export default async function Home() {
   const settings = await getSettings().catch(() => null);
   const equipment = await getEquipment().catch(() => []);
   const kategoriler = groupByKategori(equipment.filter((e) => e.aktif));
+  // Hizmet bolgeleri bolumu icin. CMS'e ulasilamazsa bolum hic basilmaz.
+  const bolgeler = (await getLocations().catch(() => [])).filter((b) => b.aktif);
 
   // Panelden yonetilen bloklar. Bos ise ilgili bolum statik varsayilanini kullanir.
   const [heroBloklari, ekipBloklari] = await Promise.all([
@@ -326,6 +328,51 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/*
+        HİZMET BÖLGELERİ
+
+        ⚠️ NEDEN EKLENDİ: 2026-08-30 taramasında anasayfada TEK BİR şehir adı
+        ya da bölge bağlantısı bulunmadığı görüldü — yalnızca alt bilgide
+        "/bolge" geçiyordu. Yerinde hizmet veren bir muayene kuruluşu için bu
+        büyük bir eksik: sitenin en güçlü sayfası nerede çalıştığını
+        söylemiyordu. Bölge sayfaları da anasayfadan hiç iç bağlantı almıyordu.
+
+        Liste CMS'ten geliyor; panelden bölge eklenince burası da güncellenir.
+      */}
+      {/* Ustteki HIZMETLER de bg-bgsoft: ikisi tek yumusak bant gibi okunuyor,
+          boylece sonraki bolumlerin arka plan siralamasi bozulmuyor. */}
+      {bolgeler.length > 0 && (
+        <section id="bolgeler" className="section bg-bgsoft">
+          <div className="container-x">
+            <div className="mx-auto mb-9 max-w-[720px] text-center">
+              <span className="chip">Hizmet Bölgelerimiz</span>
+              <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>
+                Ekipmanınızın bulunduğu yere geliyoruz
+              </h2>
+              <p className="mt-3 text-muted">
+                Merkezimiz Beylikdüzü&apos;nde; muayene işletmenizde, yerinde yapılıyor.
+                Aşağıdaki bölgeler için sanayi yapısına göre hazırlanmış ayrı sayfalarımız var.
+              </p>
+            </div>
+            <ul className="mx-auto flex max-w-[900px] flex-wrap justify-center gap-2">
+              {bolgeler.map((b) => (
+                <li key={b.slug}>
+                  <Link
+                    href={`/bolge/${b.slug}`}
+                    className="inline-block rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:border-blue hover:text-blue"
+                  >
+                    {b.ilce || b.il}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 text-center">
+              <Link href="/bolge" className="btn-ghost">Tüm Hizmet Bölgeleri</Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* NEDEN BİZ */}
       <section id="neden" className="section">
