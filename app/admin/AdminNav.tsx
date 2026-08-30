@@ -35,6 +35,23 @@ const GRUPLAR: Grup[] = [
     })),
   },
   {
+    /**
+     * ⚠️ Bu grup EKLENDI. Hizmet (ekipman), bolge ve teklif sorusu listelerine
+     * menuden dogrudan gidilemiyordu; yalnizca ilgili SAYFA ekraninin icindeki
+     * bir dugmeyle ulasilabiliyordu. Kullanici "adminde hizmet ekleme sayfasini
+     * bulamiyorum" dedi ve haklıydı: /admin/equipment menude hic yoktu.
+     *
+     * Etikette hem "Hizmetler" hem "Ekipman" geciyor; sitede "Hizmetlerimiz"
+     * yaziyor ama panelde tablo adi "equipment" — iki terimi de arayan bulsun.
+     */
+    baslik: "Listeler",
+    maddeler: [
+      { href: "/admin/equipment", etiket: "Hizmetler (Ekipman)", not: "Hizmet ekle / düzenle / görsel", ikon: "🔧" },
+      { href: "/admin/locations", etiket: "Hizmet Bölgeleri", not: "Şehir sayfaları", ikon: "📍" },
+      { href: "/admin/teklif-sorulari", etiket: "Teklif Soruları", not: "Ekipmana bağlı ek bilgiler", ikon: "📐" },
+    ],
+  },
+  {
     baslik: "Site geneli",
     maddeler: [
       { href: "/admin/menu", etiket: "Menü", not: "Üst menü başlıkları", ikon: "🧭" },

@@ -50,6 +50,17 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
   const gorsel = EKIPMAN_GORSEL[slug];
   const foto = EKIPMAN_FOTO[slug];
 
+  /**
+   * Panelden yuklenen hizmet gorseli. Varsa koddaki varsayilanin yerine gecer.
+   *
+   * ⚠️ `next/image` yerine duz `<img>`: panelden gelen adres bir dize
+   * (`/api/gorsel/3` veya harici https). `placeholder="blur"` statik import
+   * gerektiriyor, harici adres icin de `remotePatterns` yapilandirmasi
+   * gerekirdi. Duz etiket her adresle calisir; yukleme boyutu zaten panelde
+   * 6 MB ile sinirli.
+   */
+  const cmsGorsel = e.image?.trim() || null;
+
   const periyotText =
     e.periyot === 1 ? "Aylık çalıştırma testi (imalatçı talimatı)" : `Yılda en az 1 kez (${e.periyot} ayda bir)`;
   const related = (await getEquipment())
@@ -108,9 +119,14 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
 
       {/* KAHRAMAN */}
       <section className="relative isolate overflow-hidden bg-navy text-white">
-        {gorsel && (
+        {(cmsGorsel || gorsel) && (
           <>
-            <Image src={gorsel} alt="" aria-hidden fill priority sizes="100vw" className="object-cover opacity-25" placeholder="blur" />
+            {cmsGorsel ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={cmsGorsel} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-25" />
+            ) : (
+              <Image src={gorsel} alt="" aria-hidden fill priority sizes="100vw" className="object-cover opacity-25" placeholder="blur" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/92 to-navy/60" />
           </>
         )}
@@ -136,15 +152,24 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
               <>
                 <p className="text-lg font-medium leading-relaxed text-ink">{icerik.lead}</p>
 
-                {gorsel && (
+                {(cmsGorsel || gorsel) && (
                   <figure className="mt-7">
-                    <Image
-                      src={gorsel}
-                      alt={`${e.ad} — yerinde periyodik muayene`}
-                      sizes="(max-width: 1024px) 100vw, 700px"
-                      className="h-auto w-full rounded-card border border-line object-cover"
-                      placeholder="blur"
-                    />
+                    {cmsGorsel ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={cmsGorsel}
+                        alt={`${e.ad} — yerinde periyodik muayene`}
+                        className="h-auto w-full rounded-card border border-line object-cover"
+                      />
+                    ) : (
+                      <Image
+                        src={gorsel}
+                        alt={`${e.ad} — yerinde periyodik muayene`}
+                        sizes="(max-width: 1024px) 100vw, 700px"
+                        className="h-auto w-full rounded-card border border-line object-cover"
+                        placeholder="blur"
+                      />
+                    )}
                     <figcaption className="mt-2 text-xs text-muted">
                       {e.ad} · TÜRKAK akredite ({KURUM.akreditasyon}) muayene kapsamında
                     </figcaption>

@@ -139,6 +139,14 @@ export async function saveEquipmentAction(formData: FormData) {
   const slugRaw = String(formData.get("slug") || "");
   const ad = String(formData.get("ad") || "");
   const slug = slugRaw.trim() ? slugRaw.trim() : slugify(ad) || `ekipman-${Date.now()}`;
+
+  // Hizmet gorseli dosya secerek yuklenebiliyor; secilmezse adres alani,
+  // o da bossa koddaki slug eslesmeli varsayilan gorsel kullanilir.
+  const yuklenen = await dosyaYukle(formData, "gorselDosya", ad || slug, ad);
+  if (yuklenen === "buyuk") {
+    redirect(`/admin/equipment?edit=${encodeURIComponent(slug)}&hata=buyuk`);
+  }
+
   const e: Equipment = {
     slug,
     ad,
@@ -148,10 +156,12 @@ export async function saveEquipmentAction(formData: FormData) {
     periyotNot: String(formData.get("periyotNot") || "") || undefined,
     aktif: formData.get("aktif") === "on" || formData.get("aktif") === "true",
     sira: num(formData.get("sira")),
+    image: yuklenen || String(formData.get("image") || "").trim() || undefined,
   };
   await saveEquipment(e);
   revalidatePath("/");
   revalidatePath("/ekipman");
+  revalidatePath(`/ekipman/${slug}`);
   redirect("/admin/equipment");
 }
 

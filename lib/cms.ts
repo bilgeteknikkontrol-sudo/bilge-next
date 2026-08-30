@@ -39,6 +39,15 @@ export type Equipment = {
   periyotNot?: string;
   aktif: boolean;
   sira: number;
+  /**
+   * Hizmet gorseli. Bos ise `lib/images.ts` icindeki slug eslesmeli varsayilan
+   * gorsel kullanilir.
+   *
+   * ⚠️ Onceden ekipmanda gorsel alani HIC YOKTU; gorseller yalnizca kodda
+   * (EKIPMAN_GORSEL) tanimliydi. Panelden yeni bir hizmet eklendiginde o
+   * hizmetin gorseli olmuyordu ve degistirmenin tek yolu kod dagitimiydi.
+   */
+  image?: string;
 };
 
 export type Location = {
@@ -119,6 +128,7 @@ function ensureSchema(): Promise<void> {
        * bir daha calismadigi icin ALTER sart.
        */
       await run(s`ALTER TABLE articles ADD COLUMN seo_title TEXT`).catch(() => {});
+      await run(s`ALTER TABLE equipment ADD COLUMN image LONGTEXT`).catch(() => {});
     } else {
       await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
       await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
@@ -129,6 +139,7 @@ function ensureSchema(): Promise<void> {
       await run(s`CREATE TABLE IF NOT EXISTS site_content (key text PRIMARY KEY, value text)`);
       await run(s`CREATE TABLE IF NOT EXISTS media (id serial PRIMARY KEY, name text, url text, data_url text, alt text, created timestamptz DEFAULT now())`);
       await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS seo_title text`);
+      await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS image text`);
     }
     await seedIfEmpty(s);
   })().catch((e) => {
@@ -376,6 +387,7 @@ function rowToEquipment(r: Record<string, unknown>): Equipment {
     periyotNot: r.periyot_not ? String(r.periyot_not) : undefined,
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
+    image: r.image ? String(r.image) : undefined,
   };
 }
 
@@ -513,12 +525,12 @@ async function dbSaveEquipment(e: Equipment): Promise<void> {
   const q = sql();
   await run(
     isMysql()
-      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
-          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
-          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`
-      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira)
-          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira})
-          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}`
+      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null})
+          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}`
+      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null})
+          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}`
   );
 }
 
