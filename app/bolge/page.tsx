@@ -98,7 +98,7 @@ export default async function BolgeIndex() {
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("bolge_baslik")}</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">Hizmet Bölgelerimiz</h1>
+          <h1 className="text-3xl font-black md:text-4xl">{m("bolge_baslik")}</h1>
           <p className="mt-3 max-w-3xl text-onnavy">{m("bolge_giris")}</p>
           {/* Sayilar giris yazisindan ayri: giris artik panelden duzenleniyor,
               rakamlar ise listeden otomatik hesaplaniyor ve guncel kaliyor. */}
@@ -145,11 +145,9 @@ export default async function BolgeIndex() {
           {/* Ilce sayfalari — il kartlari il bazli oldugu icin ayri bolum. */}
           {ilceGruplari.map(([il, liste]) => (
             <div key={il}>
-              <h2 className="text-2xl font-black text-navy">{il} ilçeleri</h2>
+              <h2 className="text-2xl font-black text-navy">{il} {m("bolge_ilce_baslik")}</h2>
               <p className="mt-2 max-w-3xl text-muted">
-                {il}&apos;un tamamında yerinde muayene yapıyoruz. Aşağıdaki ilçeler için,
-                bölgedeki sanayi yapısına ve orada en çok kontrol edilen ekipmanlara
-                göre hazırlanmış ayrı sayfalarımız var.
+                {il}&apos;un {m("bolge_ilce_yazi")}
               </p>
               <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {liste.map((l) => (
@@ -168,14 +166,11 @@ export default async function BolgeIndex() {
           ))}
 
           <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-8 text-center text-white">
-            <h2 className="text-2xl font-black text-white">Şehriniz listede yok mu?</h2>
-            <p className="mt-2 text-onnavy">
-              Türkiye genelinde planlama yapıyoruz. Ekipman listenizi iletin, bölgenize uygun
-              takvimi birlikte belirleyelim.
-            </p>
+            <h2 className="text-2xl font-black text-white">{m("bolge_cta_baslik")}</h2>
+            <p className="mt-2 text-onnavy">{m("bolge_cta_yazi")}</p>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
-              <Link href="/teklif" className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">Teklif Al →</Link>
-              <Link href="/iletisim" className="rounded-full border border-white/40 px-6 py-3 font-bold text-white transition hover:bg-white/10">İletişim</Link>
+              <Link href="/teklif" className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">{m("bolge_cta_btn1")}</Link>
+              <Link href="/iletisim" className="rounded-full border border-white/40 px-6 py-3 font-bold text-white transition hover:bg-white/10">{m("bolge_cta_btn2")}</Link>
             </div>
           </div>
         </div>

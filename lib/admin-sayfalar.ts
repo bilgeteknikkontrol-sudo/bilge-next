@@ -218,7 +218,22 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     yol: "/ekipman",
     aciklama: "Periyodik kontrolünü yaptığınız ekipmanların listesi ve her birinin kendi sayfası.",
     bolumler: [
-      { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["ekipman_baslik", "ekipman_giris"] },
+      { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["ekipman_baslik", "ekipman_giris", "ekipman_yol_adi", "ekipman_rozet"] },
+      {
+        tip: "metin",
+        baslik: "Sol sütun ve alt çağrı",
+        aciklama: "Kategori listesinin başlığı, altındaki lacivert kutu ve sayfanın sonundaki çağrı.",
+        anahtarlar: [
+          "ekipman_kategori_baslik",
+          "ekipman_kutu_baslik",
+          "ekipman_kutu_yazi",
+          "ekipman_kutu_buton",
+          "ekipman_cta_baslik",
+          "ekipman_cta_yazi",
+          "ekipman_cta_btn1",
+          "ekipman_cta_btn2",
+        ],
+      },
       {
         tip: "kayit",
         baslik: "Ekipman listesi",
@@ -270,7 +285,33 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     yol: "/sertifikalar",
     aciklama: "TÜRKAK akreditasyon sayfası ve belge görselleri.",
     bolumler: [
-      { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["sertifika_baslik", "sertifika_giris"] },
+      { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["sertifika_baslik", "sertifika_giris", "sertifika_yol_adi"] },
+      {
+        tip: "metin",
+        baslik: "Akreditasyon künyesi",
+        aciklama: "Yeşil onaylı kutu ve altındaki doğrulama açıklaması.",
+        anahtarlar: [
+          "sertifika_no_baslik",
+          "sertifika_no_yazi",
+          "sertifika_dogrula_baslik",
+          "sertifika_dogrula_yazi",
+        ],
+      },
+      {
+        tip: "metin",
+        baslik: "Belgeler bölümü başlıkları",
+        anahtarlar: ["sertifika_belge_etiket", "sertifika_belge_baslik"],
+      },
+      {
+        tip: "metin",
+        baslik: "“Akreditasyon neden önemli?” bölümü",
+        anahtarlar: ["sertifika_neden_baslik", "sertifika_neden_yazi"],
+      },
+      {
+        tip: "metin",
+        baslik: "Hiç belge eklenmemişse görünen metin",
+        anahtarlar: ["sertifika_bos_baslik", "sertifika_bos_yazi", "sertifika_bos_buton"],
+      },
       {
         tip: "blok",
         tur: "sertifika",
@@ -326,6 +367,19 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     bolumler: [
       { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["bolge_baslik", "bolge_giris"] },
       {
+        tip: "metin",
+        baslik: "İlçe bölümü ve alt çağrı",
+        anahtarlar: [
+          "bolge_ilce_baslik",
+          "bolge_ilce_yazi",
+          "bolge_kart_link",
+          "bolge_cta_baslik",
+          "bolge_cta_yazi",
+          "bolge_cta_btn1",
+          "bolge_cta_btn2",
+        ],
+      },
+      {
         tip: "kayit",
         baslik: "Şehir sayfaları",
         aciklama:
@@ -343,6 +397,17 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     aciklama: "Soru-cevap sayfası.",
     bolumler: [
       { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["sss_baslik", "sss_giris"] },
+      {
+        tip: "metin",
+        baslik: "Sağdaki kutular",
+        anahtarlar: [
+          "sss_kutu1_baslik",
+          "sss_kutu1_yazi",
+          "sss_kutu1_buton",
+          "sss_kutu2_baslik",
+          "sss_kutu2_buton",
+        ],
+      },
       {
         tip: "blok",
         tur: "sss",

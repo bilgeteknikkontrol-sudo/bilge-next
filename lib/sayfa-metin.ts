@@ -275,14 +275,103 @@ Pratikte bunun anlamı şudur: size ekipman satmıyor, bakımını üstlenmiyoru
     "/ekipman",
     "ekipman",
     "Periyodik Kontrol Hizmetlerimiz",
-    "TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu olarak iş ekipmanı ve tesisat gruplarında periyodik kontrol hizmeti veriyoruz. Soldaki listeden kategoriye, oradan aradığınız ekipmana ulaşabilirsiniz."
+    "TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu olarak iş ekipmanı ve tesisat gruplarında periyodik kontrol hizmeti veriyoruz. Soldaki listeden kategoriye, oradan aradığınız ekipmana ulaşabilirsiniz.",
+    [
+      {
+        anahtar: "ekipman_yol_adi",
+        etiket: "Üst satırdaki yol adı",
+        not: "“Ana Sayfa / …” satırında görünen kısa ad.",
+        varsayilan: "Hizmetlerimiz",
+      },
+      {
+        anahtar: "ekipman_rozet",
+        etiket: "Başlık altındaki üçüncü rozet",
+        not: "İlk ikisi (kategori ve hizmet sayısı) otomatik hesaplanır.",
+        varsayilan: "Türkiye geneli yerinde muayene",
+      },
+      { anahtar: "ekipman_kategori_baslik", etiket: "Sol listenin başlığı", varsayilan: "Kategoriler" },
+      { anahtar: "ekipman_kutu_baslik", etiket: "Sol alttaki kutu — başlık", varsayilan: "Ekipmanınız listede yok mu?" },
+      {
+        anahtar: "ekipman_kutu_yazi",
+        etiket: "Sol alttaki kutu — yazı",
+        uzun: true,
+        varsayilan: "Kapsamımız listeyle sınırlı değil. Listenizi iletin, birlikte değerlendirelim.",
+      },
+      { anahtar: "ekipman_kutu_buton", etiket: "Sol alttaki kutu — buton", varsayilan: "Teklif Al →" },
+      { anahtar: "ekipman_cta_baslik", etiket: "Alt çağrı — başlık", varsayilan: "Kapsamı birlikte belirleyelim" },
+      {
+        anahtar: "ekipman_cta_yazi",
+        etiket: "Alt çağrı — yazı",
+        uzun: true,
+        varsayilan:
+          "Ekipman listenizi iletin; hangi muayenelerin yasal olarak zorunlu olduğunu, periyotları ve toplam maliyeti tek bir teklifte size sunalım.",
+      },
+      { anahtar: "ekipman_cta_btn1", etiket: "Alt çağrı — birinci buton", varsayilan: "Teklif Al →" },
+      { anahtar: "ekipman_cta_btn2", etiket: "Alt çağrı — ikinci buton", varsayilan: "Süremi Hesapla" },
+    ]
   ),
   sayfa(
     "Akreditasyon ve Sertifikalar",
     "/sertifikalar",
     "sertifika",
     "Akreditasyon ve Sertifikalarımız",
-    "Düzenlediğimiz raporların denetimlerde ve ihale süreçlerinde kabul görmesi, akreditasyonumuza dayanır. Yetki kapsamımızı ve belgelerimizi burada inceleyebilirsiniz."
+    "Düzenlediğimiz raporların denetimlerde ve ihale süreçlerinde kabul görmesi, akreditasyonumuza dayanır. Yetki kapsamımızı ve belgelerimizi burada inceleyebilirsiniz.",
+    [
+      { anahtar: "sertifika_yol_adi", etiket: "Üst satırdaki yol adı", varsayilan: "Akreditasyon ve Sertifikalar" },
+      {
+        anahtar: "sertifika_no_baslik",
+        etiket: "Akreditasyon kutusu — başlık",
+        not: "Akreditasyon numarası sonuna otomatik eklenir.",
+        varsayilan: "TÜRKAK Akreditasyon No:",
+      },
+      {
+        anahtar: "sertifika_no_yazi",
+        etiket: "Akreditasyon kutusu — yazı",
+        uzun: true,
+        bicimli: true,
+        varsayilan:
+          "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti., Türk Akreditasyon Kurumu (TÜRKAK) tarafından **TS EN ISO/IEC 17020** standardına göre akredite edilmiş bağımsız **A Tipi muayene kuruluşu**dur.",
+      },
+      {
+        anahtar: "sertifika_dogrula_baslik",
+        etiket: "Doğrulama kutusu — başlık",
+        varsayilan: "Akreditasyonumuzu nasıl doğrularsınız?",
+      },
+      {
+        anahtar: "sertifika_dogrula_yazi",
+        etiket: "Doğrulama kutusu — yazı",
+        uzun: true,
+        bicimli: true,
+        varsayilan:
+          "Akreditasyon durumu, TÜRKAK'ın kendi resmî kayıtları üzerinden doğrulanabilir. Akredite kuruluş sorgulaması için [turkak.org.tr](https://www.turkak.org.tr) adresindeki akredite kuruluş listesinden **AB-0296-M** numarasıyla arama yapabilirsiniz.",
+      },
+      { anahtar: "sertifika_belge_etiket", etiket: "Belgeler bölümü — küçük etiket", varsayilan: "Belgelerimiz" },
+      { anahtar: "sertifika_belge_baslik", etiket: "Belgeler bölümü — başlık", varsayilan: "Sertifika ve belgeler" },
+      {
+        anahtar: "sertifika_bos_baslik",
+        etiket: "Hiç belge yokken — başlık",
+        not: "Yalnızca panele hiç belge eklenmemişse görünür.",
+        varsayilan: "Belge görselleri hazırlanıyor",
+      },
+      {
+        anahtar: "sertifika_bos_yazi",
+        etiket: "Hiç belge yokken — yazı",
+        uzun: true,
+        varsayilan:
+          "Akreditasyon sertifikamızın ve diğer belgelerimizin kopyalarını talep üzerine paylaşıyoruz. Belge talebi için bizimle iletişime geçebilirsiniz.",
+      },
+      { anahtar: "sertifika_bos_buton", etiket: "Hiç belge yokken — buton", varsayilan: "Belge Talep Et" },
+      { anahtar: "sertifika_neden_baslik", etiket: "“Neden önemli” — başlık", varsayilan: "Akreditasyon neden önemli?" },
+      {
+        anahtar: "sertifika_neden_yazi",
+        etiket: "“Neden önemli” — yazı",
+        uzun: true,
+        bicimli: true,
+        varsayilan: `Periyodik kontrol raporunuz, bir denetimde veya iş kazası sonrası incelemede delil niteliği taşır. Raporu düzenleyen kuruluşun yetkinliği tartışmaya açıksa, raporun kendisi de tartışmaya açılır.
+
+Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağımsız bir kurum tarafından düzenli olarak denetlendiği anlamına gelir. A Tipi olmak ise muayene ettiğimiz ekipmanın satışı, montajı veya bakımıyla hiçbir ticari ilişkimizin bulunmadığını gösterir.`,
+      },
+    ]
   ),
   sayfa(
     "Referanslar",
@@ -329,14 +418,53 @@ Pratikte bunun anlamı şudur: size ekipman satmıyor, bakımını üstlenmiyoru
     "/bolge",
     "bolge",
     "Hizmet Bölgelerimiz",
-    "Merkez ofisimiz Beylikdüzü / İstanbul’dadır. Türkiye genelinde, birçok şehirde yerinde periyodik kontrol hizmeti veriyoruz. Listede şehriniz görünmüyorsa da planlama yapabiliriz — bize sormanız yeterli."
+    "Merkez ofisimiz Beylikdüzü / İstanbul’dadır. Türkiye genelinde, birçok şehirde yerinde periyodik kontrol hizmeti veriyoruz. Listede şehriniz görünmüyorsa da planlama yapabiliriz — bize sormanız yeterli.",
+    [
+      {
+        anahtar: "bolge_ilce_baslik",
+        etiket: "İlçe bölümü başlığı",
+        not: "Başına şehrin adı otomatik eklenir: “İstanbul ilçeleri”.",
+        varsayilan: "ilçeleri",
+      },
+      {
+        anahtar: "bolge_ilce_yazi",
+        etiket: "İlçe bölümü açıklaması",
+        not: "Başına “İstanbul'un” gibi şehir adı otomatik eklenir.",
+        uzun: true,
+        varsayilan:
+          "tamamında yerinde muayene yapıyoruz. Aşağıdaki ilçeler için, bölgedeki sanayi yapısına ve orada en çok kontrol edilen ekipmanlara göre hazırlanmış ayrı sayfalarımız var.",
+      },
+      { anahtar: "bolge_kart_link", etiket: "Kartlardaki bağlantı yazısı", varsayilan: "Ayrıntılı sayfa →" },
+      { anahtar: "bolge_cta_baslik", etiket: "Alt çağrı — başlık", varsayilan: "Şehriniz listede yok mu?" },
+      {
+        anahtar: "bolge_cta_yazi",
+        etiket: "Alt çağrı — yazı",
+        uzun: true,
+        varsayilan:
+          "Türkiye genelinde planlama yapıyoruz. Ekipman listenizi iletin, bölgenize uygun takvimi birlikte belirleyelim.",
+      },
+      { anahtar: "bolge_cta_btn1", etiket: "Alt çağrı — birinci buton", varsayilan: "Teklif Al →" },
+      { anahtar: "bolge_cta_btn2", etiket: "Alt çağrı — ikinci buton", varsayilan: "İletişim" },
+    ]
   ),
   sayfa(
     "Sık Sorulan Sorular",
     "/sss",
     "sss",
     "Sık Sorulan Sorular",
-    "Periyodik kontrol süreciyle ilgili en çok sorulan sorular ve kısa yanıtları."
+    "Periyodik kontrol süreciyle ilgili en çok sorulan sorular ve kısa yanıtları.",
+    [
+      { anahtar: "sss_kutu1_baslik", etiket: "Sağdaki ilk kutu — başlık", varsayilan: "Sorunuz burada yok mu?" },
+      {
+        anahtar: "sss_kutu1_yazi",
+        etiket: "Sağdaki ilk kutu — yazı",
+        uzun: true,
+        varsayilan: "İşletmenize özel durumlar için doğrudan bize sorabilirsiniz.",
+      },
+      { anahtar: "sss_kutu1_buton", etiket: "Sağdaki ilk kutu — buton", varsayilan: "İletişim Sayfası" },
+      { anahtar: "sss_kutu2_baslik", etiket: "Sağdaki ikinci kutu — başlık", varsayilan: "Daha ayrıntılı rehberler" },
+      { anahtar: "sss_kutu2_buton", etiket: "Sağdaki ikinci kutu — bağlantı", varsayilan: "Bilgi Merkezi →" },
+    ]
   ),
   sayfa(
     "Yasal Süre Hesaplayıcı",
@@ -403,6 +531,16 @@ Pratikte bunun anlamı şudur: size ekipman satmıyor, bakımını üstlenmiyoru
         varsayilan:
           "TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş bağımsız A Tipi muayene kuruluşu. 2014’ten bu yana iş ekipmanlarının periyodik kontrolünde uzmanız.",
       },
+      { anahtar: "footer_kurumsal_baslik", etiket: "Birinci sütun başlığı", varsayilan: "Kurumsal" },
+      { anahtar: "footer_hizmet_baslik", etiket: "İkinci sütun başlığı", varsayilan: "Hizmetler" },
+      {
+        anahtar: "footer_hizmet_tumu",
+        etiket: "İkinci sütun — “tümü” bağlantısı",
+        not: "Hizmet sayısı parantez içinde otomatik eklenir.",
+        varsayilan: "Tümü",
+      },
+      { anahtar: "footer_iletisim_baslik", etiket: "Üçüncü sütun başlığı", varsayilan: "İletişim" },
+      { anahtar: "footer_araclar_baslik", etiket: "Üçüncü sütun — alt başlık", varsayilan: "Hızlı İşlemler" },
       { anahtar: "footer_cta_baslik", etiket: "Footer CTA başlığı", varsayilan: "Periyodik kontrol zamanınız geldi mi?" },
       {
         anahtar: "footer_cta_metin",

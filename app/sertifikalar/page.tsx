@@ -6,6 +6,7 @@ import { bloklar } from "@/lib/bloklar";
 import { KURUM } from "@/lib/site-data";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { metinleriOku } from "@/lib/sayfa-metin";
+import { metniHtml } from "@/lib/metin-bicim";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -98,7 +99,7 @@ async function Sayfa() {
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> /{" "}
-            <span>Akreditasyon ve Sertifikalar</span>
+            <span>{m("sertifika_yol_adi")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">{m("sertifika_baslik")}</h1>
           <p className="mt-3 max-w-3xl text-onnavy">{m("sertifika_giris")}</p>
@@ -115,13 +116,12 @@ async function Sayfa() {
               </div>
               <div>
                 <h2 className="text-2xl font-black text-navy">
-                  TÜRKAK Akreditasyon No: {KURUM.akreditasyon}
+                  {m("sertifika_no_baslik")} {KURUM.akreditasyon}
                 </h2>
-                <p className="mt-2 text-muted">
-                  {KURUM.ad}, Türk Akreditasyon Kurumu (TÜRKAK) tarafından{" "}
-                  <strong>{KURUM.standart}</strong> standardına göre akredite edilmiş bağımsız{" "}
-                  <strong>A Tipi muayene kuruluşu</strong>dur.
-                </p>
+                <div
+                  className="prose mt-2 max-w-none"
+                  dangerouslySetInnerHTML={{ __html: metniHtml(m("sertifika_no_yazi")) }}
+                />
               </div>
             </div>
 
@@ -140,21 +140,11 @@ async function Sayfa() {
             </dl>
 
             <div className="mt-6 rounded-xl border border-line bg-white p-5">
-              <h3 className="font-bold text-navy">Akreditasyonumuzu nasıl doğrularsınız?</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                Akreditasyon durumu, TÜRKAK&apos;ın kendi resmî kayıtları üzerinden
-                doğrulanabilir. Akredite kuruluş sorgulaması için{" "}
-                <a
-                  href="https://www.turkak.org.tr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-blue underline"
-                >
-                  turkak.org.tr
-                </a>{" "}
-                adresindeki akredite kuruluş listesinden <strong>{KURUM.akreditasyon}</strong>{" "}
-                numarasıyla arama yapabilirsiniz.
-              </p>
+              <h3 className="font-bold text-navy">{m("sertifika_dogrula_baslik")}</h3>
+              <div
+                className="prose mt-2 max-w-none text-sm"
+                dangerouslySetInnerHTML={{ __html: metniHtml(m("sertifika_dogrula_yazi")) }}
+              />
             </div>
           </div>
         </div>
@@ -164,8 +154,8 @@ async function Sayfa() {
       <section className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-10 max-w-[720px] text-center">
-            <span className="chip">Belgelerimiz</span>
-            <h2 className="mt-4 text-3xl font-black text-navy">Sertifika ve belgeler</h2>
+            <span className="chip">{m("sertifika_belge_etiket")}</span>
+            <h2 className="mt-4 text-3xl font-black text-navy">{m("sertifika_belge_baslik")}</h2>
           </div>
 
           {belgeler.length > 0 ? (
@@ -203,13 +193,10 @@ async function Sayfa() {
             /* Panelden belge eklenene kadar gosterilen durum. Var olmayan belge iddia edilmiyor. */
             <div className="mx-auto max-w-[720px] rounded-card border border-line bg-white p-8 text-center">
               <p className="text-4xl" aria-hidden>📄</p>
-              <h3 className="mt-3 text-lg font-bold text-navy">Belge görselleri hazırlanıyor</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                Akreditasyon sertifikamızın ve diğer belgelerimizin kopyalarını talep üzerine
-                paylaşıyoruz. Belge talebi için bizimle iletişime geçebilirsiniz.
-              </p>
+              <h3 className="mt-3 text-lg font-bold text-navy">{m("sertifika_bos_baslik")}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{m("sertifika_bos_yazi")}</p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
-                <Link href="/iletisim" className="btn-primary">Belge Talep Et</Link>
+                <Link href="/iletisim" className="btn-primary">{m("sertifika_bos_buton")}</Link>
                 <a href={`tel:${bilgi.telefonE164}`} className="btn-ghost">{bilgi.telefon}</a>
               </div>
             </div>
@@ -221,18 +208,11 @@ async function Sayfa() {
       <section className="section">
         <div className="container-x grid gap-10 lg:grid-cols-2">
           <div>
-            <h2 className="text-2xl font-black text-navy">Akreditasyon neden önemli?</h2>
-            <p className="mt-4 leading-relaxed text-muted">
-              Periyodik kontrol raporunuz, bir denetimde veya iş kazası sonrası incelemede
-              delil niteliği taşır. Raporu düzenleyen kuruluşun yetkinliği tartışmaya açıksa,
-              raporun kendisi de tartışmaya açılır.
-            </p>
-            <p className="mt-3 leading-relaxed text-muted">
-              Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağımsız bir
-              kurum tarafından düzenli olarak denetlendiği anlamına gelir. A Tipi olmak ise
-              muayene ettiğimiz ekipmanın satışı, montajı veya bakımıyla hiçbir ticari
-              ilişkimizin bulunmadığını gösterir.
-            </p>
+            <h2 className="text-2xl font-black text-navy">{m("sertifika_neden_baslik")}</h2>
+            <div
+              className="prose mt-4 max-w-none"
+              dangerouslySetInnerHTML={{ __html: metniHtml(m("sertifika_neden_yazi")) }}
+            />
           </div>
           <ul className="space-y-3">
             {[

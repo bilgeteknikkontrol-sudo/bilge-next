@@ -7,7 +7,7 @@ import { getEquipment, type Equipment } from "@/lib/cms";
 import { EKIPMAN_GORSEL } from "@/lib/images";
 import { EKIPMAN_ICERIK } from "@/lib/ekipman-icerik";
 import { KATEGORILER } from "@/lib/data";
-import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { hizmetBasligi } from "@/lib/icerik-baglari";
 
@@ -63,6 +63,7 @@ function grupla(list: Equipment[]): [string, Equipment[]][] {
 
 export default async function EkipmanIndex() {
   const m = await metinleriOku();
+  const bilgi = await iletisimBilgi();
   const hepsi = (await getEquipment().catch(() => [])).filter((e) => e.aktif);
   const kategoriler = grupla(hepsi);
   const toplam = hepsi.length;
@@ -101,14 +102,14 @@ export default async function EkipmanIndex() {
       <section className="bg-gradient-to-br from-navy to-navy2 py-14 text-white">
         <div className="container-x">
           <nav className="mb-3 text-sm text-onnavy">
-            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Hizmetlerimiz</span>
+            <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("ekipman_yol_adi")}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">{m("ekipman_baslik")}</h1>
           <p className="mt-3 max-w-3xl text-onnavy">{m("ekipman_giris")}</p>
           <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-onnavy">
             <span>📋 {kategoriler.length} kategori</span>
             <span>🔧 {toplam} hizmet</span>
-            <span>🇹🇷 Türkiye geneli yerinde muayene</span>
+            <span>🇹🇷 {m("ekipman_rozet")}</span>
           </div>
         </div>
       </section>
@@ -118,7 +119,7 @@ export default async function EkipmanIndex() {
           {/* SOL: kategori listesi */}
           <aside className="lg:sticky lg:top-36 lg:self-start">
             <nav aria-label="Hizmet kategorileri" className="rounded-card border border-line bg-bgsoft p-4">
-              <p className="px-2 pb-2 text-xs font-bold uppercase tracking-wide text-muted">Kategoriler</p>
+              <p className="px-2 pb-2 text-xs font-bold uppercase tracking-wide text-muted">{m("ekipman_kategori_baslik")}</p>
               <ul className="space-y-1">
                 {kategoriler.map(([kat, items]) => (
                   <li key={kat}>
@@ -140,18 +141,16 @@ export default async function EkipmanIndex() {
             </nav>
 
             <div className="mt-5 rounded-card bg-gradient-to-br from-navy to-navy2 p-5 text-white">
-              <h2 className="text-base font-bold text-white">Ekipmanınız listede yok mu?</h2>
-              <p className="mt-1 text-sm text-onnavy">
-                Kapsamımız listeyle sınırlı değil. Listenizi iletin, birlikte değerlendirelim.
-              </p>
+              <h2 className="text-base font-bold text-white">{m("ekipman_kutu_baslik")}</h2>
+              <p className="mt-1 text-sm text-onnavy">{m("ekipman_kutu_yazi")}</p>
               <Link
                 href="/teklif"
                 className="mt-3 block rounded-full bg-accent px-4 py-2.5 text-center text-sm font-bold text-navy transition hover:-translate-y-0.5"
               >
-                Teklif Al →
+                {m("ekipman_kutu_buton")}
               </Link>
-              <a href={`tel:${KURUM.telefonE164}`} className="mt-3 block text-center text-sm font-bold text-accent">
-                {KURUM.telefon}
+              <a href={`tel:${bilgi.telefonE164}`} className="mt-3 block text-center text-sm font-bold text-accent">
+                {bilgi.telefon}
               </a>
             </div>
           </aside>
@@ -214,17 +213,14 @@ export default async function EkipmanIndex() {
             ))}
 
             <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-8 text-center text-white">
-              <h2 className="text-2xl font-black text-white">Kapsamı birlikte belirleyelim</h2>
-              <p className="mx-auto mt-2 max-w-2xl text-onnavy">
-                Ekipman listenizi iletin; hangi muayenelerin yasal olarak zorunlu olduğunu,
-                periyotları ve toplam maliyeti tek bir teklifte size sunalım.
-              </p>
+              <h2 className="text-2xl font-black text-white">{m("ekipman_cta_baslik")}</h2>
+              <p className="mx-auto mt-2 max-w-2xl text-onnavy">{m("ekipman_cta_yazi")}</p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
                 <Link href="/teklif" className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">
-                  Teklif Al →
+                  {m("ekipman_cta_btn1")}
                 </Link>
                 <Link href="/hesapla" className="rounded-full border border-white/40 px-6 py-3 font-bold text-white transition hover:bg-white/10">
-                  Süremi Hesapla
+                  {m("ekipman_cta_btn2")}
                 </Link>
               </div>
             </div>

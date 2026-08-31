@@ -81,7 +81,7 @@ export default async function Footer() {
 
         {/* Kurumsal */}
         <nav aria-label="Kurumsal bağlantılar">
-          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-white">Kurumsal</p>
+          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-white">{m("footer_kurumsal_baslik")}</p>
           <ul className="space-y-2.5 text-sm">
             {KURUMSAL.map((l) => (
               <li key={l.href}>
@@ -93,7 +93,7 @@ export default async function Footer() {
 
         {/* Hizmetler */}
         <nav aria-label="Hizmet kategorileri">
-          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-white">Hizmetler</p>
+          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-white">{m("footer_hizmet_baslik")}</p>
           <ul className="space-y-2.5 text-sm">
             {KATEGORILER.slice(0, 6).map((k) => (
               <li key={k.baslik}>
@@ -104,7 +104,7 @@ export default async function Footer() {
             ))}
             <li>
               <Link href="/ekipman" className="font-bold text-accent transition hover:text-white">
-                Tümü ({toplamHizmet}) →
+                {m("footer_hizmet_tumu")} ({toplamHizmet}) →
               </Link>
             </li>
           </ul>
@@ -112,7 +112,7 @@ export default async function Footer() {
 
         {/* İletişim + araçlar */}
         <div>
-          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-white">İletişim</p>
+          <p className="mb-4 text-sm font-bold uppercase tracking-wide text-white">{m("footer_iletisim_baslik")}</p>
           <address className="space-y-3 text-sm not-italic">
             <div className="flex gap-3">
               <span aria-hidden>📍</span>
@@ -136,7 +136,7 @@ export default async function Footer() {
             </div>
           </address>
 
-          <p className="mb-3 mt-6 text-sm font-bold uppercase tracking-wide text-white">Hızlı İşlemler</p>
+          <p className="mb-3 mt-6 text-sm font-bold uppercase tracking-wide text-white">{m("footer_araclar_baslik")}</p>
           <ul className="space-y-2.5 text-sm">
             {ARACLAR.map((l) =>
               l.dis ? (

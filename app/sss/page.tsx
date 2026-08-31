@@ -49,7 +49,7 @@ export default async function SssPage() {
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("sss_baslik")}</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">Sık Sorulan Sorular</h1>
+          <h1 className="text-3xl font-black md:text-4xl">{m("sss_baslik")}</h1>
           <p className="mt-3 max-w-2xl text-onnavy">{m("sss_giris")}</p>
         </div>
       </section>
@@ -70,19 +70,17 @@ export default async function SssPage() {
 
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-card border border-line bg-bgsoft p-6">
-              <h2 className="text-lg font-bold text-navy">Sorunuz burada yok mu?</h2>
-              <p className="mt-2 text-sm text-muted">
-                İşletmenize özel durumlar için doğrudan bize sorabilirsiniz.
-              </p>
+              <h2 className="text-lg font-bold text-navy">{m("sss_kutu1_baslik")}</h2>
+              <p className="mt-2 text-sm text-muted">{m("sss_kutu1_yazi")}</p>
               <div className="mt-4 space-y-2 text-sm">
                 <a href={`tel:${bilgi.telefonE164}`} className="block font-bold text-blue hover:underline">📞 {bilgi.telefon}</a>
                 <a href={`mailto:${bilgi.eposta}`} className="block font-bold text-blue hover:underline">✉️ {bilgi.eposta}</a>
               </div>
-              <Link href="/iletisim" className="btn-primary mt-4 w-full">İletişim Sayfası</Link>
+              <Link href="/iletisim" className="btn-primary mt-4 w-full">{m("sss_kutu1_buton")}</Link>
             </div>
 
             <div className="rounded-card border border-line bg-white p-6">
-              <h2 className="text-lg font-bold text-navy">Daha ayrıntılı rehberler</h2>
+              <h2 className="text-lg font-bold text-navy">{m("sss_kutu2_baslik")}</h2>
               <ul className="mt-3 space-y-2 text-sm">
                 {rehberler.map((a) => (
                   <li key={a.slug}>
@@ -90,7 +88,7 @@ export default async function SssPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/yazilar" className="mt-4 block text-sm font-bold text-blue hover:underline">Bilgi Merkezi →</Link>
+              <Link href="/yazilar" className="mt-4 block text-sm font-bold text-blue hover:underline">{m("sss_kutu2_buton")}</Link>
             </div>
           </aside>
         </div>
