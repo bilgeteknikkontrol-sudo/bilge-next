@@ -45,18 +45,21 @@ export const REFERANSLAR: Referans[] = [
  */
 export type UzmanlikAlani = { ikon: string; ad: string; aciklama: string };
 
+/**
+ * ⚠️ ACIKLAMALAR KISA TUTULUYOR — kullanici kartlarin alcak olmasini istedi.
+ * Iki satiri gecmemeli; ayrinti zaten ilgili hizmet sayfalarinda var.
+ * Cumleler HANGI EKIPMAN GRUBUNA bakildigini soyluyor, test turu saymiyor.
+ */
 export const UZMANLIK_ALANLARI: UzmanlikAlani[] = [
   {
     ikon: "⚙️",
     ad: "Makine Mühendisliği",
-    aciklama:
-      "Basınçlı kaplar, kaldırma ve iletme ekipmanları, iş makineleri ile makina ve tezgâhların periyodik kontrolü. Statik ve dinamik yük testleri ile hidrostatik testler bu kapsamda, sahada yapılır.",
+    aciklama: "Basınçlı kaplar, kaldırma ve iletme ekipmanları, iş makineleri ve tezgâhlar.",
   },
   {
     ikon: "⚡",
     ad: "Elektrik Mühendisliği",
-    aciklama:
-      "Elektrik iç tesisatı, topraklama ve paratoner ölçümleri ile yangın algılama ve ihbar sistemlerinin kontrolü. Ölçümler kalibrasyonu geçerli cihazlarla yapılır ve değerleriyle birlikte rapora işlenir.",
+    aciklama: "Elektrik iç tesisatı, topraklama ve paratoner ölçümleri, yangın algılama sistemleri.",
   },
 ];
 
