@@ -12,11 +12,25 @@
  */
 import { getContent, setContent, getMedia } from "./cms";
 
-export const BLOK_TURLERI = ["hero", "referans", "ekip", "sertifika", "sss"] as const;
+export const BLOK_TURLERI = [
+  "hero",
+  "ozellik",
+  "rakam",
+  "avantaj",
+  "surec",
+  "referans",
+  "ekip",
+  "sertifika",
+  "sss",
+] as const;
 export type BlokTuru = (typeof BLOK_TURLERI)[number];
 
 export const TUR_ETIKET: Record<BlokTuru, string> = {
   hero: "Ana Sayfa Slayt Görselleri",
+  ozellik: "Ana Sayfa — Üst Bölüm Maddeleri",
+  rakam: "Ana Sayfa — Rakam Şeridi",
+  avantaj: "Ana Sayfa — Fark Kartları",
+  surec: "Ana Sayfa — Süreç Adımları",
   referans: "Referans Logoları",
   ekip: "Ekip / Mühendis Kadrosu",
   sertifika: "Sertifika ve Belgeler",
@@ -26,17 +40,43 @@ export const TUR_ETIKET: Record<BlokTuru, string> = {
 /** Her tur icin hangi alanlarin anlamli oldugu — panelde ipucu olarak gosterilir. */
 export const TUR_IPUCU: Record<BlokTuru, string> = {
   hero: "Görsel zorunlu. Başlık/metin boş bırakılabilir; slayt yalnızca arka plan görselidir.",
+  ozellik: "İkon = emoji (🛡️ 📋 🇹🇷), Başlık = kalın yazan kısa cümle, Metin = altındaki açıklama.",
+  rakam: "Başlık = rakamın kendisi (2014, 500+, 92), Metin = altındaki etiket (Yılından beri).",
+  avantaj: "İkon = emoji, Başlık = kart başlığı, Metin = açıklama. Dört kart yan yana en iyi görünür.",
+  surec: "Başlık = adımın adı, Metin = açıklaması. Numara sıraya göre otomatik verilir.",
   referans: "Başlık = firma adı, Görsel = logo. Bağlantı isteğe bağlı.",
   ekip: "Başlık = ad soyad, Metin = unvan. Görsel isteğe bağlı.",
   sertifika: "Başlık = belge adı, Metin = açıklama, Görsel = belge görseli, Bağlantı = PDF adresi.",
   sss: "Başlık = soru, Metin = cevap.",
 };
 
+/**
+ * Hangi turlerde EMOJI IKON alani gosterilir.
+ *
+ * Ikon yalnizca birkac turde anlamli; her formda gostermek geri kalan
+ * ekranlari gereksiz yere kalabaliklastirirdi.
+ */
+export const IKONLU_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>(["ozellik", "avantaj"]);
+
+/** Gorsel alani anlamsiz olan turler — formda gizlenir. */
+export const GORSELSIZ_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
+  "rakam",
+  "avantaj",
+  "surec",
+  "sss",
+]);
+
 export type Blok = {
   id: string;
   tur: BlokTuru;
   baslik: string;
   metin: string;
+  /**
+   * Emoji ikon (ornek: "🛡️"). Yalnizca IKONLU_TURLER icin anlamli.
+   * ⚠️ Sonradan eklendi: eski kayitlarda YOK, bu yuzden opsiyonel ve okuyan
+   * taraf mutlaka bir varsayilana dusmeli.
+   */
+  ikon?: string;
   /** Gorsel adresi: /img/... , https://... veya base64 data URL */
   gorsel: string;
   /** Ilgili baglanti (sertifikada PDF, referansta firma sitesi vb.) */

@@ -47,6 +47,27 @@ export const metadata: Metadata = {
   openGraph: { url: "/", type: "website" },
 };
 
+/**
+ * ⚠️ ASAGIDAKI DORT LISTE ARTIK YALNIZCA VARSAYILANDIR.
+ *
+ * Panelde (Ana Sayfa ekrani) ilgili blok turunden en az bir kayit varsa liste
+ * ORADAN gelir; hic kayit yoksa buradaki hali kullanilir. Boylece panel bos
+ * bile olsa sayfa bugunku goruntusunu koruyor, ilk kayit eklendigi anda
+ * yonetim tamamen panele geciyor.
+ */
+const HERO_MADDELERI = [
+  ["🛡️", "Bağımsız ve tarafsız muayene", "A Tipi kuruluş; rapor satış kaygısı olmadan düzenlenir."],
+  ["📋", "TS EN ISO/IEC 17020", "Akredite kapsam; denetim ve ihalelerde sorunsuz kabul."],
+  ["🇹🇷", "Türkiye geneli yerinde hizmet", "Mühendis kadro sahaya gelir, üretiminizi durdurmadan test eder."],
+];
+
+const RAKAMLAR = [
+  ["2014", "Yılından beri"],
+  ["500+", "Müşteri firma"],
+  ["92", "Ekipman türü"],
+  [KURUM.akreditasyon, "Akreditasyon no"],
+];
+
 const AVANTAJLAR = [
   ["📝", "Online Teklif Sistemi", "Ekipmanınızı seçin, saniyeler içinde ön bilgi ve randevu talebi oluşturun."],
   ["📅", "Yasal Süre Hesaplayıcı", "Son kontrol tarihini girin; bir sonraki yasal tarihi ve gecikme riskini anında görün."],
@@ -79,11 +100,28 @@ export default async function Home() {
   const bolgeler = (await getLocations().catch(() => [])).filter((b) => b.aktif);
 
   // Panelden yonetilen bloklar. Bos ise ilgili bolum statik varsayilanini kullanir.
-  const [heroBloklari, ekipBloklari] = await Promise.all([
-    bloklar("hero").catch(() => []),
-    bloklar("ekip").catch(() => []),
-  ]);
+  const [heroBloklari, ozellikBloklari, rakamBloklari, avantajBloklari, surecBloklari, ekipBloklari] =
+    await Promise.all([
+      bloklar("hero").catch(() => []),
+      bloklar("ozellik").catch(() => []),
+      bloklar("rakam").catch(() => []),
+      bloklar("avantaj").catch(() => []),
+      bloklar("surec").catch(() => []),
+      bloklar("ekip").catch(() => []),
+    ]);
   const heroSlaytlari = heroBloklari.map((b) => b.gorsel).filter(Boolean);
+  const heroMaddeleri = ozellikBloklari.length
+    ? ozellikBloklari.map((b) => ({ ikon: b.ikon || "•", baslik: b.baslik, metin: b.metin }))
+    : HERO_MADDELERI.map(([ikon, baslik, metin]) => ({ ikon, baslik, metin }));
+  const rakamlar = rakamBloklari.length
+    ? rakamBloklari.map((b) => ({ deger: b.baslik, etiket: b.metin }))
+    : RAKAMLAR.map(([deger, etiket]) => ({ deger, etiket }));
+  const avantajlar = avantajBloklari.length
+    ? avantajBloklari.map((b) => ({ ikon: b.ikon || "✔️", baslik: b.baslik, metin: b.metin }))
+    : AVANTAJLAR.map(([ikon, baslik, metin]) => ({ ikon, baslik, metin }));
+  const surecAdimlari = surecBloklari.length
+    ? surecBloklari.map((b) => ({ baslik: b.baslik, metin: b.metin }))
+    : SUREC.map(([baslik, metin]) => ({ baslik, metin }));
   const ekipListesi = ekipBloklari.length
     ? ekipBloklari.map((b) => ({ name: b.baslik, title: b.metin, gorsel: b.gorsel }))
     : EKIP.map((u) => ({ name: u.name, title: u.title, gorsel: "" }));
@@ -148,7 +186,7 @@ export default async function Home() {
           <div className="min-w-0">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-white px-4 py-2 text-sm font-semibold text-blue shadow-[0_10px_24px_-16px_color-mix(in_srgb,var(--color-navy)_60%,transparent)]">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue text-[.7rem] text-white">✓</span>
-              TÜRKAK Akredite A Tipi Muayene Kuruluşu · {KURUM.akreditasyon}
+              {m("as_hero_rozet")} · {KURUM.akreditasyon}
             </span>
 
             {/* Panelden gelen --fs-hero (3.5rem) sabit uygulaniyordu; hero sutunu
@@ -166,44 +204,35 @@ export default async function Home() {
             {/* Hizmetin ne oldugunu somutlastiran uc madde:
                 iddia degil, dogrulanabilir olgu. */}
             <ul className="mt-5 grid gap-2 sm:max-w-lg">
-              {[
-                ["🛡️", "Bağımsız ve tarafsız muayene", "A Tipi kuruluş; rapor satış kaygısı olmadan düzenlenir."],
-                ["📋", "TS EN ISO/IEC 17020", "Akredite kapsam; denetim ve ihalelerde sorunsuz kabul."],
-                ["🇹🇷", "Türkiye geneli yerinde hizmet", "Mühendis kadro sahaya gelir, üretiminizi durdurmadan test eder."],
-              ].map(([i, t, d]) => (
-                <li key={t} className="flex items-start gap-3">
+              {heroMaddeleri.map((madde) => (
+                <li key={madde.baslik} className="flex items-start gap-3">
                   <span
                     aria-hidden
                     className="mt-0.5 flex h-8 w-8 flex-none items-center justify-center rounded-xl bg-blue-soft"
                   >
-                    {i}
+                    {madde.ikon}
                   </span>
                   <span>
-                    <b className="block text-[.95rem] font-bold text-navy">{t}</b>
-                    <span className="block text-sm text-muted">{d}</span>
+                    <b className="block text-[.95rem] font-bold text-navy">{madde.baslik}</b>
+                    <span className="block text-sm text-muted">{madde.metin}</span>
                   </span>
                 </li>
               ))}
             </ul>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/teklif" className="btn-primary px-7 py-3">Teklif Al →</Link>
-              <Link href="/hesapla" className="btn-ghost px-7 py-3">Yasal Sürenizi Hesaplayın</Link>
+              <Link href="/teklif" className="btn-primary px-7 py-3">{m("as_hero_btn1")}</Link>
+              <Link href="/hesapla" className="btn-ghost px-7 py-3">{m("as_hero_btn2")}</Link>
             </div>
 
             {/* Rakamlar: metnin altinda ince bir serit, karta gerek yok */}
             <dl className="mt-6 grid max-w-lg grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-4 sm:grid-cols-4">
-              {[
-                ["2014", "Yılından beri"],
-                ["500+", "Müşteri firma"],
-                ["92", "Ekipman türü"],
-                [KURUM.akreditasyon, "Akreditasyon no"],
-              ].map(([b, s]) => (
-                <div key={s}>
+              {rakamlar.map((r) => (
+                <div key={r.etiket || r.deger}>
                   {/* text-xl -> text-lg: rakamlar seritte fazla agir duruyordu.
                       Etiket .78rem'de birakildi ki basamak farki korunsun. */}
-                  <dt className="text-lg font-black leading-tight text-blue">{b}</dt>
-                  <dd className="text-[.78rem] text-muted">{s}</dd>
+                  <dt className="text-lg font-black leading-tight text-blue">{r.deger}</dt>
+                  <dd className="text-[.78rem] text-muted">{r.etiket}</dd>
                 </div>
               ))}
             </dl>
@@ -240,11 +269,10 @@ export default async function Home() {
               />
               <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3.5 py-1.5 text-[.78rem] font-bold text-navy shadow-sm backdrop-blur">
                 <span className="h-2 w-2 rounded-full bg-blue" aria-hidden />
-                Yerinde muayene · TÜRKAK {KURUM.akreditasyon}
+                {m("as_hero_gorsel_rozet")} {KURUM.akreditasyon}
               </span>
               <p className="absolute left-4 right-4 top-16 text-sm font-semibold leading-snug text-white drop-shadow">
-                Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri —
-                tek ekipten akredite periyodik kontrol.
+                {m("as_hero_gorsel_yazi")}
               </p>
             </div>
 
@@ -258,13 +286,13 @@ export default async function Home() {
               className="card relative z-10 mx-4 -mt-10 p-6 sm:mx-8 lg:absolute lg:inset-x-6 lg:bottom-0 lg:mx-0 lg:mt-0"
               style={{ backgroundColor: "#fbfdff91" }}
             >
-              <p className="text-xs font-bold uppercase tracking-wide text-blue">Kontrol zamanı geldi mi?</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-blue">{m("as_kart_etiket")}</p>
               <h2 className="mt-1.5 text-lg font-black leading-snug text-navy">
-                Ekipmanınızı seçin, kapsam ve fiyatı size dönelim
+                {m("as_kart_baslik")}
               </h2>
               <div className="mt-4 flex flex-wrap items-center gap-3">
-                <Link href="/teklif" className="btn-primary px-5 py-3 text-[.92rem]">Teklif Formunu Aç →</Link>
-                <span className="text-xs text-muted">2 dakika sürer · 92 ekipman türü</span>
+                <Link href="/teklif" className="btn-primary px-5 py-3 text-[.92rem]">{m("as_kart_buton")}</Link>
+                <span className="text-xs text-muted">{m("as_kart_not")}</span>
               </div>
             </aside>
           </div>
@@ -333,8 +361,8 @@ export default async function Home() {
             })}
           </div>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
-            <Link href="/ekipman" className="btn-ghost">Tüm Hizmetleri Gör ({equipment.length})</Link>
-            <Link href="/teklif" className="btn-primary">Ekipmanınızı Seçip Teklif Alın</Link>
+            <Link href="/ekipman" className="btn-ghost">{m("as_hizmet_btn1")} ({equipment.length})</Link>
+            <Link href="/teklif" className="btn-primary">{m("as_hizmet_btn2")}</Link>
           </div>
         </div>
       </section>
@@ -356,14 +384,11 @@ export default async function Home() {
         <section id="bolgeler" className="section bg-bgsoft">
           <div className="container-x">
             <div className="mx-auto mb-9 max-w-[720px] text-center">
-              <span className="chip">Hizmet Bölgelerimiz</span>
+              <span className="chip">{m("as_bolge_etiket")}</span>
               <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>
-                Ekipmanınızın bulunduğu yere geliyoruz
+                {m("as_bolge_baslik")}
               </h2>
-              <p className="mt-3 text-muted">
-                Merkezimiz Beylikdüzü&apos;nde; muayene işletmenizde, yerinde yapılıyor.
-                Aşağıdaki bölgeler için sanayi yapısına göre hazırlanmış ayrı sayfalarımız var.
-              </p>
+              <p className="mt-3 text-muted">{m("as_bolge_giris")}</p>
             </div>
             <ul className="mx-auto flex max-w-[900px] flex-wrap justify-center gap-2">
               {bolgeler.map((b) => (
@@ -378,7 +403,7 @@ export default async function Home() {
               ))}
             </ul>
             <div className="mt-8 text-center">
-              <Link href="/bolge" className="btn-ghost">Tüm Hizmet Bölgeleri</Link>
+              <Link href="/bolge" className="btn-ghost">{m("as_bolge_buton")}</Link>
             </div>
           </div>
         </section>
@@ -388,15 +413,15 @@ export default async function Home() {
       <section id="neden" className="section">
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
-            <span className="chip">Neden Bilge?</span>
-            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>Rakiplerden Ayıran 4 Fark</h2>
+            <span className="chip">{m("as_neden_etiket")}</span>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>{m("as_neden_baslik")}</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {AVANTAJLAR.map(([i, t, d]) => (
-              <div key={t} className="card card-hover beliren p-6">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl text-blue">{i}</div>
-                <h3 className="text-lg text-navy">{t}</h3>
-                <p className="mt-1 text-sm text-muted">{d}</p>
+            {avantajlar.map((a) => (
+              <div key={a.baslik} className="card card-hover beliren p-6">
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl text-blue">{a.ikon}</div>
+                <h3 className="text-lg text-navy">{a.baslik}</h3>
+                <p className="mt-1 text-sm text-muted">{a.metin}</p>
               </div>
             ))}
           </div>
@@ -407,16 +432,16 @@ export default async function Home() {
       <section className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-11 max-w-[720px] text-center">
-            <span className="chip">Süreç</span>
-            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>4 Adımda Güvenli Kontrol</h2>
+            <span className="chip">{m("as_surec_etiket")}</span>
+            <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>{m("as_surec_baslik")}</h2>
           </div>
           <div className="mx-auto grid max-w-[820px] gap-6 md:grid-cols-2">
-            {SUREC.map(([t, d], i) => (
-              <div key={t} className="flex gap-4">
+            {surecAdimlari.map((adim, i) => (
+              <div key={adim.baslik} className="flex gap-4">
                 <div className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-navy font-bold text-white">{i + 1}</div>
                 <div>
-                  <h3 className="text-lg text-navy">{t}</h3>
-                  <p className="mt-1 text-sm text-muted">{d}</p>
+                  <h3 className="text-lg text-navy">{adim.baslik}</h3>
+                  <p className="mt-1 text-sm text-muted">{adim.metin}</p>
                 </div>
               </div>
             ))}
@@ -427,12 +452,9 @@ export default async function Home() {
       {/* REFERANSLAR */}
       <section id="referans" className="section">
         <div className="container-x text-center">
-          <span className="chip">Referanslarımız</span>
-          <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>500+ firma bize güveniyor</h2>
-          <p className="mx-auto mt-3 max-w-[640px] text-muted">
-            Üretimden lojistiğe, enerjiden kamuya kadar birçok sektörde; periyodik kontrol ve
-            akreditasyon raporlarıyla iş ortaklarımızın yasal yükümlülüklerini güvence altına alıyoruz.
-          </p>
+          <span className="chip">{m("as_referans_etiket")}</span>
+          <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>{m("as_referans_baslik")}</h2>
+          <p className="mx-auto mt-3 max-w-[640px] text-muted">{m("as_referans_giris")}</p>
 
         </div>
 
@@ -442,7 +464,7 @@ export default async function Home() {
         </div>
 
         <div className="container-x mt-8 text-center">
-          <Link href="/referanslar" className="btn-ghost">Tüm Referanslarımız →</Link>
+          <Link href="/referanslar" className="btn-ghost">{m("as_referans_buton")}</Link>
         </div>
       </section>
 
@@ -451,15 +473,11 @@ export default async function Home() {
         <div className="container-x">
           <div className="card grid items-center gap-8 overflow-hidden p-8 md:grid-cols-[1fr_auto] md:p-10">
             <div>
-              <span className="chip">Kurumsal Katalog</span>
+              <span className="chip">{m("as_katalog_etiket")}</span>
               <h2 className="mt-4 font-black text-navy md:text-3xl" style={{ fontSize: "var(--fs-h2)" }}>
-                Hizmet kataloğumuzu indirin
+                {m("as_katalog_baslik")}
               </h2>
-              <p className="mt-3 max-w-xl text-muted">
-                Akreditasyon kapsamımız, muayene ettiğimiz ekipman grupları, uyguladığımız
-                standartlar ve çalışma sürecimiz tek dosyada. Satın alma ve İSG birimlerinizle
-                paylaşabileceğiniz kurumsal tanıtım dokümanı.
-              </p>
+              <p className="mt-3 max-w-xl text-muted">{m("as_katalog_giris")}</p>
               <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-muted">
                 <li>📄 6 sayfa</li>
                 <li>🛡️ TÜRKAK {KURUM.akreditasyon}</li>
@@ -472,9 +490,9 @@ export default async function Home() {
                   rel="noopener"
                   className="btn-primary"
                 >
-                  Kataloğu Aç (PDF) →
+                  {m("as_katalog_btn1")}
                 </a>
-                <Link href="/teklif" className="btn-ghost">Teklif İste</Link>
+                <Link href="/teklif" className="btn-ghost">{m("as_katalog_btn2")}</Link>
               </div>
             </div>
 
@@ -493,14 +511,11 @@ export default async function Home() {
       <section className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-10 max-w-[720px] text-center">
-            <span className="chip">Uzman Kadro</span>
+            <span className="chip">{m("as_ekip_etiket")}</span>
             <h2 className="mt-4 font-black text-navy md:text-4xl" style={{ fontSize: "var(--fs-h2)" }}>
-              Raporunuzun arkasında gerçek mühendisler var
+              {m("as_ekip_baslik")}
             </h2>
-            <p className="mt-3 text-muted">
-              Muayeneleriniz, kendi alanında yetkili mühendis kadromuz tarafından yerinde yapılır;
-              rapor bu kişilerin teknik değerlendirmesine dayanır.
-            </p>
+            <p className="mt-3 text-muted">{m("as_ekip_giris")}</p>
           </div>
           <div className="mx-auto grid max-w-[820px] gap-5 sm:grid-cols-3">
             {ekipListesi.map((u) => (
@@ -529,11 +544,8 @@ export default async function Home() {
           <div className="card mx-auto max-w-[820px] flex flex-col items-center gap-4 p-8 text-center md:flex-row md:text-left">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-soft text-3xl text-accent2">✓</div>
             <div>
-              <h2 className="text-2xl font-black text-navy">TÜRKAK Akreditasyon No: AB-0296-M</h2>
-              <p className="mt-2 text-muted">
-                TS EN ISO/IEC 17020 standardına göre akredite edilmiş bağımsız A Tipi muayene kuruluşuyuz.
-                Raporlarımız Çalışma Bakanlığı denetimlerinde ve ihale süreçlerinde geçerlidir.
-              </p>
+              <h2 className="text-2xl font-black text-navy">{m("as_akr_baslik")} {KURUM.akreditasyon}</h2>
+              <p className="mt-2 text-muted">{m("as_akr_yazi")}</p>
             </div>
           </div>
         </div>
@@ -544,7 +556,7 @@ export default async function Home() {
         <div className="container-x mx-auto max-w-[680px]">
           <h2 className="font-black" style={{ fontSize: "var(--fs-h2)" }}>{ctaTitle}</h2>
           <p className="mt-3 text-onnavy">{ctaText}</p>
-          <Link href="/teklif" className="btn-primary mt-5 bg-accent text-navy hover:bg-amber-soft">Hemen Başla →</Link>
+          <Link href="/teklif" className="btn-primary mt-5 bg-accent text-navy hover:bg-amber-soft">{m("as_cta_buton")}</Link>
         </div>
       </section>
 

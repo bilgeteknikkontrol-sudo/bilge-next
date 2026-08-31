@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { tumBloklar, TUR_IPUCU, type BlokTuru } from "@/lib/bloklar";
+import { tumBloklar, TUR_IPUCU, IKONLU_TURLER, GORSELSIZ_TURLER, type BlokTuru } from "@/lib/bloklar";
 import { saveBlokAction, deleteBlokAction, toggleBlokAction } from "./actions";
 import { Kart, Buton, BosDurum } from "./ui";
 import GorselSecici from "./GorselSecici";
@@ -68,8 +68,12 @@ export default async function BlokYonetici({
                 {b.gorsel ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={b.gorsel} alt="" className="h-full w-full object-contain" />
+                ) : b.ikon ? (
+                  <div className="flex h-full items-center justify-center text-2xl">{b.ikon}</div>
                 ) : (
-                  <div className="flex h-full items-center justify-center text-xs text-slate-300">görsel yok</div>
+                  <div className="flex h-full items-center justify-center text-xs text-slate-300">
+                    {GORSELSIZ_TURLER.has(tur) ? "—" : "görsel yok"}
+                  </div>
                 )}
               </div>
 
@@ -147,15 +151,33 @@ export default async function BlokYonetici({
                 className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
               />
             </label>
-            <label className="block">
-              <span className="text-sm font-semibold text-slate-700">Bağlantı (isteğe bağlı)</span>
-              <input
-                name="url"
-                defaultValue={duzenlenen?.url || ""}
-                placeholder="https://… veya /belge.pdf"
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
-              />
-            </label>
+            {IKONLU_TURLER.has(tur) ? (
+              <label className="block">
+                <span className="text-sm font-semibold text-slate-700">İkon (emoji)</span>
+                <input
+                  name="ikon"
+                  defaultValue={duzenlenen?.ikon || ""}
+                  placeholder="🛡️"
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
+                />
+                <span className="mt-1 block text-xs text-slate-400">
+                  Tek emoji. Windows&apos;ta <b>Win + .</b> tuşlarıyla emoji listesi açılır.
+                </span>
+                {/* ⚠️ Alan formda yoksa kaydederken BOSALIR: mevcut deger
+                    gizli alanla korunuyor. */}
+                <input type="hidden" name="url" value={duzenlenen?.url || ""} />
+              </label>
+            ) : (
+              <label className="block">
+                <span className="text-sm font-semibold text-slate-700">Bağlantı (isteğe bağlı)</span>
+                <input
+                  name="url"
+                  defaultValue={duzenlenen?.url || ""}
+                  placeholder="https://… veya /belge.pdf"
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2.5 text-sm outline-none focus:border-blue focus:ring-2 focus:ring-blue/20"
+                />
+              </label>
+            )}
           </div>
 
           <label className="block">
@@ -168,6 +190,14 @@ export default async function BlokYonetici({
             />
           </label>
 
+          {/* ⚠️ Gorsel bolumu bazi turlerde HIC gosterilmiyor (rakam seridi,
+              fark kartlari, surec adimlari, SSS): oralarda gorsel cizilmiyor,
+              alani gostermek kullaniciyi olmayan bir ozelligi denemeye
+              yoneltiyordu. Deger gizli alanla korunuyor ki tur degistiginde
+              eski gorsel kaybolmasin. */}
+          {GORSELSIZ_TURLER.has(tur) ? (
+            <input type="hidden" name="gorsel" value={duzenlenen?.gorsel || ""} />
+          ) : (
           <div className="rounded-lg border border-slate-200 bg-white p-3">
             <span className="text-sm font-semibold text-slate-700">Görsel</span>
 
@@ -206,8 +236,9 @@ export default async function BlokYonetici({
               </span>
             </details>
           </div>
+          )}
 
-          {duzenlenen?.gorsel && (
+          {duzenlenen?.gorsel && !GORSELSIZ_TURLER.has(tur) && (
             <div className="h-28 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={duzenlenen.gorsel} alt="" className="h-full w-full object-contain p-1" />

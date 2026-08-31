@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { guard } from "@/lib/auth";
-import { tumBloklar, BLOK_TURLERI, TUR_ETIKET, TUR_IPUCU, type BlokTuru } from "@/lib/bloklar";
+import { tumBloklar, BLOK_TURLERI, TUR_ETIKET, TUR_IPUCU, IKONLU_TURLER, type BlokTuru } from "@/lib/bloklar";
 import { saveBlokAction, deleteBlokAction, toggleBlokAction } from "../actions";
 import GorselSecici from "../GorselSecici";
 
@@ -92,6 +92,18 @@ export default async function BloklarAdmin({
               />
             </label>
           </div>
+
+          {IKONLU_TURLER.has(tur) && (
+            <label className="block">
+              <span className="text-xs font-semibold text-slate-600">İkon (emoji)</span>
+              <input
+                name="ikon"
+                defaultValue={duzenlenen?.ikon || ""}
+                placeholder="🛡️"
+                className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm"
+              />
+            </label>
+          )}
 
           <label className="block">
             <span className="text-xs font-semibold text-slate-600">Metin</span>

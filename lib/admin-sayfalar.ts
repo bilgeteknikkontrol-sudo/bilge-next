@@ -74,9 +74,76 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
       },
       {
         tip: "metin",
+        baslik: "Üst bölüm yazıları",
+        aciklama: "Büyük başlığın etrafındaki rozet, butonlar ve fotoğrafın üstündeki yazılar.",
+        anahtarlar: [
+          "as_hero_rozet",
+          "as_hero_btn1",
+          "as_hero_btn2",
+          "as_hero_gorsel_rozet",
+          "as_hero_gorsel_yazi",
+        ],
+      },
+      {
+        tip: "blok",
+        tur: "ozellik",
+        baslik: "Üst bölüm maddeleri",
+        aciklama:
+          "Büyük başlığın altındaki ikonlu üç madde. Hiç kayıt eklemezseniz bugünkü üç madde görünmeye devam eder.",
+      },
+      {
+        tip: "blok",
+        tur: "rakam",
+        baslik: "Rakam şeridi",
+        aciklama:
+          "Üst bölümün altındaki ince şerit (2014 · 500+ · 92 · AB-0296-M). Başlık = rakam, Metin = altındaki etiket.",
+      },
+      {
+        tip: "metin",
+        baslik: "Teklif kartı",
+        aciklama: "Fotoğrafın üzerine binen beyaz kart.",
+        anahtarlar: ["as_kart_etiket", "as_kart_baslik", "as_kart_buton", "as_kart_not"],
+      },
+      {
+        tip: "metin",
         baslik: "Hizmetler bölümü",
-        aciklama: "Ana sayfadaki hizmet kartlarının üstündeki başlık ve açıklama.",
-        anahtarlar: ["as_hizmet_etiket", "as_hizmet_baslik", "as_hizmet_giris"],
+        aciklama: "Ana sayfadaki hizmet kartlarının üstündeki başlık, açıklama ve alttaki butonlar.",
+        anahtarlar: [
+          "as_hizmet_etiket",
+          "as_hizmet_baslik",
+          "as_hizmet_giris",
+          "as_hizmet_btn1",
+          "as_hizmet_btn2",
+        ],
+      },
+      {
+        tip: "metin",
+        baslik: "Hizmet bölgeleri bölümü",
+        aciklama: "Şehir listesinin üstündeki başlık ve açıklama. Şehirler Hizmet Bölgelerimiz ekranından yönetilir.",
+        anahtarlar: ["as_bolge_etiket", "as_bolge_baslik", "as_bolge_giris", "as_bolge_buton"],
+      },
+      {
+        tip: "metin",
+        baslik: "Fark kartları — başlık",
+        anahtarlar: ["as_neden_etiket", "as_neden_baslik"],
+      },
+      {
+        tip: "blok",
+        tur: "avantaj",
+        baslik: "Fark kartları",
+        aciklama:
+          "\"Rakiplerden Ayıran 4 Fark\" bölümündeki kartlar. İkon = emoji, Başlık = kart başlığı, Metin = açıklama.",
+      },
+      {
+        tip: "metin",
+        baslik: "Süreç bölümü — başlık",
+        anahtarlar: ["as_surec_etiket", "as_surec_baslik"],
+      },
+      {
+        tip: "blok",
+        tur: "surec",
+        baslik: "Süreç adımları",
+        aciklama: "Numaralı adımlar. Numara sıraya göre otomatik verilir; siz yalnızca başlık ve açıklama yazarsınız.",
       },
       {
         tip: "ayar",
@@ -88,16 +155,45 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
         ],
       },
       {
+        tip: "metin",
+        baslik: "Referanslar bölümü",
+        aciklama: "Logo şeridinin üstündeki başlık ve açıklama.",
+        anahtarlar: ["as_referans_etiket", "as_referans_baslik", "as_referans_giris", "as_referans_buton"],
+      },
+      {
         tip: "blok",
         tur: "referans",
         baslik: "Referans logoları",
         aciklama: "Ana sayfada ve Referanslar sayfasında kayan logo şeridi. Başlık = firma adı, Görsel = logo.",
       },
       {
+        tip: "metin",
+        baslik: "Katalog bölümü",
+        aciklama: "Kataloğun tanıtıldığı kart. PDF dosyasını değiştirmek için geliştiriciye söyleyin.",
+        anahtarlar: [
+          "as_katalog_etiket",
+          "as_katalog_baslik",
+          "as_katalog_giris",
+          "as_katalog_btn1",
+          "as_katalog_btn2",
+        ],
+      },
+      {
+        tip: "metin",
+        baslik: "Ekip bölümü — başlık",
+        anahtarlar: ["as_ekip_etiket", "as_ekip_baslik", "as_ekip_giris"],
+      },
+      {
         tip: "blok",
         tur: "ekip",
         baslik: "Ekip / mühendis kadrosu",
         aciklama: "Ana sayfadaki uzman kadro kartları. Başlık = ad soyad, Metin = unvan.",
+      },
+      {
+        tip: "metin",
+        baslik: "Akreditasyon şeridi",
+        aciklama: "Sayfanın sonuna yakın, yeşil onay işaretli şerit.",
+        anahtarlar: ["as_akr_baslik", "as_akr_yazi"],
       },
       {
         tip: "ayar",
@@ -107,6 +203,11 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
           { ad: "ctaTitle", etiket: "Başlık" },
           { ad: "ctaText", etiket: "Yazı", uzun: true },
         ],
+      },
+      {
+        tip: "metin",
+        baslik: "Alt çağrı butonu",
+        anahtarlar: ["as_cta_buton"],
       },
     ],
   },

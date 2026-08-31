@@ -389,6 +389,7 @@ export async function saveBlokAction(formData: FormData) {
     tur: BLOK_TURLERI.includes(tur) ? tur : "referans",
     baslik,
     metin: String(formData.get("metin") || "").trim(),
+    ikon: String(formData.get("ikon") || "").trim(),
     // Yeni dosya varsa o kazanir; yoksa alanda yazan adres korunur.
     gorsel: yuklenen || mevcutGorsel,
     url: String(formData.get("url") || "").trim(),

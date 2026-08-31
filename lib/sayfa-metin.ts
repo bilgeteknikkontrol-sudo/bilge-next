@@ -53,7 +53,49 @@ const sayfa = (
 
 export const METIN_GRUPLARI: MetinGrubu[] = [
   {
-    baslik: "Ana sayfa — bölüm başlıkları",
+    baslik: "Ana sayfa — üst bölüm (hero)",
+    yol: "/",
+    alanlar: [
+      {
+        anahtar: "as_hero_rozet",
+        etiket: "Üstteki küçük rozet",
+        not: "Akreditasyon numarası sonuna otomatik eklenir; buraya yazmayın.",
+        varsayilan: "TÜRKAK Akredite A Tipi Muayene Kuruluşu",
+      },
+      { anahtar: "as_hero_btn1", etiket: "Birinci buton", varsayilan: "Teklif Al →" },
+      { anahtar: "as_hero_btn2", etiket: "İkinci buton", varsayilan: "Yasal Sürenizi Hesaplayın" },
+      {
+        anahtar: "as_hero_gorsel_rozet",
+        etiket: "Fotoğrafın üstündeki rozet",
+        not: "Akreditasyon numarası sonuna otomatik eklenir.",
+        varsayilan: "Yerinde muayene · TÜRKAK",
+      },
+      {
+        anahtar: "as_hero_gorsel_yazi",
+        etiket: "Fotoğrafın üstündeki yazı",
+        uzun: true,
+        varsayilan:
+          "Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri — tek ekipten akredite periyodik kontrol.",
+      },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — teklif kartı",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_kart_etiket", etiket: "Üstteki küçük yazı", varsayilan: "Kontrol zamanı geldi mi?" },
+      {
+        anahtar: "as_kart_baslik",
+        etiket: "Kart başlığı",
+        uzun: true,
+        varsayilan: "Ekipmanınızı seçin, kapsam ve fiyatı size dönelim",
+      },
+      { anahtar: "as_kart_buton", etiket: "Buton yazısı", varsayilan: "Teklif Formunu Aç →" },
+      { anahtar: "as_kart_not", etiket: "Butonun yanındaki not", varsayilan: "2 dakika sürer · 92 ekipman türü" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — hizmetler bölümü",
     yol: "/",
     alanlar: [
       { anahtar: "as_hizmet_etiket", etiket: "Hizmetler — küçük etiket", varsayilan: "Hizmetlerimiz" },
@@ -64,6 +106,113 @@ export const METIN_GRUPLARI: MetinGrubu[] = [
         uzun: true,
         varsayilan: "TS EN ISO/IEC 17020 kapsamında, yasal mevzuata tam uyumlu ve uluslararası geçerli raporlar.",
       },
+      {
+        anahtar: "as_hizmet_btn1",
+        etiket: "Birinci buton",
+        not: "Hizmet sayısı parantez içinde otomatik eklenir.",
+        varsayilan: "Tüm Hizmetleri Gör",
+      },
+      { anahtar: "as_hizmet_btn2", etiket: "İkinci buton", varsayilan: "Ekipmanınızı Seçip Teklif Alın" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — hizmet bölgeleri bölümü",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_bolge_etiket", etiket: "Küçük etiket", varsayilan: "Hizmet Bölgelerimiz" },
+      { anahtar: "as_bolge_baslik", etiket: "Başlık", varsayilan: "Ekipmanınızın bulunduğu yere geliyoruz" },
+      {
+        anahtar: "as_bolge_giris",
+        etiket: "Açıklama",
+        uzun: true,
+        varsayilan:
+          "Merkezimiz Beylikdüzü'nde; muayene işletmenizde, yerinde yapılıyor. Aşağıdaki bölgeler için sanayi yapısına göre hazırlanmış ayrı sayfalarımız var.",
+      },
+      { anahtar: "as_bolge_buton", etiket: "Alttaki buton", varsayilan: "Tüm Hizmet Bölgeleri" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — fark kartları bölümü",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_neden_etiket", etiket: "Küçük etiket", varsayilan: "Neden Bilge?" },
+      { anahtar: "as_neden_baslik", etiket: "Başlık", varsayilan: "Rakiplerden Ayıran 4 Fark" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — süreç bölümü",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_surec_etiket", etiket: "Küçük etiket", varsayilan: "Süreç" },
+      { anahtar: "as_surec_baslik", etiket: "Başlık", varsayilan: "4 Adımda Güvenli Kontrol" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — referanslar bölümü",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_referans_etiket", etiket: "Küçük etiket", varsayilan: "Referanslarımız" },
+      { anahtar: "as_referans_baslik", etiket: "Başlık", varsayilan: "500+ firma bize güveniyor" },
+      {
+        anahtar: "as_referans_giris",
+        etiket: "Açıklama",
+        uzun: true,
+        varsayilan:
+          "Üretimden lojistiğe, enerjiden kamuya kadar birçok sektörde; periyodik kontrol ve akreditasyon raporlarıyla iş ortaklarımızın yasal yükümlülüklerini güvence altına alıyoruz.",
+      },
+      { anahtar: "as_referans_buton", etiket: "Alttaki buton", varsayilan: "Tüm Referanslarımız →" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — katalog bölümü",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_katalog_etiket", etiket: "Küçük etiket", varsayilan: "Kurumsal Katalog" },
+      { anahtar: "as_katalog_baslik", etiket: "Başlık", varsayilan: "Hizmet kataloğumuzu indirin" },
+      {
+        anahtar: "as_katalog_giris",
+        etiket: "Açıklama",
+        uzun: true,
+        varsayilan:
+          "Akreditasyon kapsamımız, muayene ettiğimiz ekipman grupları, uyguladığımız standartlar ve çalışma sürecimiz tek dosyada. Satın alma ve İSG birimlerinizle paylaşabileceğiniz kurumsal tanıtım dokümanı.",
+      },
+      { anahtar: "as_katalog_btn1", etiket: "Birinci buton", varsayilan: "Kataloğu Aç (PDF) →" },
+      { anahtar: "as_katalog_btn2", etiket: "İkinci buton", varsayilan: "Teklif İste" },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — ekip bölümü",
+    yol: "/",
+    alanlar: [
+      { anahtar: "as_ekip_etiket", etiket: "Küçük etiket", varsayilan: "Uzman Kadro" },
+      { anahtar: "as_ekip_baslik", etiket: "Başlık", varsayilan: "Raporunuzun arkasında gerçek mühendisler var" },
+      {
+        anahtar: "as_ekip_giris",
+        etiket: "Açıklama",
+        uzun: true,
+        varsayilan:
+          "Muayeneleriniz, kendi alanında yetkili mühendis kadromuz tarafından yerinde yapılır; rapor bu kişilerin teknik değerlendirmesine dayanır.",
+      },
+    ],
+  },
+  {
+    baslik: "Ana sayfa — akreditasyon şeridi ve alt çağrı",
+    yol: "/",
+    alanlar: [
+      {
+        anahtar: "as_akr_baslik",
+        etiket: "Akreditasyon şeridi başlığı",
+        not: "Akreditasyon numarası sonuna otomatik eklenir.",
+        varsayilan: "TÜRKAK Akreditasyon No:",
+      },
+      {
+        anahtar: "as_akr_yazi",
+        etiket: "Akreditasyon şeridi yazısı",
+        uzun: true,
+        varsayilan:
+          "TS EN ISO/IEC 17020 standardına göre akredite edilmiş bağımsız A Tipi muayene kuruluşuyuz. Raporlarımız Çalışma Bakanlığı denetimlerinde ve ihale süreçlerinde geçerlidir.",
+      },
+      { anahtar: "as_cta_buton", etiket: "En alttaki buton", varsayilan: "Hemen Başla →" },
     ],
   },
   sayfa(
