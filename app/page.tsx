@@ -200,7 +200,9 @@ export default async function Home() {
                 [KURUM.akreditasyon, "Akreditasyon no"],
               ].map(([b, s]) => (
                 <div key={s}>
-                  <dt className="text-xl font-black leading-tight text-blue">{b}</dt>
+                  {/* text-xl -> text-lg: rakamlar seritte fazla agir duruyordu.
+                      Etiket .78rem'de birakildi ki basamak farki korunsun. */}
+                  <dt className="text-lg font-black leading-tight text-blue">{b}</dt>
                   <dd className="text-[.78rem] text-muted">{s}</dd>
                 </div>
               ))}
