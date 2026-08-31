@@ -6,6 +6,7 @@ import HaritaGomulu from "../components/HaritaGomulu";
 import { KURUM, EKIP } from "@/lib/site-data";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
+import { bloklar } from "@/lib/bloklar";
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -19,6 +20,11 @@ export default async function IletisimPage() {
   const m = await metinleriOku();
   /* Gorunen iletisim bilgileri artik PANELDEN (bkz. lib/iletisim-bilgi.ts). */
   const b = await iletisimBilgi();
+  /* Teknik ekip de panelden; kayit yoksa liste hic basilmaz. */
+  const ekipBloklari = await bloklar("ekip").catch(() => []);
+  const ekipListesi = ekipBloklari.length
+    ? ekipBloklari.map((u) => ({ name: u.baslik, title: u.metin }))
+    : EKIP;
   const localBusinessLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
@@ -132,16 +138,19 @@ export default async function IletisimPage() {
               </div>
             </div>
 
-            <div className="mt-8">
-              <h3 className="text-lg font-bold text-navy">{m("iletisim_ekip_baslik")}</h3>
-              <ul className="mt-3 space-y-1 text-sm text-muted">
-                {EKIP.map((u) => (
-                  <li key={u.name}>
-                    <span className="font-semibold text-ink">{u.name}</span> — {u.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Teknik ekip listesi yalnizca kayit varsa basiliyor. */}
+            {ekipListesi.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-lg font-bold text-navy">{m("iletisim_ekip_baslik")}</h3>
+                <ul className="mt-3 space-y-1 text-sm text-muted">
+                  {ekipListesi.map((u) => (
+                    <li key={u.name}>
+                      <span className="font-semibold text-ink">{u.name}</span> — {u.title}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <HaritaGomulu

@@ -507,7 +507,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* EKİP */}
+      {/* EKİP —
+          ⚠️ Bolumun TAMAMI yalnizca kadro varsa basiliyor. Kadro bosken
+          baslik ve aciklama basilip altinda bos bir izgara kalsaydi sayfa
+          bozuk gorunurdu. Panelden kisi eklenince bolum kendiliginden
+          geri gelir. */}
+      {ekipListesi.length > 0 && (
       <section className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-10 max-w-[720px] text-center">
@@ -537,6 +542,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* AKREDİTASYON */}
       <section id="akreditasyon" className="section bg-bgsoft">

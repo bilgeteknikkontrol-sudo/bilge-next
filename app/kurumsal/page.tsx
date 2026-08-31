@@ -8,6 +8,7 @@ import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { KATEGORILER } from "@/lib/data";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { metniHtml } from "@/lib/metin-bicim";
+import { bloklar } from "@/lib/bloklar";
 
 export const metadata: Metadata = {
   title: "Kurumsal — Hakkımızda",
@@ -20,6 +21,17 @@ export default async function KurumsalPage() {
   const bilgi = await iletisimBilgi();
   const m = await metinleriOku();
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
+
+  /**
+   * ⚠️ Kadro artik PANELDEN okunuyor (onceden bu sayfa dogrudan koddaki EKIP
+   * dizisini basiyordu; ana sayfa panelden okurken burasi okumuyordu, yani iki
+   * sayfa farkli kadro gosterebilirdi). Kayit yoksa liste bos kalir ve kadro
+   * kutusu hic basilmaz.
+   */
+  const ekipBloklari = await bloklar("ekip").catch(() => []);
+  const ekipListesi = ekipBloklari.length
+    ? ekipBloklari.map((b) => ({ name: b.baslik, title: b.metin }))
+    : EKIP;
 
   const orgLd = {
     "@context": "https://schema.org",
@@ -42,7 +54,14 @@ export default async function KurumsalPage() {
       identifier: KURUM.akreditasyon,
       credentialCategory: "TÜRKAK Akreditasyonu",
     },
-    employee: EKIP.map((u) => ({ "@type": "Person", name: u.name, jobTitle: u.title })),
+    /**
+     * ⚠️ KISISEL VERI: calisan adlari arama motorlarina da gonderiliyordu.
+     * Kadro bosken alan HIC EKLENMIYOR — bos bir `employee: []` gondermek
+     * hem anlamsiz hem de yapisal veriyi kirletir.
+     */
+    ...(ekipListesi.length > 0
+      ? { employee: ekipListesi.map((u) => ({ "@type": "Person", name: u.name, jobTitle: u.title })) }
+      : {}),
   };
 
   const breadcrumbLd = {
@@ -117,20 +136,24 @@ export default async function KurumsalPage() {
               </dl>
             </div>
 
-            <div className="rounded-card border border-line bg-white p-6">
-              <h3 className="text-lg font-bold text-navy">{m("kurumsal_ekip_baslik")}</h3>
-              <ul className="mt-3 space-y-3">
-                {EKIP.map((u) => (
-                  <li key={u.name} className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-soft">👷</span>
-                    <span>
-                      <span className="block font-semibold text-navy">{u.name}</span>
-                      <span className="block text-xs text-muted">{u.title}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Kadro kutusu YALNIZCA kayit varsa basiliyor — panel de kod da
+                bossa bomboş bir "Mühendis kadromuz" kutusu kalmasin. */}
+            {ekipListesi.length > 0 && (
+              <div className="rounded-card border border-line bg-white p-6">
+                <h3 className="text-lg font-bold text-navy">{m("kurumsal_ekip_baslik")}</h3>
+                <ul className="mt-3 space-y-3">
+                  {ekipListesi.map((u) => (
+                    <li key={u.name} className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-soft">👷</span>
+                      <span>
+                        <span className="block font-semibold text-navy">{u.name}</span>
+                        <span className="block text-xs text-muted">{u.title}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </aside>
         </div>
       </section>

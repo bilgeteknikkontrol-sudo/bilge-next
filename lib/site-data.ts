@@ -23,11 +23,25 @@ export const REFERANSLAR: Referans[] = [
 ];
 
 export type Uzman = { name: string; title: string };
-export const EKIP: Uzman[] = [
-  { name: "Tuğrul Tapan", title: "Makine Mühendisi" },
-  { name: "Bülent Alkaya", title: "Makine Mühendisi" },
-  { name: "Can Görgü", title: "Elektrik Mühendisi" },
-];
+
+/**
+ * ⚠️ BILEREK BOS.
+ *
+ * 2026-08-31: kullanici calisan personelin sitede gorunmesini istemedi ve
+ * isimler koddan cikarildi. Burasi artik yalnizca "panel bosken kullanilacak
+ * varsayilan" — ve varsayilan da bos.
+ *
+ * Kadro EKLENMEK ISTENIRSE kod degisikligi GEREKMEZ: panelden
+ * (Ana Sayfa / Hakkımızda ekrani -> "Ekip / mühendis kadrosu") kayit eklenir,
+ * uc yerde birden goruntulenir. Kayit yoksa ilgili bolumler HIC BASILMAZ —
+ * bos baslik veya bos kutu kalmaz (bkz. app/page.tsx, app/kurumsal/page.tsx,
+ * app/iletisim/page.tsx icindeki `ekipListesi.length > 0` kontrolleri).
+ *
+ * ⚠️ Kisi adi ve unvani KISISEL VERIDIR; yayindan kaldirilmasi istendiginde
+ * yalnizca gorunen listeden degil, arama motorlarina gonderilen yapisal
+ * veriden de (Organization.employee) cikarilmalidir — o da yapildi.
+ */
+export const EKIP: Uzman[] = [];
 
 export type Bolge = { ad: string; not: string; iller: { il: string; aciklama: string }[] };
 export const BOLGELER: Bolge[] = [
