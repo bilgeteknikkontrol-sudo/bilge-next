@@ -3,9 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { REFERANSLAR, KURUM } from "@/lib/site-data";
+import { REFERANSLAR } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { KATEGORILER } from "@/lib/data";
 import { metinleriOku } from "@/lib/sayfa-metin";
+import { bloklar } from "@/lib/bloklar";
 
 export const metadata: Metadata = {
   title: "Referanslarımız",
@@ -14,7 +16,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/referanslar" },
 };
 
-/** Sektorler: referans listesindeki firmalarin faaliyet alanlarindan turetildi. */
+/**
+ * Sektorler: referans listesindeki firmalarin faaliyet alanlarindan turetildi.
+ * ⚠️ Artik yalnizca VARSAYILAN — panelde "Hizmet Verilen Sektörler" blogundan
+ * kayit eklenirse liste oradan gelir.
+ */
 const SEKTORLER = [
   { ikon: "🏭", ad: "Üretim ve İmalat", not: "Makine parkı, pres, tezgâh ve kaldırma ekipmanları" },
   { ikon: "📦", ad: "Lojistik ve Depolama", not: "Forklift, transpalet, raf sistemleri" },
@@ -25,8 +31,13 @@ const SEKTORLER = [
 ];
 
 export default async function ReferanslarPage() {
+  const bilgi = await iletisimBilgi();
   const m = await metinleriOku();
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
+  const sektorBloklari = await bloklar("sektor").catch(() => []);
+  const sektorler = sektorBloklari.length
+    ? sektorBloklari.map((b) => ({ ikon: b.ikon || "🏭", ad: b.baslik, not: b.metin }))
+    : SEKTORLER;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -47,7 +58,7 @@ export default async function ReferanslarPage() {
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>{m("referans_baslik")}</span>
           </nav>
-          <h1 className="text-3xl font-black md:text-4xl">Referanslarımız</h1>
+          <h1 className="text-3xl font-black md:text-4xl">{m("referans_baslik")}</h1>
           <p className="mt-3 max-w-3xl text-onnavy">{m("referans_giris")}</p>
         </div>
       </section>
@@ -56,8 +67,8 @@ export default async function ReferanslarPage() {
       <section className="section">
         <div className="container-x">
           <div className="mx-auto mb-10 max-w-[720px] text-center">
-            <span className="chip">Bize güvenen firmalar</span>
-            <h2 className="mt-4 text-3xl font-black text-navy">Çalıştığımız markalardan bazıları</h2>
+            <span className="chip">{m("referans_logo_etiket")}</span>
+            <h2 className="mt-4 text-3xl font-black text-navy">{m("referans_logo_baslik")}</h2>
           </div>
           <ul className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
             {REFERANSLAR.map((r) => (
@@ -70,9 +81,7 @@ export default async function ReferanslarPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 text-center text-sm text-muted">
-            Müşteri gizliliği gereği tüm firma isimleri paylaşılmamaktadır.
-          </p>
+          <p className="mt-6 text-center text-sm text-muted">{m("referans_logo_not")}</p>
         </div>
       </section>
 
@@ -80,15 +89,14 @@ export default async function ReferanslarPage() {
       <section className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-10 max-w-[720px] text-center">
-            <span className="chip">Sektörler</span>
-            <h2 className="mt-4 text-3xl font-black text-navy">Hangi sektörlere hizmet veriyoruz?</h2>
+            <span className="chip">{m("referans_sektor_etiket")}</span>
+            <h2 className="mt-4 text-3xl font-black text-navy">{m("referans_sektor_baslik")}</h2>
             <p className="mt-3 text-muted">
-              {toplamHizmet} ayrı hizmet kapsamımızla, ekipman parkı hangi sektörde olursa olsun
-              periyodik kontrol yükümlülüğünü tek elden karşılıyoruz.
+              {toplamHizmet} {m("referans_sektor_giris")}
             </p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SEKTORLER.map((s) => (
+            {sektorler.map((s) => (
               <div key={s.ad} className="card p-6">
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-soft text-2xl">{s.ikon}</div>
                 <h3 className="text-lg font-bold text-navy">{s.ad}</h3>
@@ -103,17 +111,14 @@ export default async function ReferanslarPage() {
       <section className="section">
         <div className="container-x">
           <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-10 text-center text-white">
-            <h2 className="text-2xl font-black text-white md:text-3xl">Siz de aramıza katılın</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-onnavy">
-              TÜRKAK akredite ({KURUM.akreditasyon}) raporlarımızla, denetimlerde ve ihale
-              süreçlerinde sorun yaşamayın. Ekipman listenizi iletin, kapsamı birlikte belirleyelim.
-            </p>
+            <h2 className="text-2xl font-black text-white md:text-3xl">{m("referans_cta_baslik")}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-onnavy">{m("referans_cta_yazi")}</p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link href="/teklif" className="rounded-full bg-accent px-7 py-3.5 font-bold text-navy transition hover:-translate-y-0.5">
-                Teklif Al →
+                {m("referans_cta_buton")}
               </Link>
-              <a href={`tel:${KURUM.telefonE164}`} className="rounded-full border border-white/40 px-7 py-3.5 font-bold text-white transition hover:bg-white/10">
-                {KURUM.telefon}
+              <a href={`tel:${bilgi.telefonE164}`} className="rounded-full border border-white/40 px-7 py-3.5 font-bold text-white transition hover:bg-white/10">
+                {bilgi.telefon}
               </a>
             </div>
           </div>

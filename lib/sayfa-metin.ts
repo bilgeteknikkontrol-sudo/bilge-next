@@ -23,6 +23,12 @@ export type MetinAlani = {
   not?: string;
   /** Cok satirli mi? */
   uzun?: boolean;
+  /**
+   * Bicimlendirme isaretleri (## baslik, - madde, **kalin**) gecerli mi?
+   * Panelde alanin altina kullanim notu ekleniyor ve kutu buyuk aciliyor;
+   * sayfa tarafinda deger lib/metin-bicim.ts ile HTML'e ceviriliyor.
+   */
+  bicimli?: boolean;
   varsayilan: string;
 };
 
@@ -220,7 +226,49 @@ export const METIN_GRUPLARI: MetinGrubu[] = [
     "/kurumsal",
     "kurumsal",
     "Kurumsal",
-    "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti. — TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş (AB-0296-M) bağımsız A Tipi muayene kuruluşu."
+    "Bilge Teknik Kontrol Muayene Gözetim Denetim Ltd. Şti. — TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş (AB-0296-M) bağımsız A Tipi muayene kuruluşu.",
+    [
+      {
+        anahtar: "kurumsal_govde",
+        etiket: "Sayfanın ana metni",
+        not: "Sayfanın sol tarafındaki uzun yazı.",
+        uzun: true,
+        bicimli: true,
+        varsayilan: `## Biz kimiz?
+
+2014 yılından bu yana iş ekipmanlarının periyodik kontrolü alanında hizmet veriyoruz. Beylikdüzü / İstanbul'daki merkez ofisimizden hareketle Türkiye genelindeki işletmelere yerinde muayene hizmeti sunuyoruz.
+
+Amacımız yalnızca bir kontrol belgesi düzenlemek değil; işletmenizin iş sağlığı ve güvenliği risklerini gerçek anlamda azaltmak ve yasal yükümlülüklerini zamanında karşılamasını sağlamaktır. Bu nedenle raporlarımızda yalnızca "uygundur" ibaresi değil, tespit edilen uygunsuzluklar ve giderilme önerileri de yer alır.
+
+## A Tipi muayene kuruluşu ne demek?
+
+TS EN ISO/IEC 17020 standardı muayene kuruluşlarını tarafsızlık düzeyine göre A, B ve C tiplerine ayırır. **A Tipi**, muayene ettiği ekipmanın tasarımı, imalatı, satışı, montajı veya bakımıyla hiçbir ilgisi olmayan, tamamen bağımsız üçüncü taraf kuruluş anlamına gelir.
+
+Pratikte bunun anlamı şudur: size ekipman satmıyor, bakımını üstlenmiyoruz. Bu yüzden raporumuzda çıkan bir uygunsuzluğun bizim için ticari bir karşılığı yok — sadece teknik bir tespit. Denetimlerde ve ihale süreçlerinde A Tipi raporun ayrıca aranmasının sebebi de budur.
+
+## Nasıl çalışıyoruz?
+
+1. Ekipman envanteriniz çıkarılır, İSG-KATİP üzerinden hizmet sözleşmesi düzenlenir.
+2. Uzman mühendis kadromuz tesisinizde görsel muayene, test ve ölçümleri yapar.
+3. TS EN ISO/IEC 17020 kapsamında, EKİPNET numaralı ve e-imzalı rapor düzenlenir.
+4. Bir sonraki yasal kontrol tarihiniz için hatırlatma yapılır.`,
+      },
+      {
+        anahtar: "kurumsal_btn1",
+        etiket: "Birinci buton",
+        not: "Hizmet sayısı parantez içinde otomatik eklenir.",
+        varsayilan: "Hizmetlerimiz",
+      },
+      { anahtar: "kurumsal_btn2", etiket: "İkinci buton", varsayilan: "İletişime Geç →" },
+      { anahtar: "kurumsal_kunye_baslik", etiket: "Sağdaki künye kutusunun başlığı", varsayilan: "Künye" },
+      { anahtar: "kurumsal_ekip_baslik", etiket: "Sağdaki kadro kutusunun başlığı", varsayilan: "Mühendis kadromuz" },
+      { anahtar: "kurumsal_ref_etiket", etiket: "Referanslar — küçük etiket", varsayilan: "Referanslarımız" },
+      {
+        anahtar: "kurumsal_ref_baslik",
+        etiket: "Referanslar — başlık",
+        varsayilan: "Bize güvenen firmalardan bazıları",
+      },
+    ]
   ),
   sayfa(
     "Hizmetler / Ekipman listesi",
@@ -241,7 +289,40 @@ export const METIN_GRUPLARI: MetinGrubu[] = [
     "/referanslar",
     "referans",
     "Referanslarımız",
-    "Üretimden lojistiğe, enerjiden inşaata kadar birçok sektörde işletmelerin periyodik kontrol yükümlülüklerini karşılıyoruz. Aşağıda bizimle çalışan firmalardan bazıları yer alıyor."
+    "Üretimden lojistiğe, enerjiden inşaata kadar birçok sektörde işletmelerin periyodik kontrol yükümlülüklerini karşılıyoruz. Aşağıda bizimle çalışan firmalardan bazıları yer alıyor.",
+    [
+      { anahtar: "referans_logo_etiket", etiket: "Logolar — küçük etiket", varsayilan: "Bize güvenen firmalar" },
+      { anahtar: "referans_logo_baslik", etiket: "Logolar — başlık", varsayilan: "Çalıştığımız markalardan bazıları" },
+      {
+        anahtar: "referans_logo_not",
+        etiket: "Logoların altındaki not",
+        uzun: true,
+        varsayilan: "Müşteri gizliliği gereği tüm firma isimleri paylaşılmamaktadır.",
+      },
+      { anahtar: "referans_sektor_etiket", etiket: "Sektörler — küçük etiket", varsayilan: "Sektörler" },
+      {
+        anahtar: "referans_sektor_baslik",
+        etiket: "Sektörler — başlık",
+        varsayilan: "Hangi sektörlere hizmet veriyoruz?",
+      },
+      {
+        anahtar: "referans_sektor_giris",
+        etiket: "Sektörler — açıklama",
+        not: "Hizmet sayısı cümlenin başına otomatik eklenir.",
+        uzun: true,
+        varsayilan:
+          "ayrı hizmet kapsamımızla, ekipman parkı hangi sektörde olursa olsun periyodik kontrol yükümlülüğünü tek elden karşılıyoruz.",
+      },
+      { anahtar: "referans_cta_baslik", etiket: "Alt çağrı — başlık", varsayilan: "Siz de aramıza katılın" },
+      {
+        anahtar: "referans_cta_yazi",
+        etiket: "Alt çağrı — yazı",
+        uzun: true,
+        varsayilan:
+          "TÜRKAK akredite (AB-0296-M) raporlarımızla, denetimlerde ve ihale süreçlerinde sorun yaşamayın. Ekipman listenizi iletin, kapsamı birlikte belirleyelim.",
+      },
+      { anahtar: "referans_cta_buton", etiket: "Alt çağrı — buton", varsayilan: "Teklif Al →" },
+    ]
   ),
   sayfa(
     "Hizmet Bölgeleri",
@@ -290,7 +371,25 @@ export const METIN_GRUPLARI: MetinGrubu[] = [
     "/iletisim",
     "iletisim",
     "İletişim",
-    "Merkez ofisimiz Beylikdüzü / İstanbul’dadır; Türkiye genelinde yerinde muayene hizmeti veriyoruz. Ekipman listenizi iletin, planlamayı birlikte yapalım."
+    "Merkez ofisimiz Beylikdüzü / İstanbul’dadır; Türkiye genelinde yerinde muayene hizmeti veriyoruz. Ekipman listenizi iletin, planlamayı birlikte yapalım.",
+    [
+      { anahtar: "iletisim_bolum_baslik", etiket: "Bilgi listesinin başlığı", varsayilan: "Bize ulaşın" },
+      {
+        anahtar: "iletisim_teklif_baslik",
+        etiket: "Teklif kutusu — başlık",
+        varsayilan: "Teklif mi almak istiyorsunuz?",
+      },
+      {
+        anahtar: "iletisim_teklif_yazi",
+        etiket: "Teklif kutusu — yazı",
+        uzun: true,
+        varsayilan:
+          "Ekipmanlarınızı seçip online form üzerinden ilettiğinizde, kapsam ve fiyat için size dönüş yapıyoruz.",
+      },
+      { anahtar: "iletisim_teklif_btn1", etiket: "Teklif kutusu — birinci buton", varsayilan: "Online Teklif Al →" },
+      { anahtar: "iletisim_teklif_btn2", etiket: "Teklif kutusu — ikinci buton", varsayilan: "Süremi Hesapla" },
+      { anahtar: "iletisim_ekip_baslik", etiket: "Teknik ekip kutusunun başlığı", varsayilan: "Teknik ekip" },
+    ]
   ),
   {
     baslik: "Footer (sayfa altı)",

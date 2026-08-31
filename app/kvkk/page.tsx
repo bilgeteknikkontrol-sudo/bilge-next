@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { KURUM, ADRES_TEK_SATIR } from "@/lib/site-data";
+import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import {
   SON_GUNCELLEME,
   TOPLANAN_VERILER,
@@ -18,7 +19,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/kvkk" },
 };
 
-export default function KvkkPage() {
+export default async function KvkkPage() {
+  /* Aydinlatma metnindeki iletisim bilgileri de panelden okunuyor: KVKK
+     metninde yanlis adres/telefon birakmak hukuki risk. */
+  const bilgi = await iletisimBilgi();
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -59,9 +63,9 @@ export default function KvkkPage() {
             <div className="mt-4 rounded-card border border-line bg-bgsoft p-5 text-sm">
               <dl className="space-y-1.5">
                 <div><dt className="inline font-bold text-navy">Unvan: </dt><dd className="inline text-muted">{KURUM.ad}</dd></div>
-                <div><dt className="inline font-bold text-navy">Adres: </dt><dd className="inline text-muted">{ADRES_TEK_SATIR}</dd></div>
-                <div><dt className="inline font-bold text-navy">Telefon: </dt><dd className="inline text-muted">{KURUM.telefon}</dd></div>
-                <div><dt className="inline font-bold text-navy">E-posta: </dt><dd className="inline text-muted">{KURUM.eposta}</dd></div>
+                <div><dt className="inline font-bold text-navy">Adres: </dt><dd className="inline text-muted">{bilgi.adresTekSatir}</dd></div>
+                <div><dt className="inline font-bold text-navy">Telefon: </dt><dd className="inline text-muted">{bilgi.telefon}</dd></div>
+                <div><dt className="inline font-bold text-navy">E-posta: </dt><dd className="inline text-muted">{bilgi.eposta}</dd></div>
               </dl>
             </div>
 
@@ -168,12 +172,12 @@ export default function KvkkPage() {
             <ul>
               <li>
                 Islak imzalı dilekçenizi kimliğinizi tevsik edici belgelerle birlikte{" "}
-                <strong>{ADRES_TEK_SATIR}</strong> adresine şahsen veya noter aracılığıyla
+                <strong>{bilgi.adresTekSatir}</strong> adresine şahsen veya noter aracılığıyla
                 göndererek,
               </li>
               <li>
                 Sistemimizde kayıtlı e-posta adresinizi kullanarak{" "}
-                <a href={`mailto:${KURUM.eposta}`}>{KURUM.eposta}</a> adresine ileterek.
+                <a href={`mailto:${bilgi.eposta}`}>{bilgi.eposta}</a> adresine ileterek.
               </li>
             </ul>
             <p>

@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { bloklar } from "@/lib/bloklar";
 import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { metinleriOku } from "@/lib/sayfa-metin";
 
 /**
@@ -50,6 +51,7 @@ const VARSAYILAN_BELGELER = [
 
 async function Sayfa() {
   const m = await metinleriOku();
+  const bilgi = await iletisimBilgi();
   const panelBelgeleri = await bloklar("sertifika").catch(() => []);
   const belgeler = panelBelgeleri.length ? panelBelgeleri : VARSAYILAN_BELGELER;
 
@@ -208,7 +210,7 @@ async function Sayfa() {
               </p>
               <div className="mt-5 flex flex-wrap justify-center gap-3">
                 <Link href="/iletisim" className="btn-primary">Belge Talep Et</Link>
-                <a href={`tel:${KURUM.telefonE164}`} className="btn-ghost">{KURUM.telefon}</a>
+                <a href={`tel:${bilgi.telefonE164}`} className="btn-ghost">{bilgi.telefon}</a>
               </div>
             </div>
           )}

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { GENEL_SSS, KURUM } from "@/lib/site-data";
+import { GENEL_SSS } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { ARTICLES } from "@/lib/content";
 import { metinleriOku } from "@/lib/sayfa-metin";
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SssPage() {
+  const bilgi = await iletisimBilgi();
   const m = await metinleriOku();
   const faqLd = {
     "@context": "https://schema.org",
@@ -73,8 +75,8 @@ export default async function SssPage() {
                 İşletmenize özel durumlar için doğrudan bize sorabilirsiniz.
               </p>
               <div className="mt-4 space-y-2 text-sm">
-                <a href={`tel:${KURUM.telefonE164}`} className="block font-bold text-blue hover:underline">📞 {KURUM.telefon}</a>
-                <a href={`mailto:${KURUM.eposta}`} className="block font-bold text-blue hover:underline">✉️ {KURUM.eposta}</a>
+                <a href={`tel:${bilgi.telefonE164}`} className="block font-bold text-blue hover:underline">📞 {bilgi.telefon}</a>
+                <a href={`mailto:${bilgi.eposta}`} className="block font-bold text-blue hover:underline">✉️ {bilgi.eposta}</a>
               </div>
               <Link href="/iletisim" className="btn-primary mt-4 w-full">İletişim Sayfası</Link>
             </div>

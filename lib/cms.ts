@@ -92,6 +92,13 @@ export type SiteSettings = {
   phone: string;
   email: string;
   address: string;
+  /**
+   * ⚠️ Sonradan eklendi. Eski kayitlarda YOK; `dbGetSettings` okurken
+   * `{...defaultSettings(), ...kayit}` yaptigi icin eksik alanlar otomatik
+   * varsayilanla doluyor — ek bir gecis islemi gerekmedi.
+   */
+  hours: string;
+  whatsapp: string;
   sameAs: string[];
   heroTitle: string;
   heroSubtitle: string;
@@ -263,6 +270,8 @@ export function defaultSettings(): SiteSettings {
     // zaten ayri alanlarda yaziyor, yani ikisi tekrar ediyor ve adres sitede iki
     // farkli sekilde gorunuyordu. Bkz. lib/site-data.ts semaSokakAdresi().
     address: "Yakuplu Mah. 65. Sk. No: 35 İç Kapı No: 4",
+    hours: "Pazartesi – Cuma, 08:00 – 18:00",
+    whatsapp: "0507 133 18 34",
     sameAs: ["https://www.linkedin.com/company/bilgeteknikkontrol"],
     heroTitle: "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla",
     heroSubtitle:

@@ -1,4 +1,5 @@
 import { menuOku } from "@/lib/menu";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import HeaderIstemci from "./HeaderIstemci";
 
 /**
@@ -13,5 +14,8 @@ import HeaderIstemci from "./HeaderIstemci";
 export default async function Header() {
   const menu = await menuOku().catch(() => []);
   const { VARSAYILAN_MENU } = await import("@/lib/menu");
-  return <HeaderIstemci menu={menu.length ? menu : VARSAYILAN_MENU} />;
+  /* Ust seritteki telefon/e-posta da panelden geliyor; istemci bileseni
+     veritabanina erisemedigi icin deger burada okunup prop olarak veriliyor. */
+  const bilgi = await iletisimBilgi();
+  return <HeaderIstemci menu={menu.length ? menu : VARSAYILAN_MENU} bilgi={bilgi} />;
 }

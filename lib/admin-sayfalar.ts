@@ -238,6 +238,24 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     bolumler: [
       { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["kurumsal_baslik", "kurumsal_giris"] },
       {
+        tip: "metin",
+        baslik: "Sayfanın ana metni",
+        aciklama: "Sol taraftaki uzun yazı. Başlık ekleyip madde listesi yazabilirsiniz.",
+        anahtarlar: ["kurumsal_govde"],
+      },
+      {
+        tip: "metin",
+        baslik: "Butonlar ve sağdaki kutular",
+        anahtarlar: [
+          "kurumsal_btn1",
+          "kurumsal_btn2",
+          "kurumsal_kunye_baslik",
+          "kurumsal_ekip_baslik",
+          "kurumsal_ref_etiket",
+          "kurumsal_ref_baslik",
+        ],
+      },
+      {
         tip: "blok",
         tur: "ekip",
         baslik: "Ekip / mühendis kadrosu",
@@ -271,10 +289,31 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     bolumler: [
       { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["referans_baslik", "referans_giris"] },
       {
+        tip: "metin",
+        baslik: "Logolar bölümü",
+        anahtarlar: ["referans_logo_etiket", "referans_logo_baslik", "referans_logo_not"],
+      },
+      {
         tip: "blok",
         tur: "referans",
         baslik: "Referans logoları",
         aciklama: "Ana sayfayla aynı listedir; birinde yaptığınız değişiklik ikisinde de görünür.",
+      },
+      {
+        tip: "metin",
+        baslik: "Sektörler bölümü — başlık",
+        anahtarlar: ["referans_sektor_etiket", "referans_sektor_baslik", "referans_sektor_giris"],
+      },
+      {
+        tip: "blok",
+        tur: "sektor",
+        baslik: "Hizmet verilen sektörler",
+        aciklama: "Sektör kartları. İkon = emoji, Başlık = sektör adı, Metin = hangi ekipmanlara baktığınız.",
+      },
+      {
+        tip: "metin",
+        baslik: "Alt çağrı bölümü",
+        anahtarlar: ["referans_cta_baslik", "referans_cta_yazi", "referans_cta_buton"],
       },
     ],
   },
@@ -399,24 +438,39 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     bolumler: [
       { tip: "metin", baslik: "Sayfa yazıları", anahtarlar: ["iletisim_baslik", "iletisim_giris"] },
       {
+        tip: "metin",
+        baslik: "Sayfadaki başlıklar",
+        anahtarlar: [
+          "iletisim_bolum_baslik",
+          "iletisim_teklif_baslik",
+          "iletisim_teklif_yazi",
+          "iletisim_teklif_btn1",
+          "iletisim_teklif_btn2",
+          "iletisim_ekip_baslik",
+        ],
+      },
+      {
         tip: "ayar",
         baslik: "İletişim bilgileri",
-        aciklama: "Bu alanlar header üst şeridinde, footer'da ve arama motorlarına verilen bilgilerde kullanılır.",
+        aciklama:
+          "Burada yazdıklarınız sitenin HER YERİNDE geçerlidir: üst şerit, footer, iletişim sayfası, teklif formu ve arama motorlarına verilen bilgiler.",
         alanlar: [
           { ad: "phone", etiket: "Telefon" },
+          { ad: "whatsapp", etiket: "WhatsApp numarası", not: "Teklif formundaki WhatsApp bağlantısında kullanılır." },
           { ad: "email", etiket: "E-posta" },
           {
             ad: "address",
             etiket: "Adres",
             uzun: true,
             /**
-             * ⚠️ Bu alan yalnizca arama motorlarina gonderilen yapisal veriyi
-             * besliyor; sayfalarda GORUNEN adres koddaki sabitten geliyor
-             * (lib/site-data.ts KURUM.adres). Bunu yazmazsak kullanici burayi
-             * degistirip sitede hicbir sey degismeyince sasiriyor.
+             * ⚠️ Eskiden burada "sayfalarda görünen adres buradan gelmez"
+             * yaziyordu — dogruydu ve tam olarak duzeltilmesi gereken seydi.
+             * Artik gorunen adres de bu alandan okunuyor
+             * (bkz. lib/iletisim-bilgi.ts).
              */
-            not: "Yalnızca sokak/cadde kısmını yazın — ilçe ve il ayrıca gönderiliyor. Sayfalarda görünen adres buradan gelmez; onun için geliştiriciye söyleyin.",
+            not: "Yalnızca sokak/cadde kısmını yazın — ilçe ve il ayrıca ekleniyor.",
           },
+          { ad: "hours", etiket: "Çalışma saatleri" },
         ],
       },
     ],

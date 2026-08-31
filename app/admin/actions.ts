@@ -256,6 +256,8 @@ export async function saveSettingsAction(formData: FormData) {
     phone: String(formData.get("phone") || cur.phone),
     email: String(formData.get("email") || cur.email),
     address: String(formData.get("address") || cur.address),
+    hours: String(formData.get("hours") || cur.hours),
+    whatsapp: String(formData.get("whatsapp") || cur.whatsapp),
     sameAs: String(formData.get("sameAs") || "")
       .split("\n")
       .map((x) => x.trim())

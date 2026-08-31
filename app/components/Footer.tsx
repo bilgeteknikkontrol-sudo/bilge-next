@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { KATEGORILER } from "@/lib/data";
-import { KURUM, ADRES_TEK_SATIR } from "@/lib/site-data";
+import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import CerezAyarButonu from "./CerezAyarButonu";
 // Koyu zemin varyanti: logonun lacivert bolumleri beyaza cevrilmis, turuncu korunmus.
 import logoLight from "../../public/img/marka/logo-light.png";
@@ -28,6 +29,7 @@ const ARACLAR = [
 ];
 
 export default async function Footer() {
+  const bilgi = await iletisimBilgi();
   const m = await metinleriOku();
   const yil = new Date().getFullYear();
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
@@ -50,10 +52,10 @@ export default async function Footer() {
               Teklif Al →
             </Link>
             <a
-              href={`tel:${KURUM.telefonE164}`}
+              href={`tel:${bilgi.telefonE164}`}
               className="rounded-full border border-white/30 px-6 py-3 font-bold text-white transition hover:bg-white/10"
             >
-              {KURUM.telefon}
+              {bilgi.telefon}
             </a>
           </div>
         </div>
@@ -114,23 +116,23 @@ export default async function Footer() {
           <address className="space-y-3 text-sm not-italic">
             <div className="flex gap-3">
               <span aria-hidden>📍</span>
-              <span className="text-white/70">{ADRES_TEK_SATIR}</span>
+              <span className="text-white/70">{bilgi.adresTekSatir}</span>
             </div>
             <div className="flex gap-3">
               <span aria-hidden>📞</span>
-              <a href={`tel:${KURUM.telefonE164}`} className="font-bold text-white transition hover:text-accent">
-                {KURUM.telefon}
+              <a href={`tel:${bilgi.telefonE164}`} className="font-bold text-white transition hover:text-accent">
+                {bilgi.telefon}
               </a>
             </div>
             <div className="flex gap-3">
               <span aria-hidden>✉️</span>
-              <a href={`mailto:${KURUM.eposta}`} className="break-all text-white/70 transition hover:text-white">
-                {KURUM.eposta}
+              <a href={`mailto:${bilgi.eposta}`} className="break-all text-white/70 transition hover:text-white">
+                {bilgi.eposta}
               </a>
             </div>
             <div className="flex gap-3">
               <span aria-hidden>🕘</span>
-              <span className="text-white/70">{KURUM.calismaSaatleri}</span>
+              <span className="text-white/70">{bilgi.calismaSaatleri}</span>
             </div>
           </address>
 

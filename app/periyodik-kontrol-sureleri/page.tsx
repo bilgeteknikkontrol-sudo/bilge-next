@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getEquipment, type Equipment } from "@/lib/cms";
 import { KATEGORILER } from "@/lib/data";
-import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { metinleriOku } from "@/lib/sayfa-metin";
 
 /**
@@ -74,6 +74,7 @@ const SSS = [
 ];
 
 export default async function SurelerPage() {
+  const bilgi = await iletisimBilgi();
   const m = await metinleriOku();
   const hepsi = (await getEquipment().catch(() => [])).filter((e) => e.aktif);
   const kategoriler = grupla(hepsi);
@@ -238,8 +239,8 @@ export default async function SurelerPage() {
                 <Link href="/hesapla" className="rounded-full bg-accent px-6 py-3 font-bold text-navy transition hover:-translate-y-0.5">
                   Süremi Hesapla →
                 </Link>
-                <a href={`tel:${KURUM.telefonE164}`} className="rounded-full border border-white/40 px-6 py-3 font-bold text-white transition hover:bg-white/10">
-                  {KURUM.telefon}
+                <a href={`tel:${bilgi.telefonE164}`} className="rounded-full border border-white/40 px-6 py-3 font-bold text-white transition hover:bg-white/10">
+                  {bilgi.telefon}
                 </a>
               </div>
             </div>

@@ -9,8 +9,14 @@ import { KURUM } from "@/lib/site-data";
 import logo from "../../public/img/marka/logo.png";
 
 import type { MenuOge } from "@/lib/menu";
+import type { IletisimBilgi } from "@/lib/iletisim-bilgi";
 
-export default function HeaderIstemci({ menu }: { menu: MenuOge[] }) {
+/**
+ * ⚠️ Telefon / e-posta / calisma saati artik PROP olarak geliyor: burasi bir
+ * istemci bileseni, veritabanini kendisi okuyamaz. Deger Header (sunucu)
+ * tarafinda panelden okunup buraya veriliyor.
+ */
+export default function HeaderIstemci({ menu, bilgi }: { menu: MenuOge[]; bilgi: IletisimBilgi }) {
   const [mobilAcik, setMobilAcik] = useState(false);
   const [acikMenu, setAcikMenu] = useState<string | null>(null);
   const kapatmaZamani = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -63,14 +69,14 @@ export default function HeaderIstemci({ menu }: { menu: MenuOge[] }) {
         <div className="container-x flex h-10 items-center justify-between text-[.78rem]">
           <div className="flex items-center gap-6">
             {/* xl'de telefon ana cubukta gorunuyor, burada tekrar etmesin */}
-            <a href={`tel:${KURUM.telefonE164}`} className="flex items-center gap-1.5 transition hover:text-white xl:hidden">
-              <span aria-hidden>📞</span> {KURUM.telefon}
+            <a href={`tel:${bilgi.telefonE164}`} className="flex items-center gap-1.5 transition hover:text-white xl:hidden">
+              <span aria-hidden>📞</span> {bilgi.telefon}
             </a>
-            <a href={`mailto:${KURUM.eposta}`} className="hidden items-center gap-1.5 transition hover:text-white lg:flex">
-              <span aria-hidden>✉️</span> {KURUM.eposta}
+            <a href={`mailto:${bilgi.eposta}`} className="hidden items-center gap-1.5 transition hover:text-white lg:flex">
+              <span aria-hidden>✉️</span> {bilgi.eposta}
             </a>
             <span className="hidden items-center gap-1.5 xl:flex">
-              <span aria-hidden>🕘</span> {KURUM.calismaSaatleri}
+              <span aria-hidden>🕘</span> {bilgi.calismaSaatleri}
             </span>
           </div>
           <Link
@@ -190,13 +196,13 @@ export default function HeaderIstemci({ menu }: { menu: MenuOge[] }) {
         <div className="flex shrink-0 items-center gap-3">
           {/* Telefon: kurumsal sitelerde birincil donusum yolu, CTA'nin yaninda durmali */}
           <a
-            href={`tel:${KURUM.telefonE164}`}
+            href={`tel:${bilgi.telefonE164}`}
             className="hidden items-center gap-2.5 rounded-xl border border-line px-3.5 py-2 transition hover:border-blue xl:flex"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-soft text-base">📞</span>
             <span className="leading-tight">
               <span className="block text-[.68rem] font-semibold uppercase tracking-wide text-muted">Hemen arayın</span>
-              <span className="block text-[.92rem] font-bold text-navy">{KURUM.telefon}</span>
+              <span className="block text-[.92rem] font-bold text-navy">{bilgi.telefon}</span>
             </span>
           </a>
           <Link href="/teklif" className="btn-primary hidden whitespace-nowrap px-6 py-3 text-[.92rem] md:inline-flex">
@@ -250,11 +256,11 @@ export default function HeaderIstemci({ menu }: { menu: MenuOge[] }) {
           ))}
 
           <div className="mt-4 border-t border-line pt-4">
-            <a href={`tel:${KURUM.telefonE164}`} className="block px-1 py-1 text-sm font-bold text-blue">
-              📞 {KURUM.telefon}
+            <a href={`tel:${bilgi.telefonE164}`} className="block px-1 py-1 text-sm font-bold text-blue">
+              📞 {bilgi.telefon}
             </a>
-            <a href={`mailto:${KURUM.eposta}`} className="block px-1 py-1 text-sm text-muted">
-              ✉️ {KURUM.eposta}
+            <a href={`mailto:${bilgi.eposta}`} className="block px-1 py-1 text-sm text-muted">
+              ✉️ {bilgi.eposta}
             </a>
             <Link href="/teklif" className="btn-primary mt-3 w-full">
               Teklif Al

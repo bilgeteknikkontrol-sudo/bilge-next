@@ -19,6 +19,7 @@ export const BLOK_TURLERI = [
   "avantaj",
   "surec",
   "referans",
+  "sektor",
   "ekip",
   "sertifika",
   "sss",
@@ -32,6 +33,7 @@ export const TUR_ETIKET: Record<BlokTuru, string> = {
   avantaj: "Ana Sayfa — Fark Kartları",
   surec: "Ana Sayfa — Süreç Adımları",
   referans: "Referans Logoları",
+  sektor: "Hizmet Verilen Sektörler",
   ekip: "Ekip / Mühendis Kadrosu",
   sertifika: "Sertifika ve Belgeler",
   sss: "Sık Sorulan Sorular",
@@ -45,6 +47,7 @@ export const TUR_IPUCU: Record<BlokTuru, string> = {
   avantaj: "İkon = emoji, Başlık = kart başlığı, Metin = açıklama. Dört kart yan yana en iyi görünür.",
   surec: "Başlık = adımın adı, Metin = açıklaması. Numara sıraya göre otomatik verilir.",
   referans: "Başlık = firma adı, Görsel = logo. Bağlantı isteğe bağlı.",
+  sektor: "İkon = emoji, Başlık = sektör adı, Metin = o sektörde hangi ekipmanlara baktığınız.",
   ekip: "Başlık = ad soyad, Metin = unvan. Görsel isteğe bağlı.",
   sertifika: "Başlık = belge adı, Metin = açıklama, Görsel = belge görseli, Bağlantı = PDF adresi.",
   sss: "Başlık = soru, Metin = cevap.",
@@ -56,13 +59,18 @@ export const TUR_IPUCU: Record<BlokTuru, string> = {
  * Ikon yalnizca birkac turde anlamli; her formda gostermek geri kalan
  * ekranlari gereksiz yere kalabaliklastirirdi.
  */
-export const IKONLU_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>(["ozellik", "avantaj"]);
+export const IKONLU_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
+  "ozellik",
+  "avantaj",
+  "sektor",
+]);
 
 /** Gorsel alani anlamsiz olan turler — formda gizlenir. */
 export const GORSELSIZ_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
   "rakam",
   "avantaj",
   "surec",
+  "sektor",
   "sss",
 ]);
 

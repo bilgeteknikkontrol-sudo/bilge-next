@@ -3,6 +3,7 @@ import { guard } from "@/lib/auth";
 import { getAllContent, getSettings } from "@/lib/cms";
 import { sayfaBul, ADMIN_SAYFALAR } from "@/lib/admin-sayfalar";
 import { TUM_ALANLAR } from "@/lib/sayfa-metin";
+import { BICIM_IPUCU } from "@/lib/metin-bicim";
 import { tumBloklar } from "@/lib/bloklar";
 import { saveSayfaIcerikAction, sertifikalariAktarAction } from "../../actions";
 import BlokYonetici from "../../BlokYonetici";
@@ -109,14 +110,25 @@ export default async function AdminSayfaEkrani({
                       {b.anahtarlar.map((anahtar) => {
                         const alan = varsayilan[anahtar];
                         if (!alan) return null;
+                        /**
+                         * ⚠️ Uzun govde alanlari 3 satirlik kutuya sigmiyor:
+                         * Kurumsal metni 2000+ karakter ve kullanici yazinin
+                         * tamamini goremeden duzenlemek zorunda kaliyordu.
+                         * Bicimlendirilebilir alanlar hem buyuk aciliyor hem
+                         * de altinda isaretlerin ne ise yaradigi yaziyor.
+                         */
+                        const satirSayisi = alan.bicimli ? 18 : alan.uzun ? 3 : undefined;
+                        const not = alan.bicimli
+                          ? `${alan.not ? alan.not + " " : ""}${BICIM_IPUCU}`
+                          : alan.not;
                         return (
                           <Alan
                             key={anahtar}
                             ad={anahtar}
                             etiket={alan.etiket}
-                            not={alan.not}
+                            not={not}
                             uzun={alan.uzun}
-                            satir={alan.uzun ? 3 : undefined}
+                            satir={satirSayisi}
                             deger={kayitli[anahtar] ?? alan.varsayilan}
                             yerTutucu={alan.varsayilan}
                           />
