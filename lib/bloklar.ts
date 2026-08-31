@@ -20,7 +20,7 @@ export const BLOK_TURLERI = [
   "surec",
   "referans",
   "sektor",
-  "ekip",
+  "uzmanlik",
   "sertifika",
   "sss",
   "fennisss",
@@ -35,7 +35,7 @@ export const TUR_ETIKET: Record<BlokTuru, string> = {
   surec: "Ana Sayfa — Süreç Adımları",
   referans: "Referans Logoları",
   sektor: "Hizmet Verilen Sektörler",
-  ekip: "Ekip / Mühendis Kadrosu",
+  uzmanlik: "Uzmanlık Alanları",
   sertifika: "Sertifika ve Belgeler",
   sss: "Sık Sorulan Sorular",
   fennisss: "Fenni Muayene Sayfası — Sorular",
@@ -50,7 +50,8 @@ export const TUR_IPUCU: Record<BlokTuru, string> = {
   surec: "Başlık = adımın adı, Metin = açıklaması. Numara sıraya göre otomatik verilir.",
   referans: "Başlık = firma adı, Görsel = logo. Bağlantı isteğe bağlı.",
   sektor: "İkon = emoji, Başlık = sektör adı, Metin = o sektörde hangi ekipmanlara baktığınız.",
-  ekip: "Başlık = ad soyad, Metin = unvan. Görsel isteğe bağlı.",
+  uzmanlik:
+    "İkon = emoji, Başlık = branş adı (örnek: Makine Mühendisliği), Metin = o branşın hangi ekipmanlara baktığı. ⚠️ Kişi adı yazmayın — burası kişi değil uzmanlık alanı listesidir.",
   sertifika: "Başlık = belge adı, Metin = açıklama, Görsel = belge görseli, Bağlantı = PDF adresi.",
   sss: "Başlık = soru, Metin = cevap.",
   fennisss:
@@ -67,6 +68,7 @@ export const IKONLU_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
   "ozellik",
   "avantaj",
   "sektor",
+  "uzmanlik",
 ]);
 
 /** Gorsel alani anlamsiz olan turler — formda gizlenir. */
@@ -75,6 +77,7 @@ export const GORSELSIZ_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
   "avantaj",
   "surec",
   "sektor",
+  "uzmanlik",
   "sss",
   "fennisss",
 ]);

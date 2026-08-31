@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { KURUM, EKIP, REFERANSLAR } from "@/lib/site-data";
+import { KURUM, UZMANLIK_ALANLARI, REFERANSLAR } from "@/lib/site-data";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { KATEGORILER } from "@/lib/data";
 import { metinleriOku } from "@/lib/sayfa-metin";
@@ -23,15 +23,17 @@ export default async function KurumsalPage() {
   const toplamHizmet = KATEGORILER.reduce((n, k) => n + k.ekipmanlar.length, 0);
 
   /**
-   * ⚠️ Kadro artik PANELDEN okunuyor (onceden bu sayfa dogrudan koddaki EKIP
-   * dizisini basiyordu; ana sayfa panelden okurken burasi okumuyordu, yani iki
-   * sayfa farkli kadro gosterebilirdi). Kayit yoksa liste bos kalir ve kadro
-   * kutusu hic basilmaz.
+   * Uzmanlik alanlari (kisi degil brans) PANELDEN okunuyor.
+   *
+   * ⚠️ Onceden bu sayfa kadroyu dogrudan koddan basiyordu, ana sayfa ise
+   * panelden okuyordu: panelden bir kayit eklendiginde iki sayfa FARKLI sey
+   * gosteriyordu. Ucu de (ana sayfa, burasi, iletisim) artik ayni kaynaktan
+   * okuyor. Kayit yoksa kutu hic basilmaz.
    */
-  const ekipBloklari = await bloklar("ekip").catch(() => []);
-  const ekipListesi = ekipBloklari.length
-    ? ekipBloklari.map((b) => ({ name: b.baslik, title: b.metin }))
-    : EKIP;
+  const uzmanlikBloklari = await bloklar("uzmanlik").catch(() => []);
+  const uzmanlikListesi = uzmanlikBloklari.length
+    ? uzmanlikBloklari.map((b) => ({ ikon: b.ikon || "🛠️", ad: b.baslik, aciklama: b.metin }))
+    : UZMANLIK_ALANLARI;
 
   const orgLd = {
     "@context": "https://schema.org",
@@ -55,13 +57,14 @@ export default async function KurumsalPage() {
       credentialCategory: "TÜRKAK Akreditasyonu",
     },
     /**
-     * ⚠️ KISISEL VERI: calisan adlari arama motorlarina da gonderiliyordu.
-     * Kadro bosken alan HIC EKLENMIYOR — bos bir `employee: []` gondermek
-     * hem anlamsiz hem de yapisal veriyi kirletir.
+     * ⚠️ `employee` ALANI BILEREK YOK.
+     *
+     * Onceden calisan adlari burada Person olarak arama motorlarina da
+     * gonderiliyordu — yani gorunen metni silmek tek basina yetmezdi.
+     * Kisi adi artik hic yayinlanmadigi icin alan tamamen kaldirildi;
+     * uzmanlik alanlari kisi DEGIL, onlari Person olarak gondermek yanlis
+     * yapisal veri olurdu.
      */
-    ...(ekipListesi.length > 0
-      ? { employee: ekipListesi.map((u) => ({ "@type": "Person", name: u.name, jobTitle: u.title })) }
-      : {}),
   };
 
   const breadcrumbLd = {
@@ -138,16 +141,18 @@ export default async function KurumsalPage() {
 
             {/* Kadro kutusu YALNIZCA kayit varsa basiliyor — panel de kod da
                 bossa bomboş bir "Mühendis kadromuz" kutusu kalmasin. */}
-            {ekipListesi.length > 0 && (
+            {uzmanlikListesi.length > 0 && (
               <div className="rounded-card border border-line bg-white p-6">
                 <h3 className="text-lg font-bold text-navy">{m("kurumsal_ekip_baslik")}</h3>
                 <ul className="mt-3 space-y-3">
-                  {ekipListesi.map((u) => (
-                    <li key={u.name} className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-soft">👷</span>
-                      <span>
-                        <span className="block font-semibold text-navy">{u.name}</span>
-                        <span className="block text-xs text-muted">{u.title}</span>
+                  {uzmanlikListesi.map((u) => (
+                    <li key={u.ad} className="flex items-start gap-3">
+                      <span aria-hidden className="mt-0.5 flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-blue-soft text-lg">
+                        {u.ikon}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-semibold text-navy">{u.ad}</span>
+                        <span className="mt-0.5 block text-xs leading-relaxed text-muted">{u.aciklama}</span>
                       </span>
                     </li>
                   ))}

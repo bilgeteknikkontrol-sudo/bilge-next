@@ -3,7 +3,7 @@ import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import HaritaGomulu from "../components/HaritaGomulu";
-import { KURUM, EKIP } from "@/lib/site-data";
+import { KURUM, UZMANLIK_ALANLARI } from "@/lib/site-data";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { bloklar } from "@/lib/bloklar";
@@ -20,11 +20,13 @@ export default async function IletisimPage() {
   const m = await metinleriOku();
   /* Gorunen iletisim bilgileri artik PANELDEN (bkz. lib/iletisim-bilgi.ts). */
   const b = await iletisimBilgi();
-  /* Teknik ekip de panelden; kayit yoksa liste hic basilmaz. */
-  const ekipBloklari = await bloklar("ekip").catch(() => []);
-  const ekipListesi = ekipBloklari.length
-    ? ekipBloklari.map((u) => ({ name: u.baslik, title: u.metin }))
-    : EKIP;
+  /* Uzmanlik alanlari da panelden; kayit yoksa bolum hic basilmaz.
+     Burada aciklama METNI degil yalnizca brans adi gosteriliyor — yan sutun
+     dar ve tam metin ana sayfada zaten var. */
+  const uzmanlikBloklari = await bloklar("uzmanlik").catch(() => []);
+  const uzmanlikListesi = uzmanlikBloklari.length
+    ? uzmanlikBloklari.map((u) => ({ ikon: u.ikon || "🛠️", ad: u.baslik }))
+    : UZMANLIK_ALANLARI;
   const localBusinessLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
@@ -139,13 +141,17 @@ export default async function IletisimPage() {
             </div>
 
             {/* Teknik ekip listesi yalnizca kayit varsa basiliyor. */}
-            {ekipListesi.length > 0 && (
+            {uzmanlikListesi.length > 0 && (
               <div className="mt-8">
                 <h3 className="text-lg font-bold text-navy">{m("iletisim_ekip_baslik")}</h3>
-                <ul className="mt-3 space-y-1 text-sm text-muted">
-                  {ekipListesi.map((u) => (
-                    <li key={u.name}>
-                      <span className="font-semibold text-ink">{u.name}</span> — {u.title}
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {uzmanlikListesi.map((u) => (
+                    <li
+                      key={u.ad}
+                      className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-semibold text-navy"
+                    >
+                      <span aria-hidden>{u.ikon}</span>
+                      {u.ad}
                     </li>
                   ))}
                 </ul>

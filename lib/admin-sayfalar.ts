@@ -185,9 +185,10 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
       },
       {
         tip: "blok",
-        tur: "ekip",
-        baslik: "Ekip / mühendis kadrosu",
-        aciklama: "Ana sayfadaki uzman kadro kartları. Başlık = ad soyad, Metin = unvan.",
+        tur: "uzmanlik",
+        baslik: "Uzmanlık alanları",
+        aciklama:
+          "Ana sayfadaki branş kartları. İkon = emoji, Başlık = branş adı, Metin = o branşın hangi ekipmanlara baktığı. ⚠️ Kişi adı yazmayın.",
       },
       {
         tip: "metin",
@@ -298,9 +299,9 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
       },
       {
         tip: "blok",
-        tur: "ekip",
-        baslik: "Ekip / mühendis kadrosu",
-        aciklama: "Ana sayfayla aynı listedir; birinde yaptığınız değişiklik ikisinde de görünür.",
+        tur: "uzmanlik",
+        baslik: "Uzmanlık alanları",
+        aciklama: "Ana sayfayla aynı listedir; birinde yaptığınız değişiklik üç sayfada da görünür.",
       },
     ],
   },

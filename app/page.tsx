@@ -9,7 +9,7 @@ import { getSettings, getEquipment, getLocations, type Equipment } from "@/lib/c
 import { bloklar } from "@/lib/bloklar";
 // CMS Equipment tipinde gorsel alani yok; gorsel slug uzerinden statik haritadan gelir.
 import { EKIPMAN_GORSEL } from "@/lib/images";
-import { EKIP, KURUM } from "@/lib/site-data";
+import { UZMANLIK_ALANLARI, KURUM } from "@/lib/site-data";
 import { KATEGORILER } from "@/lib/data";
 import { metinleriOku } from "@/lib/sayfa-metin";
 // Hero arka plani: saha fotografi. Genis (1000x486) oldugu icin tam genislikte net kaliyor.
@@ -100,14 +100,14 @@ export default async function Home() {
   const bolgeler = (await getLocations().catch(() => [])).filter((b) => b.aktif);
 
   // Panelden yonetilen bloklar. Bos ise ilgili bolum statik varsayilanini kullanir.
-  const [heroBloklari, ozellikBloklari, rakamBloklari, avantajBloklari, surecBloklari, ekipBloklari] =
+  const [heroBloklari, ozellikBloklari, rakamBloklari, avantajBloklari, surecBloklari, uzmanlikBloklari] =
     await Promise.all([
       bloklar("hero").catch(() => []),
       bloklar("ozellik").catch(() => []),
       bloklar("rakam").catch(() => []),
       bloklar("avantaj").catch(() => []),
       bloklar("surec").catch(() => []),
-      bloklar("ekip").catch(() => []),
+      bloklar("uzmanlik").catch(() => []),
     ]);
   const heroSlaytlari = heroBloklari.map((b) => b.gorsel).filter(Boolean);
   const heroMaddeleri = ozellikBloklari.length
@@ -122,9 +122,10 @@ export default async function Home() {
   const surecAdimlari = surecBloklari.length
     ? surecBloklari.map((b) => ({ baslik: b.baslik, metin: b.metin }))
     : SUREC.map(([baslik, metin]) => ({ baslik, metin }));
-  const ekipListesi = ekipBloklari.length
-    ? ekipBloklari.map((b) => ({ name: b.baslik, title: b.metin, gorsel: b.gorsel }))
-    : EKIP.map((u) => ({ name: u.name, title: u.title, gorsel: "" }));
+  /* Kisi degil BRANS: panelde kayit varsa oradan, yoksa koddaki iki alan. */
+  const uzmanlikListesi = uzmanlikBloklari.length
+    ? uzmanlikBloklari.map((b) => ({ ikon: b.ikon || "🛠️", ad: b.baslik, aciklama: b.metin }))
+    : UZMANLIK_ALANLARI;
 
   const heroTitle = settings?.heroTitle || "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla";
   const heroSubtitle =
@@ -512,7 +513,7 @@ export default async function Home() {
           baslik ve aciklama basilip altinda bos bir izgara kalsaydi sayfa
           bozuk gorunurdu. Panelden kisi eklenince bolum kendiliginden
           geri gelir. */}
-      {ekipListesi.length > 0 && (
+      {uzmanlikListesi.length > 0 && (
       <section className="section bg-bgsoft">
         <div className="container-x">
           <div className="mx-auto mb-10 max-w-[720px] text-center">
@@ -522,21 +523,23 @@ export default async function Home() {
             </h2>
             <p className="mt-3 text-muted">{m("as_ekip_giris")}</p>
           </div>
-          <div className="mx-auto grid max-w-[820px] gap-5 sm:grid-cols-3">
-            {ekipListesi.map((u) => (
-              <div key={u.name} className="card card-hover beliren p-6 text-center">
-                {u.gorsel ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={u.gorsel}
-                    alt={u.name}
-                    className="mx-auto mb-3 h-16 w-16 rounded-2xl object-cover"
-                  />
-                ) : (
-                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-soft text-2xl">👷</div>
-                )}
-                <h3 className="text-lg text-navy">{u.name}</h3>
-                <p className="mt-1 text-sm text-muted">{u.title}</p>
+          {/* Iki brans yan yana: uc sutunluk kisi izgarasindan gelindigi icin
+              sm:grid-cols-3 birakilsaydi iki kart sola yapisip sag ucta bosluk
+              kalirdi. md:grid-cols-2 ile kartlar esit ve genis duruyor;
+              aciklama metni de bir kisi kartina gore uzun. */}
+          <div className="mx-auto grid max-w-[880px] gap-5 md:grid-cols-2">
+            {uzmanlikListesi.map((u) => (
+              <div key={u.ad} className="card card-hover beliren flex gap-4 p-6 text-left">
+                <span
+                  aria-hidden
+                  className="flex h-14 w-14 flex-none items-center justify-center rounded-2xl bg-blue-soft text-2xl"
+                >
+                  {u.ikon}
+                </span>
+                <span className="min-w-0">
+                  <h3 className="text-lg font-bold text-navy">{u.ad}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted">{u.aciklama}</p>
+                </span>
               </div>
             ))}
           </div>

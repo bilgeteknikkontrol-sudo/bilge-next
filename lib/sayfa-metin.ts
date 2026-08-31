@@ -187,17 +187,17 @@ export const METIN_GRUPLARI: MetinGrubu[] = [
     ],
   },
   {
-    baslik: "Ana sayfa — ekip bölümü",
+    baslik: "Ana sayfa — uzmanlık alanları bölümü",
     yol: "/",
     alanlar: [
-      { anahtar: "as_ekip_etiket", etiket: "Küçük etiket", varsayilan: "Uzman Kadro" },
+      { anahtar: "as_ekip_etiket", etiket: "Küçük etiket", varsayilan: "Uzmanlık Alanlarımız" },
       { anahtar: "as_ekip_baslik", etiket: "Başlık", varsayilan: "Raporunuzun arkasında gerçek mühendisler var" },
       {
         anahtar: "as_ekip_giris",
         etiket: "Açıklama",
         uzun: true,
         varsayilan:
-          "Muayeneleriniz, kendi alanında yetkili mühendis kadromuz tarafından yerinde yapılır; rapor bu kişilerin teknik değerlendirmesine dayanır.",
+          "Muayeneleriniz, ekipmanın türüne göre ilgili branştan yetkili mühendis tarafından yerinde yapılır; rapor bu teknik değerlendirmeye dayanır.",
       },
     ],
   },
@@ -261,7 +261,7 @@ Pratikte bunun anlamı şudur: size ekipman satmıyor, bakımını üstlenmiyoru
       },
       { anahtar: "kurumsal_btn2", etiket: "İkinci buton", varsayilan: "İletişime Geç →" },
       { anahtar: "kurumsal_kunye_baslik", etiket: "Sağdaki künye kutusunun başlığı", varsayilan: "Künye" },
-      { anahtar: "kurumsal_ekip_baslik", etiket: "Sağdaki kadro kutusunun başlığı", varsayilan: "Mühendis kadromuz" },
+      { anahtar: "kurumsal_ekip_baslik", etiket: "Sağdaki uzmanlık kutusunun başlığı", varsayilan: "Uzmanlık alanlarımız" },
       { anahtar: "kurumsal_ref_etiket", etiket: "Referanslar — küçük etiket", varsayilan: "Referanslarımız" },
       {
         anahtar: "kurumsal_ref_baslik",
@@ -516,7 +516,7 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
       },
       { anahtar: "iletisim_teklif_btn1", etiket: "Teklif kutusu — birinci buton", varsayilan: "Online Teklif Al →" },
       { anahtar: "iletisim_teklif_btn2", etiket: "Teklif kutusu — ikinci buton", varsayilan: "Süremi Hesapla" },
-      { anahtar: "iletisim_ekip_baslik", etiket: "Teknik ekip kutusunun başlığı", varsayilan: "Teknik ekip" },
+      { anahtar: "iletisim_ekip_baslik", etiket: "Uzmanlık alanları başlığı", varsayilan: "Uzmanlık alanlarımız" },
     ]
   ),
   {

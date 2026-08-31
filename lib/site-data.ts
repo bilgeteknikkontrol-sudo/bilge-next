@@ -22,26 +22,38 @@ export const REFERANSLAR: Referans[] = [
   { name: "Mashattan", logo: logo_mashattan_png },
 ];
 
-export type Uzman = { name: string; title: string };
-
 /**
- * ⚠️ BILEREK BOS.
+ * UZMANLIK ALANLARI — kisi adi yerine BRANS.
  *
- * 2026-08-31: kullanici calisan personelin sitede gorunmesini istemedi ve
- * isimler koddan cikarildi. Burasi artik yalnizca "panel bosken kullanilacak
- * varsayilan" — ve varsayilan da bos.
+ * ⚠️ 2026-08-31: burada calisan adlari ve unvanlari duruyordu (EKIP dizisi).
+ * Kullanici personelin sitede gorunmesini istemedi. Isimleri silmek tek
+ * basina bir kayipti: "raporun arkasinda gercek muhendis var" mesaji sitenin
+ * en onemli guven sinyallerinden biriydi ve akredite muayenede kontrolu KIMIN
+ * yaptigi mevzuatin da sordugu bir sey (EKIPNET'e kayitli ilgili brans).
  *
- * Kadro EKLENMEK ISTENIRSE kod degisikligi GEREKMEZ: panelden
- * (Ana Sayfa / Hakkımızda ekrani -> "Ekip / mühendis kadrosu") kayit eklenir,
- * uc yerde birden goruntulenir. Kayit yoksa ilgili bolumler HIC BASILMAZ —
- * bos baslik veya bos kutu kalmaz (bkz. app/page.tsx, app/kurumsal/page.tsx,
- * app/iletisim/page.tsx icindeki `ekipListesi.length > 0` kontrolleri).
+ * Cozum: kisi degil BRANS gosteriliyor. Kisisel veri yayinlanmiyor, mesaj
+ * korunuyor — ve kadro degistiginde sitede guncellenecek bir sey kalmiyor.
  *
- * ⚠️ Kisi adi ve unvani KISISEL VERIDIR; yayindan kaldirilmasi istendiginde
- * yalnizca gorunen listeden degil, arama motorlarina gonderilen yapisal
- * veriden de (Organization.employee) cikarilmalidir — o da yapildi.
+ * ⚠️ Aciklamalarda YALNIZCA sitenin zaten sundugu hizmetler anlatiliyor.
+ * Buraya akreditasyon kapsami disinda bir muayene turu (ornek: tahribatsiz
+ * muayene) yazilmamali — yetkisiz hizmet iddiasi olur.
  */
-export const EKIP: Uzman[] = [];
+export type UzmanlikAlani = { ikon: string; ad: string; aciklama: string };
+
+export const UZMANLIK_ALANLARI: UzmanlikAlani[] = [
+  {
+    ikon: "⚙️",
+    ad: "Makine Mühendisliği",
+    aciklama:
+      "Basınçlı kaplar, kaldırma ve iletme ekipmanları, iş makineleri ile makina ve tezgâhların periyodik kontrolü. Statik ve dinamik yük testleri ile hidrostatik testler bu kapsamda, sahada yapılır.",
+  },
+  {
+    ikon: "⚡",
+    ad: "Elektrik Mühendisliği",
+    aciklama:
+      "Elektrik iç tesisatı, topraklama ve paratoner ölçümleri ile yangın algılama ve ihbar sistemlerinin kontrolü. Ölçümler kalibrasyonu geçerli cihazlarla yapılır ve değerleriyle birlikte rapora işlenir.",
+  },
+];
 
 export type Bolge = { ad: string; not: string; iller: { il: string; aciklama: string }[] };
 export const BOLGELER: Bolge[] = [
