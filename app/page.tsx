@@ -122,26 +122,9 @@ export default async function Home() {
   const surecAdimlari = surecBloklari.length
     ? surecBloklari.map((b) => ({ baslik: b.baslik, metin: b.metin }))
     : SUREC.map(([baslik, metin]) => ({ baslik, metin }));
-  /**
-   * Kisi degil BRANS: panelde kayit varsa oradan, yoksa koddaki iki alan.
-   *
-   * ⚠️ `gorsel` (panelden yuklenen adres) ile `foto` (koddaki statik import)
-   * AYRI alanlar: ikisi ayni sekilde basilamiyor. Panelden gelen kayitta foto
-   * yok, koddaki varsayilanda gorsel yok — sayfa hangisi doluysa onu kullaniyor.
-   */
-  const uzmanlikListesi: {
-    ikon: string;
-    ad: string;
-    aciklama: string;
-    gorsel?: string;
-    foto?: (typeof UZMANLIK_ALANLARI)[number]["foto"];
-  }[] = uzmanlikBloklari.length
-    ? uzmanlikBloklari.map((b) => ({
-        ikon: b.ikon || "🛠️",
-        ad: b.baslik,
-        aciklama: b.metin,
-        gorsel: b.gorsel,
-      }))
+  /* Kisi degil BRANS: panelde kayit varsa oradan, yoksa koddaki iki alan. */
+  const uzmanlikListesi = uzmanlikBloklari.length
+    ? uzmanlikBloklari.map((b) => ({ ikon: b.ikon || "🛠️", ad: b.baslik, aciklama: b.metin }))
     : UZMANLIK_ALANLARI;
 
   const heroTitle = settings?.heroTitle || "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla";
@@ -540,81 +523,33 @@ export default async function Home() {
             </h2>
             <p className="mt-3 text-muted">{m("as_ekip_giris")}</p>
           </div>
-          {/* Iki brans yan yana: uc sutunluk kisi izgarasindan gelindigi icin
-              sm:grid-cols-3 birakilsaydi iki kart sola yapisip sag ucta bosluk
-              kalirdi. md:grid-cols-2 ile kartlar esit ve genis duruyor. */}
-          <div className="mx-auto grid max-w-[920px] gap-6 md:grid-cols-2">
+          {/* ⚠️ SADE VE DAR — bilerek.
+              Once fotografli, 920px genisliginde kartlar denendi; kullanici
+              "fotograf olmasin, cok genis olmasin" dedi. Simdi kartlar ustteki
+              baslik blogunun genisligiyle (720px) hizali ve fotograf yok:
+              ikon basligin YANINDA, boylece kart alcak kaliyor. */}
+          <div className="mx-auto grid max-w-[720px] gap-4 sm:grid-cols-2">
             {uzmanlikListesi.map((u) => (
               <article
                 key={u.ad}
-                className="group card card-hover beliren flex flex-col overflow-hidden transition-colors hover:border-blue"
+                className="group card card-hover beliren p-5 transition-colors hover:border-blue"
               >
-                {/* GORSEL — kartin ust yarisi.
-                    Hareket: uzerine gelince fotograf yavasca yakinlasiyor
-                    (yarim saniye), kart da card-hover ile hafifce kalkiyor.
-                    ⚠️ Yakinlasma FOTOGRAFTA; kart tasmasin diye ust kapsayici
-                    overflow-hidden. */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-bgsoft">
-                  {u.gorsel ? (
-                    // Panelden yuklenen gorsel: adres oldugu icin next/image
-                    // boyutlandirma/blur uretemez, duz img kullaniliyor.
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={u.gorsel}
-                      alt=""
-                      aria-hidden
-                      className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.06]"
-                    />
-                  ) : u.foto ? (
-                    <Image
-                      src={u.foto}
-                      alt=""
-                      aria-hidden
-                      fill
-                      sizes="(max-width: 768px) 100vw, 450px"
-                      placeholder="blur"
-                      className="object-cover transition duration-500 ease-out group-hover:scale-[1.06]"
-                    />
-                  ) : (
-                    /* Panelden gorselsiz kayit eklenmis olabilir: kart bos bir
-                       kutu gibi durmasin diye ikon buyuk basiliyor. */
-                    <span
-                      aria-hidden
-                      className="flex h-full w-full items-center justify-center bg-blue-soft text-5xl"
-                    >
-                      {u.ikon}
-                    </span>
-                  )}
-
-                  {/* Alttan yukari koyulan perde: baslik fotografin uzerinde
-                      her fotografta okunakli kalsin. */}
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/25 to-transparent"
-                  />
-
-                  {/* Ikon rozeti — hizmet kartlarindaki desenin aynisi. */}
+                <div className="flex items-center gap-3">
                   <span
                     aria-hidden
-                    className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/95 text-xl shadow-sm backdrop-blur transition duration-300 group-hover:-translate-y-0.5"
+                    className="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-blue-soft text-lg"
                   >
                     {u.ikon}
                   </span>
-
-                  <h3 className="absolute inset-x-5 bottom-4 text-xl font-black leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,.45)]">
-                    {u.ad}
-                  </h3>
+                  <h3 className="text-base font-bold text-navy">{u.ad}</h3>
                 </div>
-
-                <div className="flex flex-1 flex-col p-6">
-                  <p className="text-sm leading-relaxed text-muted">{u.aciklama}</p>
-                  {/* Ince vurgu cizgisi: uzerine gelince soldan saga aciliyor.
-                      Metinden sonra, kartin en altinda duruyor. */}
-                  <span
-                    aria-hidden
-                    className="mt-5 block h-[3px] w-10 rounded-full bg-accent transition-all duration-500 ease-out group-hover:w-20"
-                  />
-                </div>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{u.aciklama}</p>
+                {/* Tek hareket: uzerine gelince ince turuncu cizgi aciliyor.
+                    Kart zaten card-hover ile hafifce kalkiyor. */}
+                <span
+                  aria-hidden
+                  className="mt-4 block h-[3px] w-8 rounded-full bg-accent transition-all duration-500 ease-out group-hover:w-16"
+                />
               </article>
             ))}
           </div>

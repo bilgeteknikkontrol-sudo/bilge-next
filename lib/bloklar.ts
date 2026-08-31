@@ -51,7 +51,7 @@ export const TUR_IPUCU: Record<BlokTuru, string> = {
   referans: "Başlık = firma adı, Görsel = logo. Bağlantı isteğe bağlı.",
   sektor: "İkon = emoji, Başlık = sektör adı, Metin = o sektörde hangi ekipmanlara baktığınız.",
   uzmanlik:
-    "Görsel = kartın üstündeki saha fotoğrafı (yüklemezseniz hazır fotoğraf kullanılır), İkon = fotoğrafın köşesindeki emoji, Başlık = branş adı, Metin = o branşın hangi ekipmanlara baktığı. ⚠️ Kişi adı yazmayın — burası kişi değil uzmanlık alanı listesidir.",
+    "İkon = emoji, Başlık = branş adı (örnek: Makine Mühendisliği), Metin = o branşın hangi ekipmanlara baktığı. ⚠️ Kişi adı yazmayın — burası kişi değil uzmanlık alanı listesidir.",
   sertifika: "Başlık = belge adı, Metin = açıklama, Görsel = belge görseli, Bağlantı = PDF adresi.",
   sss: "Başlık = soru, Metin = cevap.",
   fennisss:
@@ -77,6 +77,7 @@ export const GORSELSIZ_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
   "avantaj",
   "surec",
   "sektor",
+  "uzmanlik",
   "sss",
   "fennisss",
 ]);
