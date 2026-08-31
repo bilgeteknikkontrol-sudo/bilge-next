@@ -129,14 +129,33 @@ export default async function KvkkPage() {
               yükümlülüklerimizin yerine getirilmesi amacıyla mali müşavir ve avukatlarımıza
               KVKK md. 8 kapsamında aktarılabilmektedir.
             </p>
+            {/**
+             * ⚠️ 2026-08-31'de DUZELTILDI — burada "Vercel Inc. (Amerika
+             * Birleşik Devletleri)" yaziyordu. Site 29 Agustos'ta Hostinger'a
+             * tasindi; aydinlatma metninde YANLIS veri isleyen ve YANLIS ulke
+             * beyan ediliyordu. Yeni bilgi olculerek dogrulandi: alan adinin
+             * cozuldugu IP'lerin tamami (91.108.98.x, 77.37.83.x, 93.127.179.x)
+             * RIPE kayitlarinda `HOSTINGER-HOSTING / HOSTINGER NL`, ulke NL,
+             * konum Meppel / Hollanda.
+             *
+             * Ayrica: Vercel Analytics artik HIC calismiyor (app/layout.tsx
+             * bileseni yalnizca Vercel ortaminda basiyor), buna karsilik GA4
+             * calisiyor ve metinde adi gecmiyordu. Ikisi de duzeltildi.
+             */}
             <h3>Yurt dışına aktarım</h3>
             <p>
-              İnternet sitemiz <strong>Vercel Inc.</strong> (Amerika Birleşik Devletleri) altyapısı
-              üzerinde barındırılmaktadır. Bu nedenle site üzerinden ilettiğiniz veriler ile
-              sunucu tarafında oluşan teknik kayıtlar, hizmetin teknik olarak sunulabilmesi
-              amacıyla yurt dışındaki sunucularda işlenmektedir. Aynı şekilde iletişim
-              sayfamızdaki harita <strong>Google</strong> tarafından sağlanmakta olup, haritanın
-              görüntülenmesi sırasında IP adresiniz Google&apos;a iletilmektedir.
+              İnternet sitemiz <strong>Hostinger International Ltd.</strong> altyapısı üzerinde,
+              sağlayıcının <strong>Hollanda</strong> (Avrupa Birliği) veri merkezinde
+              barındırılmaktadır. Bu nedenle site üzerinden ilettiğiniz veriler ile sunucu
+              tarafında oluşan teknik kayıtlar, hizmetin teknik olarak sunulabilmesi amacıyla
+              yurt dışındaki sunucularda işlenmektedir.
+            </p>
+            <p>
+              Bunun dışında, yalnızca çerez tercihlerinizde <strong>“Tümünü kabul et”</strong>
+              {" "}dediğinizde <strong>Google Analytics 4</strong> ölçüm etiketi yüklenir ve
+              ziyaret verileriniz Google Ireland Ltd. / Google LLC tarafından işlenir. İletişim
+              sayfamızdaki harita da <strong>Google</strong> tarafından sağlanmakta olup,
+              haritanın görüntülenmesi sırasında IP adresiniz Google&apos;a iletilmektedir.
             </p>
             <p>
               Bu aktarımlar KVKK md. 9 kapsamında değerlendirilmekte olup, kullandığımız

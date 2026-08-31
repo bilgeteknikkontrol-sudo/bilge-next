@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { SON_GUNCELLEME, CEREZ_TABLOSU } from "@/lib/legal";
 
 export const metadata: Metadata = {
@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/cerez-politikasi" },
 };
 
-export default function CerezPage() {
+export default async function CerezPage() {
+  const bilgi = await iletisimBilgi();
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -85,7 +86,7 @@ export default function CerezPage() {
             Google kendi çerezlerini yerleştirebilir. Bu çerezler üzerinde kontrolümüz
             bulunmamaktadır; ayrıntılar için Google&apos;ın kendi gizlilik politikasını
             inceleyebilirsiniz. Haritanın yüklenmesini istemiyorsanız iletişim sayfasını ziyaret
-            etmeden bize telefon ({KURUM.telefon}) veya e-posta ({KURUM.eposta}) ile
+            etmeden bize telefon ({bilgi.telefon}) veya e-posta ({bilgi.eposta}) ile
             ulaşabilirsiniz.
           </p>
 

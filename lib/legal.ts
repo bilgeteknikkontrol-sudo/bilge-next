@@ -7,7 +7,13 @@
  * analitik — bu metinler de guncellenmelidir.
  */
 
-export const SON_GUNCELLEME = "26 Ağustos 2026";
+/**
+ * ⚠️ Hukuki metinlerde gercege aykiri beyan birakmamak icin bu tarih, metnin
+ * ICERIGI her degistiginde guncellenir. 31.08.2026: barindirma saglayicisi
+ * (Vercel -> Hostinger, ABD -> Hollanda) ve analitik servis (Vercel Analytics
+ * -> Google Analytics 4) beyanlari gercek duruma gore duzeltildi.
+ */
+export const SON_GUNCELLEME = "31 Ağustos 2026";
 
 /** Sitenin fiilen topladigi kisisel veriler. Kaynak: /teklif formu. */
 export const TOPLANAN_VERILER = [
@@ -89,11 +95,19 @@ export const CEREZ_TABLOSU = [
       "Sayfanın görüntülenebilmesi ve form gönderimlerinin güvenli şekilde iletilmesi. Bu kayıtlar olmadan site çalışmaz.",
     tip: "Zorunlu",
   },
+  /**
+   * ⚠️ 2026-08-31'de DUZELTILDI. Burada "Vercel Analytics" yaziyordu ama site
+   * 29 Agustos'ta Hostinger'a tasindi ve o bilesen yalnizca Vercel ortaminda
+   * basiliyor (bkz. app/layout.tsx `process.env.VERCEL ? ... : null`) — yani
+   * ARTIK CALISMIYOR. Buna karsilik GERCEKTEN calisan Google Analytics 4
+   * (app/components/GoogleAnalytics.tsx) listede HIC YOKTU. Yani cerez
+   * politikasi calismayan bir servisi beyan edip calisani gizliyordu.
+   */
   {
-    ad: "Vercel Analytics",
-    saglayici: "Vercel Inc. (ABD)",
+    ad: "Google Analytics 4",
+    saglayici: "Google Ireland Ltd. / Google LLC (ABD)",
     amac:
-      "Hangi sayfaların ne sıklıkta görüntülendiğinin toplu ve istatistiksel olarak ölçülmesi. Sağlayıcının beyanına göre ziyaretçiyi tanımlayan kalıcı çerez kullanılmaz.",
+      "Hangi sayfaların ne sıklıkta görüntülendiğinin ve ziyaretçilerin siteyi nasıl kullandığının toplu olarak ölçülmesi. Yalnızca “Tümünü kabul et” dediğinizde yüklenir; reddederseniz hiç çalışmaz.",
     tip: "Analitik",
   },
   {
