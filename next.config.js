@@ -111,6 +111,30 @@ const nextConfig = {
    */
   experimental: {
     cpus: 2,
+
+    /**
+     * ⚠️ PANELDEN GORSEL YUKLEMENIN CAN DAMARI.
+     *
+     * Sunucu eylemlerinin (server action) istek govdesi Next'te VARSAYILAN
+     * OLARAK 1 MB. Bu ayar hic verilmemisti; panel ise "en fazla 6 MB"
+     * yaziyordu. Sonuc: 1 MB'i asan her fotograf uygulamanin kendi boyut
+     * kontrolune ULASMADAN reddediliyor, kayit yapilmiyor ve ekranda anlamli
+     * bir hata cikmiyordu. 2026-08-31'de "hero slaytini degistirdim ama
+     * degismiyor" sikayetinin sebebi tam olarak buydu; canli sunucuda ayni
+     * sunucu eylemine gonderilen ~1 KB govde 303, 3 MB govde 500 donuyordu.
+     *
+     * 8mb: uygulamanin kendi siniri 6 MB (bkz. app/admin/actions.ts
+     * YUKLEME_SINIRI) + multipart bicim yuku icin pay. Boylece "cok buyuk"
+     * karari yine UYGULAMADA veriliyor ve kullaniciya anlasilir bir mesaj
+     * gosterilebiliyor. Hostinger'in vekil sunucusu 9 MB govdeyi geciriyor
+     * (olculdu), yani darbogaz burasi degil.
+     *
+     * Not: dosyalar ayrica TARAYICIDA kucultuluyor (app/admin/GorselSecici.tsx),
+     * bu sinir yalnizca guvenlik agi.
+     */
+    serverActions: {
+      bodySizeLimit: "8mb",
+    },
   },
 
   // Sunucu yazilimini duyurmanin faydasi yok, saldirgana ipucu vermenin zarari var.

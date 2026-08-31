@@ -25,7 +25,26 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
     return new Response("Geçersiz görsel", { status: 400 });
   }
 
-  const g = await getMediaBytes(n).catch(() => null);
+  /**
+   * ⚠️ VERITABANI HATASI 404 DEGILDIR.
+   *
+   * Onceden her hata `.catch(() => null)` ile 404'e cevriliyordu. 404 ise
+   * "bu gorsel silinmis" anlamina gelir ve arayan taraf (lib/bloklar.ts
+   * gecersizGorselleriTemizle) atfi TEMIZLER. Yani veritabanina bir anlik
+   * erisim sorunu, calisan bir gorseli "silinmis" saydirabiliyordu. Ayrica
+   * teshis imkansizlasiyordu: 2026-08-31'de ayni gorsel arka arkaya kimi
+   * istekte 200 kimi istekte 404 donuyordu ve sebebin veritabani mi yoksa
+   * silinmis kayit mi oldugu disaridan ayirt edilemiyordu.
+   */
+  let g: Awaited<ReturnType<typeof getMediaBytes>>;
+  try {
+    g = await getMediaBytes(n);
+  } catch {
+    return new Response("Görsel şu an okunamadı", {
+      status: 503,
+      headers: { "Cache-Control": "no-store" },
+    });
+  }
   if (!g) return new Response("Görsel bulunamadı", { status: 404 });
 
   return new Response(new Uint8Array(g.bytes), {

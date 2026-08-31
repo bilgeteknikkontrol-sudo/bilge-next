@@ -3,6 +3,7 @@ import { getSettings } from "@/lib/cms";
 import { saveSettingsAction } from "../actions";
 import { guard } from "@/lib/auth";
 import RenkPaneli from "./RenkPaneli";
+import GorselSecici from "../GorselSecici";
 
 export default async function SettingsAdmin({
   searchParams,
@@ -81,15 +82,15 @@ export default async function SettingsAdmin({
 
                 <label className="mt-2 block">
                   <span className="mb-1 block text-xs text-slate-500">Bilgisayarınızdan seçin</span>
-                  <input
-                    type="file"
+                  <GorselSecici
                     name={`${g.ad}Dosya`}
-                    accept="image/*"
-                    className="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-blue file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-white"
+                    ipucu={
+                      <>
+                        {g.ipucu} Büyük görseller tarayıcıda otomatik küçültülür. Yeni
+                        dosya seçmezseniz mevcut görsel korunur.
+                      </>
+                    }
                   />
-                  <span className="mt-1 block text-xs text-slate-400">
-                    En fazla 6 MB. {g.ipucu} Yeni dosya seçmezseniz mevcut görsel korunur.
-                  </span>
                 </label>
 
                 <details className="mt-2">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { tumBloklar, TUR_IPUCU, type BlokTuru } from "@/lib/bloklar";
 import { saveBlokAction, deleteBlokAction, toggleBlokAction } from "./actions";
 import { Kart, Buton, BosDurum } from "./ui";
+import GorselSecici from "./GorselSecici";
 
 /**
  * Bir blok koleksiyonunun (slayt / referans / ekip / sertifika / SSS)
@@ -174,16 +175,16 @@ export default async function BlokYonetici({
               <span className="mb-1 block text-xs text-slate-500">
                 Bilgisayarınızdan seçin
               </span>
-              <input
-                type="file"
+              <GorselSecici
                 name="gorselDosya"
-                accept="image/*"
-                className="block w-full cursor-pointer rounded-lg border border-dashed border-slate-300 bg-slate-50 p-2.5 text-sm file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-blue file:px-3 file:py-1.5 file:text-sm file:font-bold file:text-white"
+                ipucu={
+                  <>
+                    Büyük fotoğraflar tarayıcıda otomatik küçültülür; telefondan
+                    çektiğiniz fotoğrafı olduğu gibi seçebilirsiniz.
+                    {duzenlenen?.gorsel && " Yeni dosya seçmezseniz mevcut görsel korunur."}
+                  </>
+                }
               />
-              <span className="mt-1 block text-xs text-slate-400">
-                En fazla 6 MB. Tercihen WebP, 1600 px genişlik.
-                {duzenlenen?.gorsel && " Yeni dosya seçmezseniz mevcut görsel korunur."}
-              </span>
             </label>
 
             <details className="mt-3">

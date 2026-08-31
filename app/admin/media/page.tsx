@@ -1,6 +1,7 @@
 import { getMedia } from "@/lib/cms";
 import { saveMediaAction, deleteMediaAction } from "../actions";
 import { guard } from "@/lib/auth";
+import GorselSecici from "../GorselSecici";
 
 export default async function MediaAdmin({
   searchParams,
@@ -38,7 +39,11 @@ export default async function MediaAdmin({
             <input name="name" placeholder="Görsel adı" className="rounded-lg border border-slate-300 p-2 text-sm" />
             <input name="alt" placeholder="Alt metin" className="rounded-lg border border-slate-300 p-2 text-sm" />
           </div>
-          <input type="file" name="file" accept="image/*" className="block w-full text-sm" />
+          <GorselSecici
+            name="file"
+            className="block w-full text-sm"
+            ipucu="Büyük fotoğraflar tarayıcıda otomatik küçültülür."
+          />
           <div className="text-center text-xs text-slate-400">— veya —</div>
           <input name="url" placeholder="Harici görsel URL'si" className="w-full rounded-lg border border-slate-300 p-2 text-sm" />
           <button className="rounded-lg bg-blue px-5 py-2 font-bold text-white hover:brightness-110">
