@@ -4,6 +4,10 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getEquipment, type Equipment } from "@/lib/cms";
 import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
+import { metinleriOku } from "@/lib/sayfa-metin";
+import { metniHtml } from "@/lib/metin-bicim";
+import { bloklar } from "@/lib/bloklar";
 import { sadeAd } from "@/lib/icerik-baglari";
 
 /**
@@ -45,6 +49,11 @@ function grupla(list: Equipment[]): [string, Equipment[]][] {
 }
 
 /** Sayfada GORUNEN sorular; FAQPage schema birebir bunlardan uretiliyor. */
+/**
+ * ⚠️ Artik yalnizca VARSAYILAN. Panelde "Fenni Muayene Sayfası — Sorular"
+ * blogundan kayit eklenirse hem sayfadaki akordeon hem Google'a gonderilen
+ * yapisal veri (FAQPage) ORADAN uretiliyor.
+ */
 const SORULAR = [
   {
     q: "Fenni muayene ile periyodik kontrol arasında fark var mı?",
@@ -69,6 +78,12 @@ const SORULAR = [
 ];
 
 export default async function FenniMuayenePage() {
+  const m = await metinleriOku();
+  const bilgi = await iletisimBilgi();
+  const soruBloklari = await bloklar("fennisss").catch(() => []);
+  const sorular = soruBloklari.length
+    ? soruBloklari.map((b) => ({ q: b.baslik, a: b.metin }))
+    : SORULAR;
   const hepsi = (await getEquipment().catch(() => [])).filter((e) => e.aktif);
   const kategoriler = grupla(hepsi);
 
@@ -84,7 +99,7 @@ export default async function FenniMuayenePage() {
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: SORULAR.map((f) => ({
+    mainEntity: sorular.map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -102,85 +117,27 @@ export default async function FenniMuayenePage() {
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <span>Fenni Muayene</span>
           </nav>
-          <h1 className="max-w-3xl text-3xl font-black md:text-4xl">
-            Fenni Muayene Nedir? Periyodik Kontrolden Farkı Var mı?
-          </h1>
-          <p className="mt-3 max-w-2xl text-onnavy">
-            Kısa cevap: fark yok. İkisi aynı işlemin iki adı. Uzun cevap ve hangi ekipmanın
-            hangi sıklıkta muayene edilmesi gerektiği aşağıda.
-          </p>
+          <h1 className="max-w-3xl text-3xl font-black md:text-4xl">{m("fenni_baslik")}</h1>
+          <p className="mt-3 max-w-2xl text-onnavy">{m("fenni_giris")}</p>
         </div>
       </section>
 
       <section className="py-12">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 lg:grid-cols-[1.55fr_1fr]">
           <div>
-            <p className="text-lg font-medium leading-relaxed text-ink">
-              <b>Fenni muayene</b>, iş ekipmanlarının güvenli kullanılıp kullanılamayacağını
-              belirlemek için belirli aralıklarla yapılan test, deney ve muayene faaliyetidir.
-              Mevzuattaki resmî adı <b>periyodik kontrol</b>&apos;dür. &quot;Fenni muayene&quot;,
-              &quot;periyodik muayene&quot; ve &quot;periyodik kontrol&quot; ifadelerinin üçü de
-              aynı işlemi anlatır; düzenlenen rapor da aynı yasal geçerliliğe sahiptir.
-            </p>
+            {/* Giris paragrafi ve altindaki iki bolum PANELDEN geliyor. */}
+            <div
+              className="text-lg font-medium leading-relaxed text-ink [&_p]:text-ink [&_strong]:font-bold"
+              dangerouslySetInnerHTML={{ __html: metniHtml(m("fenni_lead")) }}
+            />
 
-            <h2 className="mt-8 text-2xl font-black text-navy">Yasal dayanak</h2>
-            <p className="mt-3 leading-relaxed text-muted">
-              İşlemin dayanağı, 25 Nisan 2013 tarihli ve 28628 sayılı Resmî Gazete&apos;de
-              yayımlanan <b>İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları
-              Yönetmeliği</b>&apos;dir. Yönetmelik <b>23 Aralık 2025</b> tarihinde önemli
-              ölçüde değiştirildi. Değişiklikle birlikte:
-            </p>
-            <ul className="mt-3 list-disc space-y-2 pl-6 text-muted">
-              <li>
-                EKİPNET, İSG-KATİP içinde yer alan bir modül olarak yeniden tanımlandı.
-              </li>
-              <li>
-                <b>İSG-KATİP üzerinden sözleşme olmaksızın periyodik kontrol raporu
-                düzenlenemez</b>; sözleşmesiz düzenlenen raporlar geçersizdir.
-              </li>
-              <li>
-                Raporlar ıslak imzalı saklanabileceği gibi, 5070 sayılı Kanuna uygun güvenli
-                elektronik imzayla imzalanıp elektronik ortamda da saklanabilir.
-              </li>
-              <li>
-                İdari yaptırımlar denetim başına uygulanır; aykırılık hâlinde yetkili kişinin
-                yetkisi bir ay süreyle askıya alınabilir.
-              </li>
-            </ul>
-            <p className="mt-3 text-sm text-muted">
-              Ayrıntılar için:{" "}
-              <Link href="/yazilar/periyodik-kontrol-yeni-yonetmelik-2025" className="font-semibold text-blue hover:underline">
-                23 Aralık 2025 yönetmelik değişikliği neler getirdi?
-              </Link>{" "}
-              ve{" "}
-              <Link href="/yazilar/ekipnet-nedir" className="font-semibold text-blue hover:underline">
-                EKİPNET nedir?
-              </Link>
-            </p>
+            <div
+              className="prose mt-8 max-w-none"
+              dangerouslySetInnerHTML={{ __html: metniHtml(m("fenni_govde")) }}
+            />
 
-            <h2 className="mt-8 text-2xl font-black text-navy">Fenni muayeneyi kim yapabilir?</h2>
-            <p className="mt-3 leading-relaxed text-muted">
-              Yönetmelik, kontrolü yapacak kişiyi <b>EKİPNET&apos;e kayıtlı ilgili branştan
-              mühendis, teknik öğretmen, tekniker veya yüksek tekniker</b> olarak tanımlar.
-              Aranan branş ekipmana göre değişir: basınçlı bir kabı makine mühendisi,
-              topraklama ölçümünü elektrik mühendisi yapar.
-            </p>
-            <p className="mt-3 leading-relaxed text-muted">
-              {KURUM.kisaAd}, TÜRKAK tarafından <b>{KURUM.standart}</b> kapsamında akredite
-              edilmiş <b>A Tipi muayene kuruluşu</b>dur (akreditasyon no {KURUM.akreditasyon}).
-              Akreditasyon kapsamımızı{" "}
-              <Link href="/sertifikalar" className="font-semibold text-blue hover:underline">
-                sertifikalar sayfasından
-              </Link>{" "}
-              görebilirsiniz.
-            </p>
-
-            <h2 className="mt-8 text-2xl font-black text-navy">Hangi ekipmanın fenni muayenesi zorunlu?</h2>
-            <p className="mt-3 leading-relaxed text-muted">
-              Aşağıda muayenesini yaptığımız ekipmanlar kategori kategori listelenmiştir.
-              Her başlık, o ekipmanın kontrol kapsamını, uygulanan standardı ve yasal
-              periyodunu anlatan sayfaya gider.
-            </p>
+            <h2 className="mt-8 text-2xl font-black text-navy">{m("fenni_zorunlu_baslik")}</h2>
+            <p className="mt-3 leading-relaxed text-muted">{m("fenni_zorunlu_yazi")}</p>
 
             <div className="mt-6 space-y-7">
               {kategoriler.map(([kategori, liste]) => (
@@ -202,9 +159,9 @@ export default async function FenniMuayenePage() {
               ))}
             </div>
 
-            <h2 className="mt-10 text-2xl font-black text-navy">Sıkça Sorulan Sorular</h2>
+            <h2 className="mt-10 text-2xl font-black text-navy">{m("fenni_sss_baslik")}</h2>
             <div className="mt-4 space-y-3">
-              {SORULAR.map((f, i) => (
+              {sorular.map((f, i) => (
                 <details
                   key={f.q}
                   className="group rounded-xl border border-line bg-white p-5 open:border-blue"
@@ -227,7 +184,7 @@ export default async function FenniMuayenePage() {
 
           <aside className="space-y-5 lg:sticky lg:top-36 lg:self-start">
             <div className="rounded-card border border-line bg-bgsoft p-6">
-              <h2 className="text-lg font-bold text-navy">Kısaca</h2>
+              <h2 className="text-lg font-bold text-navy">{m("fenni_kisaca_baslik")}</h2>
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex justify-between gap-3 border-b border-line pb-2">
                   <dt className="text-muted">Resmî adı</dt>
@@ -249,7 +206,7 @@ export default async function FenniMuayenePage() {
             </div>
 
             <div className="rounded-card border border-line bg-white p-6">
-              <h2 className="text-lg font-bold text-navy">İlgili sayfalar</h2>
+              <h2 className="text-lg font-bold text-navy">{m("fenni_ilgili_baslik")}</h2>
               <ul className="mt-3 space-y-2 text-sm">
                 <li><Link href="/periyodik-kontrol-sureleri" className="text-ink hover:text-blue">Periyodik kontrol süreleri tablosu</Link></li>
                 <li><Link href="/ekipman" className="text-ink hover:text-blue">Tüm kontrol hizmetlerimiz</Link></li>
@@ -260,8 +217,8 @@ export default async function FenniMuayenePage() {
             </div>
 
             <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-6 text-white">
-              <h2 className="text-lg font-bold text-white">Hemen bilgi alın</h2>
-              <p className="mt-1 text-sm text-onnavy">{KURUM.calismaSaatleri}</p>
+              <h2 className="text-lg font-bold text-white">{m("fenni_kutu_baslik")}</h2>
+              <p className="mt-1 text-sm text-onnavy">{bilgi.calismaSaatleri}</p>
               <a href={`tel:${KURUM.telefonE164}`} className="mt-3 block text-xl font-black text-accent">
                 {KURUM.telefon}
               </a>

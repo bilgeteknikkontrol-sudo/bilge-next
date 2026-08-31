@@ -23,6 +23,7 @@ export const BLOK_TURLERI = [
   "ekip",
   "sertifika",
   "sss",
+  "fennisss",
 ] as const;
 export type BlokTuru = (typeof BLOK_TURLERI)[number];
 
@@ -37,6 +38,7 @@ export const TUR_ETIKET: Record<BlokTuru, string> = {
   ekip: "Ekip / Mühendis Kadrosu",
   sertifika: "Sertifika ve Belgeler",
   sss: "Sık Sorulan Sorular",
+  fennisss: "Fenni Muayene Sayfası — Sorular",
 };
 
 /** Her tur icin hangi alanlarin anlamli oldugu — panelde ipucu olarak gosterilir. */
@@ -51,6 +53,8 @@ export const TUR_IPUCU: Record<BlokTuru, string> = {
   ekip: "Başlık = ad soyad, Metin = unvan. Görsel isteğe bağlı.",
   sertifika: "Başlık = belge adı, Metin = açıklama, Görsel = belge görseli, Bağlantı = PDF adresi.",
   sss: "Başlık = soru, Metin = cevap.",
+  fennisss:
+    "Başlık = soru, Metin = cevap. Bu sorular ayrıca Google'a yapısal veri olarak gönderilir; arama sonucunda çıkabilir.",
 };
 
 /**
@@ -72,6 +76,7 @@ export const GORSELSIZ_TURLER: ReadonlySet<BlokTuru> = new Set<BlokTuru>([
   "surec",
   "sektor",
   "sss",
+  "fennisss",
 ]);
 
 export type Blok = {

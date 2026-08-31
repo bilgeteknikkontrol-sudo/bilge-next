@@ -591,6 +591,71 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
     ],
   },
   {
+    baslik: "Fenni Muayene Nedir? sayfası",
+    yol: "/fenni-muayene",
+    alanlar: [
+      {
+        anahtar: "fenni_baslik",
+        etiket: "Sayfa başlığı (H1)",
+        varsayilan: "Fenni Muayene Nedir? Periyodik Kontrolden Farkı Var mı?",
+      },
+      {
+        anahtar: "fenni_giris",
+        etiket: "Başlık altı yazı",
+        uzun: true,
+        varsayilan:
+          "Kısa cevap: fark yok. İkisi aynı işlemin iki adı. Uzun cevap ve hangi ekipmanın hangi sıklıkta muayene edilmesi gerektiği aşağıda.",
+      },
+      {
+        anahtar: "fenni_lead",
+        etiket: "İlk paragraf (kalın, büyük punto)",
+        uzun: true,
+        bicimli: true,
+        varsayilan:
+          "**Fenni muayene**, iş ekipmanlarının güvenli kullanılıp kullanılamayacağını belirlemek için belirli aralıklarla yapılan test, deney ve muayene faaliyetidir. Mevzuattaki resmî adı **periyodik kontrol**'dür. \"Fenni muayene\", \"periyodik muayene\" ve \"periyodik kontrol\" ifadelerinin üçü de aynı işlemi anlatır; düzenlenen rapor da aynı yasal geçerliliğe sahiptir.",
+      },
+      {
+        anahtar: "fenni_govde",
+        etiket: "Sayfanın ana metni",
+        not: "“Yasal dayanak” ve “Kim yapabilir?” bölümleri.",
+        uzun: true,
+        bicimli: true,
+        varsayilan: `## Yasal dayanak
+
+İşlemin dayanağı, 25 Nisan 2013 tarihli ve 28628 sayılı Resmî Gazete'de yayımlanan **İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği**'dir. Yönetmelik **23 Aralık 2025** tarihinde önemli ölçüde değiştirildi. Değişiklikle birlikte:
+
+- EKİPNET, İSG-KATİP içinde yer alan bir modül olarak yeniden tanımlandı.
+- **İSG-KATİP üzerinden sözleşme olmaksızın periyodik kontrol raporu düzenlenemez**; sözleşmesiz düzenlenen raporlar geçersizdir.
+- Raporlar ıslak imzalı saklanabileceği gibi, 5070 sayılı Kanuna uygun güvenli elektronik imzayla imzalanıp elektronik ortamda da saklanabilir.
+- İdari yaptırımlar denetim başına uygulanır; aykırılık hâlinde yetkili kişinin yetkisi bir ay süreyle askıya alınabilir.
+
+Ayrıntılar için: [23 Aralık 2025 yönetmelik değişikliği neler getirdi?](/yazilar/periyodik-kontrol-yeni-yonetmelik-2025) ve [EKİPNET nedir?](/yazilar/ekipnet-nedir)
+
+## Fenni muayeneyi kim yapabilir?
+
+Yönetmelik, kontrolü yapacak kişiyi **EKİPNET'e kayıtlı ilgili branştan mühendis, teknik öğretmen, tekniker veya yüksek tekniker** olarak tanımlar. Aranan branş ekipmana göre değişir: basınçlı bir kabı makine mühendisi, topraklama ölçümünü elektrik mühendisi yapar.
+
+Bilge Teknik Kontrol, TÜRKAK tarafından **TS EN ISO/IEC 17020** kapsamında akredite edilmiş **A Tipi muayene kuruluşu**dur (akreditasyon no AB-0296-M). Akreditasyon kapsamımızı [sertifikalar sayfasından](/sertifikalar) görebilirsiniz.`,
+      },
+      {
+        anahtar: "fenni_zorunlu_baslik",
+        etiket: "Ekipman listesi bölümü — başlık",
+        varsayilan: "Hangi ekipmanın fenni muayenesi zorunlu?",
+      },
+      {
+        anahtar: "fenni_zorunlu_yazi",
+        etiket: "Ekipman listesi bölümü — açıklama",
+        uzun: true,
+        varsayilan:
+          "Aşağıda muayenesini yaptığımız ekipmanlar kategori kategori listelenmiştir. Her başlık, o ekipmanın kontrol kapsamını, uygulanan standardı ve yasal periyodunu anlatan sayfaya gider.",
+      },
+      { anahtar: "fenni_sss_baslik", etiket: "Sorular bölümü başlığı", varsayilan: "Sıkça Sorulan Sorular" },
+      { anahtar: "fenni_kisaca_baslik", etiket: "Sağdaki özet kutusu başlığı", varsayilan: "Kısaca" },
+      { anahtar: "fenni_ilgili_baslik", etiket: "Sağdaki bağlantı listesi başlığı", varsayilan: "İlgili sayfalar" },
+      { anahtar: "fenni_kutu_baslik", etiket: "Sağdaki lacivert kutu başlığı", varsayilan: "Hemen bilgi alın" },
+    ],
+  },
+  {
     /** ⚠️ Bu grup 12 bolge sayfasini birden etkiler. {ad} = şehir/ilçe adı. */
     baslik: "Bölge alt sayfaları (12 sayfanın ortak metinleri)",
     yol: "/bolge",

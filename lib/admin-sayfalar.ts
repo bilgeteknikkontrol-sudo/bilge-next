@@ -535,6 +535,45 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     ],
   },
   {
+    id: "fenni",
+    ad: "Fenni Muayene Nedir?",
+    ikon: "📘",
+    yol: "/fenni-muayene",
+    aciklama:
+      "“Fenni muayene” diye arayan ziyaretçiyi karşılayan bilgi sayfası. Arama motorlarında bu terim için en güçlü sayfanız.",
+    bolumler: [
+      {
+        tip: "metin",
+        baslik: "Sayfa yazıları",
+        anahtarlar: ["fenni_baslik", "fenni_giris", "fenni_lead"],
+      },
+      {
+        tip: "metin",
+        baslik: "Sayfanın ana metni",
+        aciklama: "“Yasal dayanak” ve “Kim yapabilir?” bölümleri.",
+        anahtarlar: ["fenni_govde"],
+      },
+      {
+        tip: "metin",
+        baslik: "Ekipman listesi bölümü",
+        aciklama: "Listenin kendisi ekipman kayıtlarından otomatik oluşur.",
+        anahtarlar: ["fenni_zorunlu_baslik", "fenni_zorunlu_yazi", "fenni_sss_baslik"],
+      },
+      {
+        tip: "blok",
+        tur: "fennisss",
+        baslik: "Sayfadaki sorular",
+        aciklama:
+          "Başlık = soru, Metin = cevap. Bu sorular Google'a yapısal veri olarak da gönderilir. Hiç kayıt eklemezseniz bugünkü beş soru görünmeye devam eder.",
+      },
+      {
+        tip: "metin",
+        baslik: "Sağdaki kutular",
+        anahtarlar: ["fenni_kisaca_baslik", "fenni_ilgili_baslik", "fenni_kutu_baslik"],
+      },
+    ],
+  },
+  {
     id: "iletisim",
     ad: "İletişim",
     ikon: "📞",
