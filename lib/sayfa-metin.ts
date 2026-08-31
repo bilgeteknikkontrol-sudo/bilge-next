@@ -591,6 +591,32 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
     ],
   },
   {
+    /**
+     * ⚠️ HUKUKI METINLER BILEREK PANELE TASINMADI.
+     *
+     * KVKK aydinlatma metni ve cerez politikasinin GOVDESI kodda kaliyor:
+     * hukuki yukumluluk doguran, yilda bir kez ve mevzuat degisikligine bagli
+     * olarak degisen metinler. Panelden serbestce duzenlenebilir olmasi
+     * kolaylik degil, RISK olur.
+     *
+     * Buna karsilik pratikte bayatlayan iki sey panelde:
+     *  - "Son guncelleme" tarihi (metni guncelleyince degistirilmesi gereken),
+     *  - iletisim bilgileri (zaten lib/iletisim-bilgi.ts uzerinden panelden).
+     * Barindirma ve analitik saglayici beyanlari 31.08.2026'da gercege gore
+     * duzeltildi (bkz. lib/legal.ts ve app/kvkk/page.tsx notlari).
+     */
+    baslik: "Yasal metinler (KVKK · Çerez Politikası)",
+    yol: "/kvkk",
+    alanlar: [
+      {
+        anahtar: "yasal_son_guncelleme",
+        etiket: "“Son güncelleme” tarihi",
+        not: "Her iki yasal sayfanın üstünde görünür. Metinlerin gövdesi güvenlik gereği kodda tutuluyor; değişiklik gerekirse söyleyin.",
+        varsayilan: "31 Ağustos 2026",
+      },
+    ],
+  },
+  {
     baslik: "Fenni Muayene Nedir? sayfası",
     yol: "/fenni-muayene",
     alanlar: [

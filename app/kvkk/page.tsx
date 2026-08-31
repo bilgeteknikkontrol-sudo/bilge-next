@@ -4,8 +4,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { KURUM } from "@/lib/site-data";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
+import { metinleriOku } from "@/lib/sayfa-metin";
 import {
-  SON_GUNCELLEME,
   TOPLANAN_VERILER,
   ISLEME_AMACLARI,
   HUKUKI_SEBEPLER,
@@ -23,6 +23,7 @@ export default async function KvkkPage() {
   /* Aydinlatma metnindeki iletisim bilgileri de panelden okunuyor: KVKK
      metninde yanlis adres/telefon birakmak hukuki risk. */
   const bilgi = await iletisimBilgi();
+  const m = await metinleriOku();
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -48,7 +49,7 @@ export default async function KvkkPage() {
             verilerinizin veri sorumlusu sıfatıyla tarafımızca nasıl işlendiğine ilişkin
             bilgilendirmedir.
           </p>
-          <p className="mt-2 text-sm text-onnavydim">Son güncelleme: {SON_GUNCELLEME}</p>
+          <p className="mt-2 text-sm text-onnavydim">Son güncelleme: {m("yasal_son_guncelleme")}</p>
         </div>
       </section>
 

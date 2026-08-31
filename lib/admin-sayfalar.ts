@@ -535,6 +535,22 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
     ],
   },
   {
+    id: "yasal",
+    ad: "Yasal Metinler",
+    ikon: "⚖️",
+    yol: "/kvkk",
+    aciklama:
+      "KVKK aydınlatma metni ve çerez politikası. Metinlerin gövdesi güvenlik gereği kodda tutuluyor; değişiklik gerekirse geliştiriciye söyleyin.",
+    bolumler: [
+      {
+        tip: "metin",
+        baslik: "Son güncelleme tarihi",
+        aciklama: "Her iki yasal sayfanın üstünde görünür.",
+        anahtarlar: ["yasal_son_guncelleme"],
+      },
+    ],
+  },
+  {
     id: "fenni",
     ad: "Fenni Muayene Nedir?",
     ikon: "📘",

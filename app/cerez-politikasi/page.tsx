@@ -3,7 +3,8 @@ import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
-import { SON_GUNCELLEME, CEREZ_TABLOSU } from "@/lib/legal";
+import { metinleriOku } from "@/lib/sayfa-metin";
+import { CEREZ_TABLOSU } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "Çerez Politikası",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function CerezPage() {
   const bilgi = await iletisimBilgi();
+  const m = await metinleriOku();
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -38,7 +40,7 @@ export default async function CerezPage() {
             bilgekontrol.com üzerinde hangi çerezlerin kullanıldığı, ne amaçla kullanıldıkları ve
             bunları nasıl yönetebileceğiniz hakkında bilgilendirme.
           </p>
-          <p className="mt-2 text-sm text-onnavydim">Son güncelleme: {SON_GUNCELLEME}</p>
+          <p className="mt-2 text-sm text-onnavydim">Son güncelleme: {m("yasal_son_guncelleme")}</p>
         </div>
       </section>
 
