@@ -248,8 +248,16 @@ export default async function Home() {
               </p>
             </div>
 
-            {/* Donusum karti: gorselin uzerine binerek eylemi one cikarir */}
-            <aside className="card relative z-10 mx-4 -mt-10 p-6 sm:mx-8 lg:absolute lg:inset-x-6 lg:bottom-0 lg:mx-0 lg:mt-0">
+            {/* Donusum karti: gorselin uzerine binerek eylemi one cikarir.
+                ⚠️ Zemin rengi BURADA, satir ici olarak veriliyor: `.card` sinifi
+                sitedeki tum kartlarda ortak (bg-white) ve kullanici YALNIZCA bu
+                kartin yari saydam olmasini istedi. Sinifi degistirmek butun
+                kartlari etkilerdi. #fbfdff91 -> ~%57 opaklik; arkadaki saha
+                fotografi hafifce goruniyor. */}
+            <aside
+              className="card relative z-10 mx-4 -mt-10 p-6 sm:mx-8 lg:absolute lg:inset-x-6 lg:bottom-0 lg:mx-0 lg:mt-0"
+              style={{ backgroundColor: "#fbfdff91" }}
+            >
               <p className="text-xs font-bold uppercase tracking-wide text-blue">Kontrol zamanı geldi mi?</p>
               <h2 className="mt-1.5 text-lg font-black leading-snug text-navy">
                 Ekipmanınızı seçin, kapsam ve fiyatı size dönelim
