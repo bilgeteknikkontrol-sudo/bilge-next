@@ -9,6 +9,9 @@ import logo_pelsan_png from "../public/img/referanslar/pelsan.png";
 import logo_alfa_metal_png from "../public/img/referanslar/alfa-metal.png";
 import logo_tam_hangers_jpg from "../public/img/referanslar/tam-hangers.jpg";
 import logo_mashattan_png from "../public/img/referanslar/mashattan.png";
+// Uzmanlik alani kartlarinin varsayilan saha fotograflari.
+import img_basincli_kap_kontrolu from "../public/img/basincli-kaplarin-periyodik-kontrolu.webp";
+import img_elektrik_olcum_kontrolu from "../public/img/elektirik-tesisati-olcum-kontrolleri.webp";
 
 export type Referans = { name: string; logo: StaticImageData };
 export const REFERANSLAR: Referans[] = [
@@ -38,7 +41,18 @@ export const REFERANSLAR: Referans[] = [
  * Buraya akreditasyon kapsami disinda bir muayene turu (ornek: tahribatsiz
  * muayene) yazilmamali — yetkisiz hizmet iddiasi olur.
  */
-export type UzmanlikAlani = { ikon: string; ad: string; aciklama: string };
+export type UzmanlikAlani = {
+  ikon: string;
+  ad: string;
+  aciklama: string;
+  /**
+   * Kart gorseli. Panelden gorsel yuklenirse ORASI kazanir; buradaki foto
+   * yalnizca varsayilan. Statik import oldugu icin Next boyutlandirip
+   * bulanik yer tutucu (blur) uretebiliyor — panelden gelen adres icin bu
+   * mumkun degil, o yuzden iki durum sayfada ayri ele aliniyor.
+   */
+  foto: StaticImageData;
+};
 
 export const UZMANLIK_ALANLARI: UzmanlikAlani[] = [
   {
@@ -46,12 +60,14 @@ export const UZMANLIK_ALANLARI: UzmanlikAlani[] = [
     ad: "Makine Mühendisliği",
     aciklama:
       "Basınçlı kaplar, kaldırma ve iletme ekipmanları, iş makineleri ile makina ve tezgâhların periyodik kontrolü. Statik ve dinamik yük testleri ile hidrostatik testler bu kapsamda, sahada yapılır.",
+    foto: img_basincli_kap_kontrolu,
   },
   {
     ikon: "⚡",
     ad: "Elektrik Mühendisliği",
     aciklama:
       "Elektrik iç tesisatı, topraklama ve paratoner ölçümleri ile yangın algılama ve ihbar sistemlerinin kontrolü. Ölçümler kalibrasyonu geçerli cihazlarla yapılır ve değerleriyle birlikte rapora işlenir.",
+    foto: img_elektrik_olcum_kontrolu,
   },
 ];
 
