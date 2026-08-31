@@ -520,6 +520,104 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
     ]
   ),
   {
+    /**
+     * ⚠️ BU GRUP 92 SAYFAYI BIRDEN ETKILER. Her hizmet sayfasi ayni sablonu
+     * kullaniyor; buradaki bir kelime degisikligi 92 sayfada birden goruluyor.
+     * Yer tutucular: {ad} = hizmetin adi, {standart}, {periyot}, {kategori}.
+     */
+    baslik: "Hizmet alt sayfaları (92 sayfanın ortak metinleri)",
+    yol: "/ekipman",
+    alanlar: [
+      { anahtar: "hizmet_yol_adi", etiket: "Üst satırdaki yol adı", varsayilan: "Hizmetlerimiz" },
+      { anahtar: "hizmet_sss_baslik", etiket: "SSS bölümü başlığı", varsayilan: "Sıkça Sorulan Sorular" },
+      {
+        anahtar: "hizmet_kapsam_baslik",
+        etiket: "Kapsam başlığı",
+        not: "Yalnızca kendi özel metni yazılmamış hizmetlerde görünür.",
+        varsayilan: "Kontrol Kapsamı",
+      },
+      {
+        anahtar: "hizmet_kapsam_p1",
+        etiket: "Kapsam — birinci paragraf",
+        not: "{ad} = hizmetin adı, {standart} = standart, {periyot} = kontrol sıklığı.",
+        uzun: true,
+        bicimli: true,
+        varsayilan:
+          "{ad}, **{standart}** ve ilgili mevzuat gereği periyodik olarak muayene edilir. Üretici aksini belirtmedikçe kontrol sıklığı **{periyot}** şeklindedir.",
+      },
+      {
+        anahtar: "hizmet_kapsam_p2",
+        etiket: "Kapsam — ikinci paragraf",
+        uzun: true,
+        bicimli: true,
+        varsayilan:
+          "{ad} ekipmanınızı yerinde, uzman mühendis kadromuzla muayene ediyor; uluslararası geçerli e-imzalı raporu İSG-KATİP uyumlu şekilde düzenliyoruz.",
+      },
+      {
+        anahtar: "hizmet_liste_baslik",
+        etiket: "Madde listesi başlığı",
+        varsayilan: "Genelde Neler Değerlendirilir?",
+      },
+      {
+        anahtar: "hizmet_liste",
+        etiket: "Madde listesi",
+        uzun: true,
+        bicimli: true,
+        varsayilan: `- Görsel muayene ve güvenlik işaretleri
+- Standartlara uygun test ve deney prosedürleri
+- Belgelerin ve etiketlerin kontrolü
+- Uygunsuzluk tespiti ve raporlanması`,
+      },
+      { anahtar: "hizmet_btn1", etiket: "Birinci buton", varsayilan: "Bu Ekipman İçin Teklif Al →" },
+      { anahtar: "hizmet_btn2", etiket: "İkinci buton", varsayilan: "Süremi Hesapla" },
+      {
+        anahtar: "hizmet_rehber_baslik",
+        etiket: "İlgili yazılar bölümü başlığı",
+        varsayilan: "Bu konuyu ayrıntılı anlatan rehberler",
+      },
+      { anahtar: "hizmet_kunye_kategori", etiket: "Künye — kategori etiketi", varsayilan: "Kategori" },
+      { anahtar: "hizmet_kunye_standart", etiket: "Künye — standart etiketi", varsayilan: "Standart" },
+      { anahtar: "hizmet_kunye_periyot", etiket: "Künye — periyot etiketi", varsayilan: "Periyot" },
+      { anahtar: "hizmet_kunye_akreditasyon", etiket: "Künye — akreditasyon etiketi", varsayilan: "Akreditasyon" },
+      { anahtar: "hizmet_kunye_digerad", etiket: "Künye — diğer ad etiketi", varsayilan: "Diğer adı" },
+      {
+        anahtar: "hizmet_diger_baslik",
+        etiket: "Sağdaki “diğer hizmetler” başlığı",
+        not: "Başına kategori adı otomatik eklenir.",
+        varsayilan: "içindeki diğer hizmetler",
+      },
+      { anahtar: "hizmet_tum_link", etiket: "“Tüm hizmetler” bağlantısı", varsayilan: "Tüm hizmetler →" },
+      { anahtar: "hizmet_kutu_baslik", etiket: "Sağdaki lacivert kutu başlığı", varsayilan: "Hemen bilgi alın" },
+    ],
+  },
+  {
+    /** ⚠️ Bu grup 12 bolge sayfasini birden etkiler. {ad} = şehir/ilçe adı. */
+    baslik: "Bölge alt sayfaları (12 sayfanın ortak metinleri)",
+    yol: "/bolge",
+    alanlar: [
+      { anahtar: "bolgeAlt_rozet", etiket: "Başlık altındaki yazı", varsayilan: "TÜRKAK akredite (AB-0296-M)" },
+      { anahtar: "bolgeAlt_alan_baslik", etiket: "“Hizmet verdiğimiz alanlar” başlığı", varsayilan: "Hizmet Verdiğimiz Alanlar" },
+      { anahtar: "bolgeAlt_neden_baslik", etiket: "“Neden biz” başlığı", not: "Başına bölge adı eklenmez.", varsayilan: "Neden Bölgenizde Bilge?" },
+      {
+        anahtar: "bolgeAlt_neden_liste",
+        etiket: "“Neden biz” maddeleri",
+        uzun: true,
+        bicimli: true,
+        varsayilan: `- Yakın bölge ekipleriyle hızlı randevu
+- Sanayi ve üretim tesislerine özel planlama
+- İSG-KATİP uyumlu, e-imzalı raporlar`,
+      },
+      {
+        anahtar: "bolgeAlt_btn1",
+        etiket: "Birinci buton",
+        not: "Başına bölge adı otomatik eklenir: “Kocaeli için Teklif Al”.",
+        varsayilan: "için Teklif Al",
+      },
+      { anahtar: "bolgeAlt_btn2", etiket: "İkinci buton", varsayilan: "Diğer Bölgeler" },
+      { anahtar: "bolgeAlt_diger_baslik", etiket: "Sağdaki liste başlığı", varsayilan: "Diğer hizmet bölgeleri" },
+    ],
+  },
+  {
     baslik: "Footer (sayfa altı)",
     yol: "/",
     alanlar: [

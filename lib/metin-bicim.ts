@@ -93,3 +93,21 @@ export function metniHtml(ham: string | null | undefined): string {
 /** Panelde metin alanlarinin altinda gosterilen kisa kullanim notu. */
 export const BICIM_IPUCU =
   "Boş satır = yeni paragraf · satır başına ## = ara başlık · - = madde listesi · **kalın** · [yazı](/adres) = bağlantı";
+
+/**
+ * YER TUTUCU DOLDURMA — `{ad}`, `{standart}` gibi isaretleri gercek degerle
+ * degistirir.
+ *
+ * ⚠️ NEDEN VAR: 92 hizmet ve 12 bolge alt sayfasi AYNI sablon cumleleri
+ * kullaniyor, ama cumlenin ortasinda o sayfaya ozel degerler var
+ * ("Vinç, TS EN 13000 gereği ... 12 ayda bir"). Metni panele tasirken bu
+ * degerleri kaybetmemek icin kullanici cumleyi yer tutucularla yaziyor.
+ *
+ * Bilinmeyen bir isaret OLDUGU GIBI birakiliyor: kullanici yanlis yazarsa
+ * cumlenin ortasinda bos bir bosluk degil, ne yazdigi gorunur kalsin.
+ */
+export function yerlestir(metin: string, degerler: Record<string, string | number>): string {
+  return (metin ?? "").replace(/\{(\w+)\}/g, (tam, ad) =>
+    ad in degerler ? String(degerler[ad]) : tam
+  );
+}

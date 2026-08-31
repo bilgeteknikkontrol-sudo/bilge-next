@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
  * ⚠️ Bu dosyayi PowerShell `Set-Content` ile guncelleme: BOM ekliyor ve
  * Turkce karakterleri bozuyor. Duzenleme araciyla veya Write ile yaz.
  */
-const SURUM = "2026-08-31-41-hizmetler-bolgeler-sss-sertifika-footer";
+const SURUM = "2026-08-31-42-alt-sayfa-sablonlari-panelde";
 
 export async function GET() {
   return NextResponse.json({ surum: SURUM });

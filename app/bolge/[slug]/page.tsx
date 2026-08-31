@@ -5,6 +5,8 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getLocationBySlug, getLocations, getEquipment } from "@/lib/cms";
 import { BOLGE_ICERIK } from "@/lib/bolge-icerik";
+import { metinleriOku } from "@/lib/sayfa-metin";
+import { metniHtml } from "@/lib/metin-bicim";
 import { BOLGE_EKIPMAN, VARSAYILAN_BOLGE_EKIPMAN, hizmetBasligi } from "@/lib/icerik-baglari";
 
 /**
@@ -49,6 +51,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function BolgePage({ params }: { params: Promise<{ slug: string }> }) {
+  /* ⚠️ Bu sablon 12 bolge sayfasinda birden kullaniliyor; metinler panelde
+     "Bölge alt sayfaları" grubundan tek yerden yonetiliyor. */
+  const m = await metinleriOku();
   const { slug } = await params;
   const l = await getLocationBySlug(slug);
   if (!l) notFound();
@@ -135,7 +140,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
             <Link href="/" className="hover:text-white">Ana Sayfa</Link> / <Link href="/bolge" className="hover:text-white">Hizmet Bölgeleri</Link> / <span>{ad}</span>
           </nav>
           <h1 className="text-3xl font-black md:text-4xl">{ad} Periyodik Kontrol Hizmeti</h1>
-          <p className="mt-2 text-onnavy">TÜRKAK akredite (AB-0296-M)</p>
+          <p className="mt-2 text-onnavy">{m("bolgeAlt_rozet")}</p>
         </div>
       </section>
 
@@ -150,7 +155,7 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
               </p>
             )}
 
-            <h2 className="mt-7 text-xl font-bold text-navy">Hizmet Verdiğimiz Alanlar</h2>
+            <h2 className="mt-7 text-xl font-bold text-navy">{m("bolgeAlt_alan_baslik")}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {l.hizmetler.map((h: string) => (
                 <span key={h} className="rounded-full bg-blue-soft px-3 py-1 text-sm font-semibold text-blue">{h}</span>
@@ -184,12 +189,11 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
               </section>
             )}
 
-            <h2 className="mt-7 text-xl font-bold text-navy">Neden Bölgenizde Bilge?</h2>
-            <ul className="mt-3 list-disc space-y-1 pl-6 text-muted">
-              <li>Yakın bölge ekipleriyle hızlı randevu</li>
-              <li>Sanayi ve üretim tesislerine özel planlama</li>
-              <li>İSG-KATİP uyumlu, e-imzalı raporlar</li>
-            </ul>
+            <h2 className="mt-7 text-xl font-bold text-navy">{m("bolgeAlt_neden_baslik")}</h2>
+            <div
+              className="prose mt-3 max-w-none"
+              dangerouslySetInnerHTML={{ __html: metniHtml(m("bolgeAlt_neden_liste")) }}
+            />
 
             {/* Bolgeye ozgu govde: her sehir icin farkli yazildi. Sekiz sayfaya
                 ayni paragrafi kopyalamak ince icerigi yinelenen icerige cevirirdi. */}
@@ -222,13 +226,13 @@ export default async function BolgePage({ params }: { params: Promise<{ slug: st
             )}
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/teklif" className="rounded-full bg-blue px-6 py-3 font-bold text-white transition hover:-translate-y-0.5">{ad} için Teklif Al</Link>
-              <Link href="/bolge" className="rounded-full border border-line px-6 py-3 font-bold text-navy transition hover:border-blue">Diğer Bölgeler</Link>
+              <Link href="/teklif" className="rounded-full bg-blue px-6 py-3 font-bold text-white transition hover:-translate-y-0.5">{ad} {m("bolgeAlt_btn1")}</Link>
+              <Link href="/bolge" className="rounded-full border border-line px-6 py-3 font-bold text-navy transition hover:border-blue">{m("bolgeAlt_btn2")}</Link>
             </div>
           </div>
 
           <aside className="rounded-card border border-line bg-bgsoft p-6">
-            <h3 className="text-lg font-bold text-navy">Diğer hizmet bölgeleri</h3>
+            <h3 className="text-lg font-bold text-navy">{m("bolgeAlt_diger_baslik")}</h3>
             <ul className="mt-3 space-y-2">
               {diger.length ? diger.map((d) => (
                 <li key={d.slug}><Link href={`/bolge/${d.slug}`} className="text-blue hover:underline">{bolgeAdi(d)}</Link></li>

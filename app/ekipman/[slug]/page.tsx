@@ -12,6 +12,9 @@ import { EKIPMAN_YAZI, esAnlamliAdlar, hizmetBasligi, sadeAd } from "@/lib/iceri
 import { EKIPMAN_ICERIK } from "@/lib/ekipman-icerik";
 import { EKIPMAN_GORSEL, EKIPMAN_FOTO } from "@/lib/images";
 import { KURUM } from "@/lib/site-data";
+import { iletisimBilgi } from "@/lib/iletisim-bilgi";
+import { metinleriOku } from "@/lib/sayfa-metin";
+import { metniHtml, yerlestir } from "@/lib/metin-bicim";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -43,6 +46,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function EkipmanPage({ params }: { params: Promise<{ slug: string }> }) {
+  /* ⚠️ Bu sablon 92 sayfada birden kullaniliyor: buradaki metinler panelde
+     "Hizmet alt sayfaları" grubunda tek yerden yonetiliyor. */
+  const m = await metinleriOku();
+  const bilgi = await iletisimBilgi();
   const { slug } = await params;
   const e = await getEquipmentBySlug(slug);
   if (!e) notFound();
@@ -193,7 +200,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
         <div className="container-x relative py-14">
           <nav className="mb-3 text-sm text-onnavy">
             <Link href="/" className="hover:text-white">Ana Sayfa</Link>{" "}/{" "}
-            <Link href="/ekipman" className="hover:text-white">Hizmetlerimiz</Link>{" "}/{" "}
+            <Link href="/ekipman" className="hover:text-white">{m("hizmet_yol_adi")}</Link>{" "}/{" "}
             <span>{e.kategori}</span>
           </nav>
           {/*
@@ -248,7 +255,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
 
                 {icerik.faq?.length > 0 && (
                   <div className="mt-12">
-                    <h2 className="text-2xl font-black text-navy">Sıkça Sorulan Sorular</h2>
+                    <h2 className="text-2xl font-black text-navy">{m("hizmet_sss_baslik")}</h2>
                     <div className="mt-4 space-y-3">
                       {icerik.faq.map((f, i) => (
                         <details key={i} className="group rounded-xl border border-line bg-white p-5 open:border-blue" open={i === 0}>
@@ -266,28 +273,42 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
             ) : (
               /* Panelden eklenmis, ozel icerigi henuz yazilmamis ekipmanlar */
               <>
-                <h2 className="text-2xl font-black text-navy">Kontrol Kapsamı</h2>
-                <p className="mt-3 leading-relaxed text-muted">
-                  {e.ad}, <b>{e.standart}</b> ve ilgili mevzuat gereği periyodik olarak muayene edilir.
-                  Üretici aksini belirtmedikçe kontrol sıklığı <b>{periyotText}</b> şeklindedir.
-                </p>
-                <p className="mt-3 leading-relaxed text-muted">
-                  {e.ad} ekipmanınızı yerinde, uzman mühendis kadromuzla muayene ediyor; uluslararası
-                  geçerli e-imzalı raporu İSG-KATİP uyumlu şekilde düzenliyoruz.
-                </p>
-                <h3 className="mt-7 text-xl font-bold text-navy">Genelde Neler Değerlendirilir?</h3>
-                <ul className="mt-3 list-disc space-y-1 pl-6 text-muted">
-                  <li>Görsel muayene ve güvenlik işaretleri</li>
-                  <li>Standartlara uygun test ve deney prosedürleri</li>
-                  <li>Belgelerin ve etiketlerin kontrolü</li>
-                  <li>Uygunsuzluk tespiti ve raporlanması</li>
-                </ul>
+                <h2 className="text-2xl font-black text-navy">{m("hizmet_kapsam_baslik")}</h2>
+                {/* Yer tutucular ({ad}, {standart}, {periyot}) panelde yazilan
+                    cumlenin icinde duruyor; deger burada yerlestiriliyor. */}
+                <div
+                  className="prose mt-3 max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      metniHtml(
+                        yerlestir(m("hizmet_kapsam_p1"), {
+                          ad: e.ad,
+                          standart: e.standart,
+                          periyot: periyotText,
+                          kategori: e.kategori,
+                        })
+                      ) +
+                      metniHtml(
+                        yerlestir(m("hizmet_kapsam_p2"), {
+                          ad: e.ad,
+                          standart: e.standart,
+                          periyot: periyotText,
+                          kategori: e.kategori,
+                        })
+                      ),
+                  }}
+                />
+                <h3 className="mt-7 text-xl font-bold text-navy">{m("hizmet_liste_baslik")}</h3>
+                <div
+                  className="prose mt-3 max-w-none"
+                  dangerouslySetInnerHTML={{ __html: metniHtml(m("hizmet_liste")) }}
+                />
               </>
             )}
 
             <div className="mt-10 flex flex-wrap gap-3">
-              <Link href="/teklif" className="btn-primary">Bu Ekipman İçin Teklif Al →</Link>
-              <Link href="/hesapla" className="btn-ghost">Süremi Hesapla</Link>
+              <Link href="/teklif" className="btn-primary">{m("hizmet_btn1")}</Link>
+              <Link href="/hesapla" className="btn-ghost">{m("hizmet_btn2")}</Link>
             </div>
 
             {/*
@@ -302,7 +323,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
             */}
             {ilgiliYazilar.length > 0 && (
               <div className="mt-12">
-                <h2 className="text-2xl font-black text-navy">Bu konuyu ayrıntılı anlatan rehberler</h2>
+                <h2 className="text-2xl font-black text-navy">{m("hizmet_rehber_baslik")}</h2>
                 <ul className="mt-4 space-y-3">
                   {ilgiliYazilar.map((y) => (
                     <li key={y.slug} className="rounded-xl border border-line bg-white p-4">
@@ -359,21 +380,21 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
               <h2 className="text-lg font-bold text-navy">Künye</h2>
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex justify-between gap-3 border-b border-line pb-2">
-                  <dt className="text-muted">Kategori</dt>
+                  <dt className="text-muted">{m("hizmet_kunye_kategori")}</dt>
                   <dd className="text-right font-semibold text-navy">{e.kategori}</dd>
                 </div>
                 <div className="flex justify-between gap-3 border-b border-line pb-2">
-                  <dt className="text-muted">Standart</dt>
+                  <dt className="text-muted">{m("hizmet_kunye_standart")}</dt>
                   <dd className="text-right font-semibold text-navy">{e.standart}</dd>
                 </div>
                 <div className="flex justify-between gap-3 border-b border-line pb-2">
-                  <dt className="text-muted">Periyot</dt>
+                  <dt className="text-muted">{m("hizmet_kunye_periyot")}</dt>
                   <dd className="text-right font-semibold text-navy">
                     {e.periyot === 1 ? "Aylık" : `${e.periyot} ayda bir`}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-3 border-b border-line pb-2">
-                  <dt className="text-muted">Akreditasyon</dt>
+                  <dt className="text-muted">{m("hizmet_kunye_akreditasyon")}</dt>
                   <dd className="text-right font-semibold text-navy">{KURUM.akreditasyon}</dd>
                 </div>
                 {/*
@@ -384,7 +405,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
                   es anlamliyi mevcut sayfada dogal sekilde karsilamak.
                 */}
                 <div className="flex justify-between gap-3">
-                  <dt className="text-muted">Diğer adı</dt>
+                  <dt className="text-muted">{m("hizmet_kunye_digerad")}</dt>
                   <dd className="text-right font-semibold text-navy">{sadeAd(e.ad)} fenni muayenesi</dd>
                 </div>
               </dl>
@@ -392,7 +413,7 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
 
             {related.length > 0 && (
               <div className="rounded-card border border-line bg-white p-6">
-                <h2 className="text-lg font-bold text-navy">{e.kategori} içindeki diğer hizmetler</h2>
+                <h2 className="text-lg font-bold text-navy">{e.kategori} {m("hizmet_diger_baslik")}</h2>
                 <ul className="mt-3 space-y-2 text-sm">
                   {related.map((r) => (
                     <li key={r.slug}>
@@ -401,19 +422,19 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
                   ))}
                 </ul>
                 <Link href="/ekipman" className="mt-4 block text-sm font-bold text-blue hover:underline">
-                  Tüm hizmetler →
+                  {m("hizmet_tum_link")}
                 </Link>
               </div>
             )}
 
             <div className="rounded-card bg-gradient-to-br from-navy to-navy2 p-6 text-white">
-              <h2 className="text-lg font-bold text-white">Hemen bilgi alın</h2>
-              <p className="mt-1 text-sm text-onnavy">{KURUM.calismaSaatleri}</p>
-              <a href={`tel:${KURUM.telefonE164}`} className="mt-3 block text-xl font-black text-accent">
-                {KURUM.telefon}
+              <h2 className="text-lg font-bold text-white">{m("hizmet_kutu_baslik")}</h2>
+              <p className="mt-1 text-sm text-onnavy">{bilgi.calismaSaatleri}</p>
+              <a href={`tel:${bilgi.telefonE164}`} className="mt-3 block text-xl font-black text-accent">
+                {bilgi.telefon}
               </a>
-              <a href={`mailto:${KURUM.eposta}`} className="mt-1 block text-sm text-onnavy hover:text-white">
-                {KURUM.eposta}
+              <a href={`mailto:${bilgi.eposta}`} className="mt-1 block text-sm text-onnavy hover:text-white">
+                {bilgi.eposta}
               </a>
             </div>
           </aside>
