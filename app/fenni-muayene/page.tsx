@@ -35,7 +35,8 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Fenni Muayene Nedir?",
   description:
-    // ⚠️ 160 karakter siniri — 2026-09-01 taramasinda 169 idi.
+    // ⚠️ 160 karakter siniri — 2026-09-01 taramasinda 162 idi, Google kirpiyordu.
+    // Bolge sablonu disinda siniri asan TEK sayfa buydu.
     "Fenni muayene, mevzuattaki adıyla periyodik kontroldür. Kimler yapabilir, hangi ekipmanlar zorunlu, rapor ne zaman geçerli olur? TÜRKAK akredite kuruluş.",
   alternates: { canonical: "/fenni-muayene" },
 };

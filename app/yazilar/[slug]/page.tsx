@@ -32,9 +32,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Arama sonucu basligi: `seoTitle` doluysa o, degilse H1. Marka eki
     // yalnizca 60 karaktere sigdiginda ekleniyor — bkz. lib/seo-baslik.ts
     title: seoBaslik(a.seoTitle?.trim() || a.title),
-    // ⚠️ Aciklama PANELDEN geliyor; uzunlugu kontrol edilmiyordu ve iki yazinin
-    // aciklamasi 160 karakteri asmisti (en uzunu 175). seoAciklama cumle ya da
-    // kelime sinirinda kesiyor — Google'in ortadan kirpmasindan iyisi.
+    // Aciklama PANELDEN geliyor ve uzunlugu hic kontrol edilmiyordu. 2026-09-01
+    // taramasinda 31 yazinin hicbiri siniri asmiyordu; yani bu ONLEYICI bir
+    // sarmalayici — yarin panelde uzun bir ozet yazilirsa Google'in ortadan
+    // kirpmasi yerine seoAciklama cumle/kelime sinirinda kesiyor.
+    // Panelde uyari: /admin/seo
     description: seoAciklama(a.description),
     alternates: { canonical: `/yazilar/${a.slug}` },
     /**

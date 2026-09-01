@@ -34,13 +34,20 @@ export function seoBaslik(baslik: string): string | { absolute: string } {
 /* ---------------------------------------------------------------------------
    ARAMA SONUCU ACIKLAMASI (meta description)
 
-   ⚠️ NEDEN VAR: 2026-09-01 taramasinda 153 sayfanin 16'sinin aciklamasi 160
-   karakteri asiyordu (en uzunu 183). Google fazlasini kirpiyor; kirpilan
-   aciklama cumlenin ortasinda "..." ile bitiyor ve tiklama orani dusuyor.
+   ⚠️ NEDEN VAR: 2026-09-01 taramasinda 153 sayfanin 9'unun aciklamasi 160
+   karakteri asiyordu (en uzunu 177: /bolge/tuzla). Google fazlasini kirpiyor;
+   kirpilan aciklama cumlenin ortasinda "..." ile bitiyor ve tiklama orani
+   dusuyor.
 
-   Asanlarin cogu SABLONDAN uretilenler: bolge sayfasinda
-   "<il> bolgesinde ... hizmeti. <panelden gelen aciklama>" gibi. Panelden
-   girilen metnin uzunlugu bilinmedigi icin sonuc her sehirde farkli cikiyor.
+   ⚠️ OLCERKEN DIKKAT: asanlarin 8'i bolge sayfasiydi ve hepsi SABLONDAN
+   uretiliyordu — "<il> bolgesinde ... hizmeti. <panelden gelen aciklama>".
+   Panelden girilen metnin uzunlugu bilinmedigi icin sonuc her sehirde farkli
+   cikiyor; yani sorun tek tek sayfalarda degil, sablonda.
+
+   ⚠️ Bu sayilar TEKRAR olculurken `wc -m` KULLANMAYIN: Git Bash'te yerel ayar
+   C oldugu icin bayt sayiyor ve Turkce karakterli metni sisiriyor (ilk olcumde
+   9 yerine 16 sayfa "asiyor" gorundu). Gercek karakter sayisi icin PowerShell
+   `$s.Length` ya da UTF-8 farkindaligi olan bir arac kullanin.
 
    Bu yuzden kirpma KELIME sinirinda yapiliyor ve mumkunse CUMLE sinirinda:
    yarim kelimeyle biten aciklama, kirpilmis aciklamadan daha kotudur.

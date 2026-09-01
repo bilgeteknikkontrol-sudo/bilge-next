@@ -12,7 +12,7 @@ import { bloklar } from "@/lib/bloklar";
 export const metadata: Metadata = {
   title: "Referanslarımız",
   description:
-    // ⚠️ 160 karakter siniri — 2026-09-01 taramasinda 162 idi.
+    // 160 karakter siniri. (2026-09-01'de 154 idi — sinirin altindaydi.)
     "Üretimden lojistiğe, enerjiden inşaata birçok sektörde periyodik kontrol verdiğimiz firmalar. TÜRKAK akredite (AB-0296-M) A Tipi muayene kuruluşu.",
   alternates: { canonical: "/referanslar" },
 };

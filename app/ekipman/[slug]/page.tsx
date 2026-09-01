@@ -38,11 +38,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!e) return {};
   const icerik = EKIPMAN_ICERIK[slug];
   return {
-    // ⚠️ seoBaslik/seoAciklama SARMALAYICILARI SART. 92 hizmet sayfasinin
-    // basligi da aciklamasi da SABLONDAN uretiliyor; ekipman adinin uzunlugu
-    // onceden bilinemiyor. 2026-09-01 taramasinda 9 hizmet sayfasinin basligi
-    // 60 karakteri, biri de aciklamasi 160 karakteri asiyordu — Google ikisini
-    // de kirpiyor. bkz. lib/seo-baslik.ts
+    // seoBaslik/seoAciklama sarmalayicilari ONLEYICI: 2026-09-01 taramasinda
+    // 92 hizmet sayfasinin HICBIRI siniri asmiyordu (en uzun baslik 60).
+    // Ama baslik da aciklama da SABLONDAN uretiliyor ve ekipman adini panelden
+    // yazan kisi uzunlugu goremiyor — uzunca bir ad girildigi anda sinir
+    // sessizce asilir. Sarmalayici o riski kapatiyor. bkz. lib/seo-baslik.ts
+    // Panelde ayni denetim: /admin/seo
     title: seoBaslik(icerik?.seoTitle || hizmetBasligi(e.ad)),
     description: seoAciklama(
       icerik?.seoDesc ||

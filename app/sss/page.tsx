@@ -10,7 +10,8 @@ import { metinleriOku } from "@/lib/sayfa-metin";
 export const metadata: Metadata = {
   title: "Sık Sorulan Sorular",
   description:
-    // ⚠️ 160 karakter siniri — 2026-09-01 taramasinda 164 idi, Google kirpiyordu.
+    // 160 karakter siniri. (2026-09-01'de 152 idi — sinirin altindaydi;
+    // yine de kisaltildi ki yeni bir cumle eklenince tasmasin.)
     "Periyodik kontrol neden zorunlu, periyot nasıl belirlenir, kimler yapabilir, İSG-KATİP sözleşmesi nasıl işler? En sık sorulan soruların yanıtları.",
   alternates: { canonical: "/sss" },
 };

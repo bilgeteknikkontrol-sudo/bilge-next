@@ -55,6 +55,11 @@ const GRUPLAR: Grup[] = [
     baslik: "Site geneli",
     maddeler: [
       { href: "/admin/menu", etiket: "Menü", not: "Üst menü başlıkları", ikon: "🧭" },
+      /**
+       * ⚠️ EKLENDI. Panelde SEO ile ilgili tek bir ekran yoktu; arama sonucunda
+       * neyin nasil gorunecegi yalnizca siteyi disaridan tarayarak anlasilabiliyordu.
+       */
+      { href: "/admin/seo", etiket: "SEO Sağlık", not: "Arama sonucu denetimi", ikon: "🔎" },
       { href: "/admin/teklifler", etiket: "Teklif Talepleri", not: "Formdan gelen istekler", ikon: "📥" },
       { href: "/admin/settings", etiket: "Renkler & Ayarlar", not: "Palet, yazı boyutu, logo", ikon: "🎨" },
       { href: "/admin/media", etiket: "Medya", not: "Görsel yükleme", ikon: "🖼️" },

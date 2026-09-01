@@ -22,8 +22,9 @@ import { seoBaslik } from "@/lib/seo-baslik";
 export const revalidate = 300;
 
 export const metadata = {
-  // Marka eki eklenince 62 karakter oluyordu; seoBaslik sigmadiginda markayi
-  // dusuruyor (marka zaten sonucta alan adi olarak gorunuyor).
+  // Marka ekiyle birlikte TAM 60 karakter — sinirda. Bir kelime eklenirse
+  // sessizce asilir; seoBaslik o durumda markayi dusurup basligi tam tutuyor
+  // (marka zaten arama sonucunda alan adi olarak gorunuyor).
   title: seoBaslik("Bilgi Merkezi — Makaleler & Rehberler"),
   description:
     "Periyodik kontrol mevzuatı, standartlar ve ekipman rehberleri. 6331, ISO/IEC 17020, ceza, forklift ve basınçlı kap kontrolü hakkında uzman içerik.",
