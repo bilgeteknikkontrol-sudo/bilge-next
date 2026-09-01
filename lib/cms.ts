@@ -106,6 +106,19 @@ export type SiteSettings = {
   aboutText: string;
   ctaTitle: string;
   ctaText: string;
+  /**
+   * Google Isletme Profili "yorum yaz" baglantisi (g.page/r/... veya
+   * search.google.com/local/writereview?placeid=...).
+   *
+   * Bos ise iletisim sayfasindaki yorum kutusu HIC BASILMAZ — yani yanlislikla
+   * bos bir butona tiklatmak mumkun degil.
+   *
+   * ⚠️ Bu baglantiyi siteye koymak, YORUM PUANI isaretlemesi koymak DEGILDIR.
+   * Kendi sitesinde kendi isletmesi hakkinda `AggregateRating` yayinlamak
+   * Google'in yapisal veri kurallarina aykiri (2019'dan beri); yildizlar arama
+   * sonucunda gorunmez, ustelik risk yaratir. Puan Google tarafinda kalir.
+   */
+  googleYorumLinki: string;
 };
 
 type CmsState = {
@@ -282,6 +295,9 @@ export function defaultSettings(): SiteSettings {
     ctaTitle: "İş Güvenliğinizi Sıraya Koymayın",
     ctaText:
       "2 dakikada online teklif alın veya yasal sürenizi hesaplayın. TÜRKAK akredite farkıyla tanışın.",
+    // Panelden girilir (Admin > İletişim). Bos oldugu surece yorum kutusu
+    // sayfaya hic basilmaz.
+    googleYorumLinki: "",
   };
 }
 

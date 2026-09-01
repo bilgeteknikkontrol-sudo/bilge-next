@@ -634,6 +634,19 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
           { ad: "hours", etiket: "Çalışma saatleri" },
         ],
       },
+      {
+        tip: "ayar",
+        baslik: "Google yorum bağlantısı",
+        aciklama:
+          "Doldurursanız iletişim sayfasında “Bizi Google'da değerlendirin” kutusu görünür. Boş bırakırsanız kutu hiç çıkmaz. Bağlantıyı Google İşletme Profilinizde “Yorum isteyin” bölümünden alabilirsiniz (g.page/r/… ile başlar). Kutunun yazılarını “Tüm Metinler” ekranından değiştirebilirsiniz.",
+        alanlar: [
+          {
+            ad: "googleYorumLinki",
+            etiket: "Google “yorum yaz” adresi",
+            not: "Örnek: https://g.page/r/CxxxxxxxxxxxxxEBM/review",
+          },
+        ],
+      },
     ],
   },
 ];

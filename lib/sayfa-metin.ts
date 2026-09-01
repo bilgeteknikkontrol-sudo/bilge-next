@@ -517,6 +517,33 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
       { anahtar: "iletisim_teklif_btn1", etiket: "Teklif kutusu — birinci buton", varsayilan: "Online Teklif Al →" },
       { anahtar: "iletisim_teklif_btn2", etiket: "Teklif kutusu — ikinci buton", varsayilan: "Süremi Hesapla" },
       { anahtar: "iletisim_ekip_baslik", etiket: "Uzmanlık alanları başlığı", varsayilan: "Uzmanlık alanlarımız" },
+
+      /**
+       * GOOGLE YORUM KUTUSU
+       *
+       * ⚠️ Metin BILEREK filtresiz. "Memnun kaldiysaniz Google'a, memnun
+       * kalmadiysaniz bize yazin" tarzi bir ayrim (review gating) Google'in
+       * politikasina aykiri ve isletme profilinin cezalandirilmasina yol acar.
+       * Herkese ayni cagri gosterilir.
+       */
+      {
+        anahtar: "iletisim_yorum_baslik",
+        etiket: "Google yorum kutusu — başlık",
+        not: "Yalnızca panelde Google yorum bağlantısı girilmişse görünür.",
+        varsayilan: "Bizi Google'da değerlendirin",
+      },
+      {
+        anahtar: "iletisim_yorum_yazi",
+        etiket: "Google yorum kutusu — yazı",
+        uzun: true,
+        varsayilan:
+          "Hizmetimizle ilgili deneyiminizi paylaşmanız, bizi arayan diğer işletmelere yol gösteriyor. Bir dakikanızı ayırırsanız çok memnun oluruz.",
+      },
+      {
+        anahtar: "iletisim_yorum_buton",
+        etiket: "Google yorum kutusu — buton",
+        varsayilan: "Google'da yorum yazın",
+      },
     ]
   ),
   {

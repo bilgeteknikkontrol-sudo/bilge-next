@@ -7,6 +7,8 @@ import { KURUM, UZMANLIK_ALANLARI } from "@/lib/site-data";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { bloklar } from "@/lib/bloklar";
+import { getSettings } from "@/lib/cms";
+import GoogleYorum from "../components/GoogleYorum";
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -27,6 +29,9 @@ export default async function IletisimPage() {
   const uzmanlikListesi = uzmanlikBloklari.length
     ? uzmanlikBloklari.map((u) => ({ ikon: u.ikon || "🛠️", ad: u.baslik }))
     : UZMANLIK_ALANLARI;
+  /* Google yorum baglantisi panelden. Bos ise kutu hic basilmaz — CMS'e
+     ulasilamazsa da ayni sekilde sessizce gizlenir, sayfa calismaya devam eder. */
+  const ayarlar = await getSettings().catch(() => null);
   const localBusinessLd = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
@@ -139,6 +144,14 @@ export default async function IletisimPage() {
                 <Link href="/hesapla" className="btn-ghost">{m("iletisim_teklif_btn2")}</Link>
               </div>
             </div>
+
+            {/* Google yorum cagrisi — panelde baglanti girilmemisse hic basilmaz. */}
+            <GoogleYorum
+              link={ayarlar?.googleYorumLinki ?? ""}
+              baslik={m("iletisim_yorum_baslik")}
+              yazi={m("iletisim_yorum_yazi")}
+              buton={m("iletisim_yorum_buton")}
+            />
 
             {/* Teknik ekip listesi yalnizca kayit varsa basiliyor. */}
             {uzmanlikListesi.length > 0 && (

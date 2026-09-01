@@ -268,6 +268,30 @@ export async function saveSettingsAction(formData: FormData) {
     aboutText: String(formData.get("aboutText") || cur.aboutText),
     ctaTitle: String(formData.get("ctaTitle") || cur.ctaTitle),
     ctaText: String(formData.get("ctaText") || cur.ctaText),
+    /**
+     * ⚠️ BURADA `|| cur.x` DESENI KULLANILAMAZ.
+     *
+     * Diger alanlarda bos deger mevcut degere dusuyor; bu alan icin bu yanlis
+     * olurdu: kullanici yorum kutusunu GIZLEMEK istediginde alani bosaltir ve
+     * kaydeder — `|| cur` deseni o bosaltmayi yok sayar, kutu silinemez hale
+     * gelirdi.
+     *
+     * `formData.has()` ile ayirt ediliyor: alan formda VARSA girilen deger
+     * aynen (bos dahil) yazilir; alan formda HIC YOKSA (bu ayar formu iki ayri
+     * ekrandan gonderilebiliyor — /admin/settings ve /admin/sayfa/iletisim)
+     * mevcut deger korunur, yani baska bir ekrandan kaydetmek baglantiyi
+     * silmez.
+     *
+     * Bicim kontrolu: yalnizca http(s) kabul ediliyor. Gecersiz bir deger
+     * girilirse eskisi korunuyor — bozuk bir baglantiyi siteye basmaktansa
+     * degisikligi yok saymak daha guvenli.
+     */
+    googleYorumLinki: (() => {
+      if (!formData.has("googleYorumLinki")) return cur.googleYorumLinki;
+      const v = String(formData.get("googleYorumLinki") || "").trim();
+      if (v === "") return "";
+      return /^https?:\/\//i.test(v) ? v : cur.googleYorumLinki;
+    })(),
   };
   await saveSettings(s);
   // Renk, logo ve iletisim bilgisi TUM sayfalarda kullaniliyor; yalnizca
