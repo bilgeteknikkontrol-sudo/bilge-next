@@ -5,8 +5,9 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import YaziGorseli from "../../components/YaziGorseli";
 import { getArticleBySlug, getArticles, getEquipment } from "@/lib/cms";
-import { seoBaslik } from "@/lib/seo-baslik";
+import { seoBaslik, seoAciklama } from "@/lib/seo-baslik";
 import { YAZI_EKIPMAN, hizmetBasligi } from "@/lib/icerik-baglari";
+import { yaziGorselAdresi } from "@/lib/images";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -31,8 +32,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Arama sonucu basligi: `seoTitle` doluysa o, degilse H1. Marka eki
     // yalnizca 60 karaktere sigdiginda ekleniyor — bkz. lib/seo-baslik.ts
     title: seoBaslik(a.seoTitle?.trim() || a.title),
-    description: a.description,
+    // ⚠️ Aciklama PANELDEN geliyor; uzunlugu kontrol edilmiyordu ve iki yazinin
+    // aciklamasi 160 karakteri asmisti (en uzunu 175). seoAciklama cumle ya da
+    // kelime sinirinda kesiyor — Google'in ortadan kirpmasindan iyisi.
+    description: seoAciklama(a.description),
     alternates: { canonical: `/yazilar/${a.slug}` },
+    /**
+     * ⚠️ HER YAZI AYNI genel OG gorselini kullaniyordu (app/opengraph-image).
+     * Yani 31 yazidan hangisi paylasilirsa paylasilsin WhatsApp/LinkedIn'de
+     * ayni kare cikiyor, yazinin kendi gorseli hic gorunmuyordu. Tiklama
+     * oranini dogrudan etkiliyor. Gorsel cozulemezse alan basilmiyor ve
+     * site geneli varsayilan devreye giriyor — yani kayip yok.
+     */
+    openGraph: {
+      type: "article",
+      url: `/yazilar/${a.slug}`,
+      title: a.seoTitle?.trim() || a.title,
+      description: seoAciklama(a.description),
+      publishedTime: a.date || undefined,
+      ...(yaziGorselAdresi(a.slug, a.image)
+        ? { images: [{ url: yaziGorselAdresi(a.slug, a.image)! }] }
+        : {}),
+    },
   };
 }
 
@@ -61,6 +82,10 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
         .sort((x, y) => hizmetSluglari.indexOf(x.slug) - hizmetSluglari.indexOf(y.slug))
     : [];
 
+  // Sema `image` alani icin mutlak adres; sayfada gosterilen gorselle ayni
+  // kaynak sirasini izler (bkz. lib/images.ts).
+  const gorselAdresi = yaziGorselAdresi(a.slug, a.image);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -71,8 +96,35 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
     // belirsiz" sayiyor; guncellik bu konuda (mevzuat degisiyor) siralama
     // sinyali. Yazinin kendi tarihi tek kaynak.
     dateModified: a.date,
-    author: { "@type": "Organization", name: "Bilge Teknik Kontrol" },
-    publisher: { "@type": "Organization", name: "Bilge Teknik Kontrol" },
+    /**
+     * ⚠️ GORSEL YOKTU — Article zengin sonucunun en belirleyici alani.
+     * Google'in "Article structured data" dokumaninda `image` tavsiye edilen
+     * alan; gorseli olmayan makale arama sonucunda kucuk resim ALMIYOR ve
+     * Discover'a hic girmiyor. Sitede her yazinin zaten bir gorseli var
+     * (panelden ya da slug eslesmeli varsayilan) — yalnizca semaya
+     * baglanmamisti.
+     *
+     * Adres MUTLAK olmali: Google semadaki goreli adresi cozmuyor.
+     * Panelden gelen adres zaten mutlak olabilir (harici URL / data URL);
+     * data URL semaya konmaz, o durumda alan hic basilmaz.
+     */
+    ...(gorselAdresi ? { image: gorselAdresi } : {}),
+    // Icerigin dili — cok dilli olmayan sitede de Google'in beklediği alan.
+    inLanguage: "tr-TR",
+    author: {
+      "@type": "Organization",
+      name: "Bilge Teknik Kontrol",
+      url: "https://bilgekontrol.com",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Bilge Teknik Kontrol",
+      // Yayinci logosu: Google publisher.logo'yu ImageObject olarak bekliyor.
+      logo: {
+        "@type": "ImageObject",
+        url: "https://bilgekontrol.com/icon.png",
+      },
+    },
     mainEntityOfPage: `https://bilgekontrol.com/yazilar/${a.slug}`,
   };
 

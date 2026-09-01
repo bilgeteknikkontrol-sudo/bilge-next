@@ -8,6 +8,7 @@ import { BOLGE_ICERIK } from "@/lib/bolge-icerik";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { metniHtml } from "@/lib/metin-bicim";
 import { BOLGE_EKIPMAN, VARSAYILAN_BOLGE_EKIPMAN, hizmetBasligi } from "@/lib/icerik-baglari";
+import { seoBaslik, seoAciklama } from "@/lib/seo-baslik";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -43,9 +44,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const l = await getLocationBySlug(slug);
   if (!l) return {};
   const ad = bolgeAdi(l);
+  /**
+   * ⚠️ 16 bolge sayfasinin 9'unun aciklamasi 160 karakteri asiyordu (en uzunu
+   * 183). Sebep: sabit onek + panelden gelen `l.description` ard arda
+   * ekleniyor ve panel metninin uzunlugu bilinmiyor. Onek de kisaltildi
+   * ("periyodik teknik kontrol, muayene ve TÜRKAK akredite rapor hizmeti" ->
+   * "periyodik kontrol ve TÜRKAK akredite muayene") ki panelden yazilan
+   * SEHRE OZEL metne yer kalsin — yinelenen onek degil, o metin ayirt edici.
+   */
   return {
-    title: `${ad} Periyodik Kontrol Hizmeti`,
-    description: `${ad} bölgesinde periyodik teknik kontrol, muayene ve TÜRKAK akredite rapor hizmeti. ${l.description}`,
+    title: seoBaslik(`${ad} Periyodik Kontrol Hizmeti`),
+    description: seoAciklama(
+      `${ad} bölgesinde periyodik kontrol ve TÜRKAK akredite muayene. ${l.description}`,
+    ),
     alternates: { canonical: `/bolge/${l.slug}` },
   };
 }

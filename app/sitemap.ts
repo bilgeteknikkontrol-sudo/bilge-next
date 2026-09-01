@@ -19,9 +19,22 @@ export const revalidate = 3600; // saatte bir yenilensin; her istekte CMS okumay
 
 const base = "https://bilgekontrol.com";
 
+/**
+ * ⚠️ `lastModified` ARTIK YALNIZCA GERCEK TARIHI OLANA YAZILIYOR.
+ *
+ * Onceki hali her girdiye `new Date()` koyuyordu. Site haritasi saatte bir
+ * yeniden uretildigi icin bu, Google'a "153 sayfanin HEPSI bir saat once
+ * degisti" demek oluyordu — ve bunu her saat tekrar soyluyordu.
+ *
+ * Google `lastmod`'u yalnizca GUVENILIRSE kullanir; surekli "her sey yeni"
+ * diyen bir harita, degeri tamamen yok sayilan bir haritaya doner. Yani
+ * gercekten guncellenen bir sayfa da sinyalini kaybeder. Bos birakmak
+ * (alan istege bagli) yanlis tarih yazmaktan iyidir.
+ *
+ * Yazilarin kendi `date` alani var, onlar tarihini korur. Ekipman ve bolge
+ * tablolarinda guncelleme tarihi sutunu YOK; eklendiginde buraya da baglanir.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
-
   const [yazilar, ekipmanlar, sehirler] = await Promise.all([
     getArticles().catch(() => null),
     getEquipment().catch(() => null),
@@ -29,40 +42,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const core: MetadataRoute.Sitemap = [
-    { url: base + "/", lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: base + "/ekipman", lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: base + "/periyodik-kontrol-sureleri", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: base + "/", changeFrequency: "weekly", priority: 1 },
+    { url: base + "/ekipman", changeFrequency: "weekly", priority: 0.9 },
+    { url: base + "/periyodik-kontrol-sureleri", changeFrequency: "monthly", priority: 0.9 },
     // "Fenni muayene" — periyodik kontrolun sahadaki yaygin adi. Terimi
     // karsilayan tek sayfa; ayni zamanda 90+ ekipman sayfasina link dagitiyor.
-    { url: base + "/fenni-muayene", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: base + "/teklif", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: base + "/bolge", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: base + "/hesapla", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: base + "/kurumsal", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: base + "/sertifikalar", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: base + "/iletisim", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: base + "/yazilar", lastModified: now, changeFrequency: "weekly", priority: 0.7 },
-    { url: base + "/sss", lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: base + "/referanslar", lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: base + "/kvkk", lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: base + "/cerez-politikasi", lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: base + "/fenni-muayene", changeFrequency: "monthly", priority: 0.9 },
+    { url: base + "/teklif", changeFrequency: "monthly", priority: 0.9 },
+    { url: base + "/bolge", changeFrequency: "monthly", priority: 0.8 },
+    { url: base + "/hesapla", changeFrequency: "monthly", priority: 0.8 },
+    { url: base + "/kurumsal", changeFrequency: "monthly", priority: 0.8 },
+    { url: base + "/sertifikalar", changeFrequency: "monthly", priority: 0.8 },
+    { url: base + "/iletisim", changeFrequency: "monthly", priority: 0.8 },
+    { url: base + "/yazilar", changeFrequency: "weekly", priority: 0.7 },
+    { url: base + "/sss", changeFrequency: "monthly", priority: 0.7 },
+    { url: base + "/referanslar", changeFrequency: "monthly", priority: 0.7 },
+    { url: base + "/kvkk", changeFrequency: "yearly", priority: 0.3 },
+    { url: base + "/cerez-politikasi", changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const yaziGirdileri: MetadataRoute.Sitemap = (yazilar ?? ARTICLES)
     .filter((a) => !("aktif" in a) || a.aktif)
-    .map((a) => ({
-      url: `${base}/yazilar/${a.slug}`,
+    .map((a) => {
       // Yazinin kendi tarihi — "hepsi bugun" demek Google'a yanlis sinyal veriyordu.
-      lastModified: new Date(a.date || now),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    }));
+      // ⚠️ Once `a.date || now` yaziyordu; `now` kaldirilinca gecersiz bir tarih
+      // `Invalid Date` uretip site haritasinin TAMAMINI dusurebilirdi. Tarih
+      // okunamiyorsa alan hic basilmiyor.
+      const t = a.date ? new Date(a.date) : null;
+      const gecerli = t && !Number.isNaN(t.getTime());
+      return {
+        url: `${base}/yazilar/${a.slug}`,
+        ...(gecerli ? { lastModified: t } : {}),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      };
+    });
 
   const sehirGirdileri: MetadataRoute.Sitemap = (sehirler ?? LOCATIONS)
     .filter((l) => !("aktif" in l) || l.aktif)
     .map((l) => ({
       url: `${base}/bolge/${l.slug}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       // Sehir sayfalari yerel aramalarin giris kapisi; yazilardan onemli.
       priority: 0.8,
@@ -72,7 +91,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((e) => !("aktif" in e) || e.aktif)
     .map((e) => ({
       url: `${base}/ekipman/${e.slug}`,
-      lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,
     }));

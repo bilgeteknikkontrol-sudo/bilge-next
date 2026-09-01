@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import YaziGorseli from "../components/YaziGorseli";
 import { getArticles } from "@/lib/cms";
 import { metinleriOku } from "@/lib/sayfa-metin";
+import { seoBaslik } from "@/lib/seo-baslik";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -21,7 +22,9 @@ import { metinleriOku } from "@/lib/sayfa-metin";
 export const revalidate = 300;
 
 export const metadata = {
-  title: "Bilgi Merkezi — Makaleler & Rehberler",
+  // Marka eki eklenince 62 karakter oluyordu; seoBaslik sigmadiginda markayi
+  // dusuruyor (marka zaten sonucta alan adi olarak gorunuyor).
+  title: seoBaslik("Bilgi Merkezi — Makaleler & Rehberler"),
   description:
     "Periyodik kontrol mevzuatı, standartlar ve ekipman rehberleri. 6331, ISO/IEC 17020, ceza, forklift ve basınçlı kap kontrolü hakkında uzman içerik.",
   alternates: { canonical: "/yazilar" },

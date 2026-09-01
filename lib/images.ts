@@ -169,6 +169,37 @@ export const EKIPMAN_FOTO: Record<string, StaticImageData> = {
   "yukseltilebilir-seyyar-is-platformu": img_yangin11,
 };
 
+/**
+ * Bir yazinin gorselinin MUTLAK adresi — schema.org Article `image` alani icin.
+ *
+ * ⚠️ NEDEN VAR: Article semasinda gorsel yoktu. Google'in Article dokumaninda
+ * `image` tavsiye edilen alan; gorseli olmayan makale arama sonucunda kucuk
+ * resim almiyor ve Discover'a girmiyor. Gorsel sitede zaten vardi, yalnizca
+ * semaya baglanmamisti.
+ *
+ * Kaynak sirasi `YaziGorseli` bileseniyle AYNI olmali, yoksa sema sayfada
+ * gorunenden baska bir gorseli bildirir:
+ *   1. Panelden girilen adres (`cmsImage`)
+ *   2. slug eslesmeli varsayilan (`YAZI_GORSEL`)
+ *
+ * Sema MUTLAK adres ister; goreli adres cozulmez. `data:` URL'ler semaya
+ * konmaz (Google indiremez) — o durumda null donup alan hic basilmaz.
+ */
+export function yaziGorselAdresi(slug: string, cmsImage?: string): string | null {
+  const site = "https://bilgekontrol.com";
+  const cms = cmsImage?.trim();
+
+  if (cms) {
+    if (cms.startsWith("data:")) return null; // gomulu gorsel semaya konmaz
+    if (cms.startsWith("http://") || cms.startsWith("https://")) return cms;
+    if (cms.startsWith("/")) return site + cms;
+    return null; // tanimadigimiz bicim: yanlis adres basmaktansa alani atla
+  }
+
+  const varsayilan = YAZI_GORSEL[slug];
+  return varsayilan ? site + varsayilan.src : null;
+}
+
 /** Yazi slug -> gorsel */
 export const YAZI_GORSEL: Record<string, StaticImageData> = {
   "basincli-kap-hidrostatik-test": img_basincli_kaplarin_periyodik_kontrolu,

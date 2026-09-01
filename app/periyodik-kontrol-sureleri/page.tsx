@@ -25,8 +25,9 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Periyodik Kontrol Süreleri Tablosu",
   description:
-    // 160 karakter siniri.
-    "Hangi iş ekipmanı ne sıklıkla kontrol edilmeli? Kaldırma araçları, basınçlı kaplar, elektrik ve iş makineleri için yasal süreler ve standartlar tek tabloda.",
+    // ⚠️ 160 karakter siniri — bu not zaten buradaydi ama metin 169 karakterdi
+    // (2026-09-01 taramasi). Yorum yazmak olcmek degil; degistirirken SAY.
+    "Hangi iş ekipmanı ne sıklıkla kontrol edilmeli? Kaldırma araçları, basınçlı kaplar, elektrik ve iş makineleri için yasal süreler tek tabloda.",
   alternates: { canonical: "/periyodik-kontrol-sureleri" },
 };
 

@@ -10,7 +10,8 @@ import { metinleriOku } from "@/lib/sayfa-metin";
 export const metadata: Metadata = {
   title: "Sık Sorulan Sorular",
   description:
-    "Periyodik kontrol neden zorunlu, periyot nasıl belirlenir, kontrolü kim yapabilir, İSG-KATİP sözleşmesi nasıl işler? En sık sorulan soruların yanıtları.",
+    // ⚠️ 160 karakter siniri — 2026-09-01 taramasinda 164 idi, Google kirpiyordu.
+    "Periyodik kontrol neden zorunlu, periyot nasıl belirlenir, kimler yapabilir, İSG-KATİP sözleşmesi nasıl işler? En sık sorulan soruların yanıtları.",
   alternates: { canonical: "/sss" },
 };
 

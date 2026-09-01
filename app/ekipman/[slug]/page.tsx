@@ -15,6 +15,7 @@ import { KURUM } from "@/lib/site-data";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { metniHtml, yerlestir } from "@/lib/metin-bicim";
+import { seoBaslik, seoAciklama } from "@/lib/seo-baslik";
 
 /**
  * Sayfa onbellekleniyor (ISR).
@@ -37,10 +38,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!e) return {};
   const icerik = EKIPMAN_ICERIK[slug];
   return {
-    title: icerik?.seoTitle || hizmetBasligi(e.ad),
-    description:
+    // ⚠️ seoBaslik/seoAciklama SARMALAYICILARI SART. 92 hizmet sayfasinin
+    // basligi da aciklamasi da SABLONDAN uretiliyor; ekipman adinin uzunlugu
+    // onceden bilinemiyor. 2026-09-01 taramasinda 9 hizmet sayfasinin basligi
+    // 60 karakteri, biri de aciklamasi 160 karakteri asiyordu — Google ikisini
+    // de kirpiyor. bkz. lib/seo-baslik.ts
+    title: seoBaslik(icerik?.seoTitle || hizmetBasligi(e.ad)),
+    description: seoAciklama(
       icerik?.seoDesc ||
-      `${sadeAd(e.ad)} periyodik kontrolü ${e.standart} kapsamında TÜRKAK akredite (${KURUM.akreditasyon}) muayene kuruluşu tarafından yapılır.`,
+        `${sadeAd(e.ad)} periyodik kontrolü ${e.standart} kapsamında TÜRKAK akredite (${KURUM.akreditasyon}) muayene kuruluşu tarafından yapılır.`,
+    ),
     alternates: { canonical: `/ekipman/${e.slug}` },
   };
 }
