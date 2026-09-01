@@ -660,16 +660,12 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
       {
         tip: "metin",
         baslik: "Sayfa yazıları",
-        aciklama: "Başlık, açıklama, buton ve “nasıl yapılır” adımları.",
+        aciklama: "Başlık, açıklama, buton ve alttaki teşekkür yazısı.",
         anahtarlar: [
           "degerlendir_baslik",
           "degerlendir_giris",
           "degerlendir_buton",
           "degerlendir_buton_not",
-          "degerlendir_adim_baslik",
-          "degerlendir_adim1",
-          "degerlendir_adim2",
-          "degerlendir_adim3",
           "degerlendir_tesekkur",
         ],
       },

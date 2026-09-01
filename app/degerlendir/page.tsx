@@ -79,8 +79,6 @@ export default async function DegerlendirPage() {
    */
   if (!link) notFound();
 
-  const adimlar = [m("degerlendir_adim1"), m("degerlendir_adim2"), m("degerlendir_adim3")];
-
   return (
     <>
       <Header />
@@ -116,26 +114,15 @@ export default async function DegerlendirPage() {
         </div>
       </section>
 
-      {/* NASIL YAPILIR — çoğu kişi Google'da yorumu nereden yazacağını bilmiyor;
-          üç adım, tıklama oranını doğrudan artırıyor. */}
+      {/*
+        ⚠️ "Nasil yapilir?" uc adimlik bolum KALDIRILDI (kullanici istegi).
+        Sayfa zaten tek butonluk; adimlar dikkati dagitiyordu. Metin alanlari da
+        (degerlendir_adim_*) silindi — panelde hicbir yerde gorunmeyen alan
+        birakmak, sonradan "burayi degistirdim ama degismedi" sorusuna yol acar.
+      */}
       <section className="section">
         <div className="container-x max-w-3xl">
-          <h2 className="text-center text-xl font-black text-navy">
-            {m("degerlendir_adim_baslik")}
-          </h2>
-
-          <ol className="mt-8 grid gap-5 md:grid-cols-3">
-            {adimlar.map((adim, i) => (
-              <li key={i} className="card p-5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-soft text-sm font-black text-blue">
-                  {i + 1}
-                </span>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{adim}</p>
-              </li>
-            ))}
-          </ol>
-
-          <p className="mx-auto mt-10 max-w-xl text-center leading-relaxed text-muted">
+          <p className="mx-auto max-w-xl text-center leading-relaxed text-muted">
             {m("degerlendir_tesekkur")}
           </p>
 

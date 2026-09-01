@@ -572,10 +572,8 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
         etiket: "Butonun altındaki küçük not",
         varsayilan: "Google hesabınızla açılır · yaklaşık 1 dakika sürer",
       },
-      { anahtar: "degerlendir_adim_baslik", etiket: "Adımlar bölümü başlığı", varsayilan: "Nasıl yapılır?" },
-      { anahtar: "degerlendir_adim1", etiket: "1. adım", varsayilan: "Yukarıdaki butona dokunun; Google değerlendirme ekranı açılır." },
-      { anahtar: "degerlendir_adim2", etiket: "2. adım", varsayilan: "Yıldız verin." },
-      { anahtar: "degerlendir_adim3", etiket: "3. adım", varsayilan: "Dilerseniz birkaç cümle yazıp gönderin. Hepsi bu." },
+      /* ⚠️ "Nasil yapilir?" bolumu ve degerlendir_adim_* alanlari kaldirildi:
+         sayfa tek butonluk, adimlar dikkati dagitiyordu. */
       {
         anahtar: "degerlendir_tesekkur",
         etiket: "Alt bölüm yazısı",
