@@ -34,8 +34,19 @@ export default function GoogleYorum({ link, baslik, yazi, buton }: Props) {
   const adres = link?.trim();
   if (!adres) return null;
 
+  /*
+    ⚠️ BELIRGINLIK, BUYUKLUKLE DEGIL KONTRASTLA saglaniyor — kutu bilerek
+    buyutulmedi (kullanici "olcusu iyi" dedi). Oldugu boyutta one cikmasi icin
+    uc sey var, hepsi olculu:
+      - turuncu (accent) kenarlik: sayfadaki diger kutular gri `border-line`
+        kullaniyor; tek turuncu cerceve bakisi buraya cekiyor
+      - kart golgesi: gri teklif kutusu duz dururken bu zeminden kalkiyor
+      - beyaz zemin: yanindaki bg-bgsoft kutudan ayrisiyor
+    Turuncu sitede YALNIZCA vurgu icin kullaniliyor (bkz. globals.css palet
+    notu); burada da o kurala uygun — dolgu degil, yalnizca cerceve.
+  */
   return (
-    <section className="mt-8 rounded-card border border-line bg-white p-6">
+    <section className="mt-5 rounded-card border border-accent/40 bg-white p-6 shadow-[0_18px_40px_-22px_color-mix(in_srgb,var(--color-navy)_35%,transparent)]">
       <div className="flex items-start gap-4">
         {/* Google'in dort renkli "G" harfi — resmi marka isareti. */}
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-bgsoft">

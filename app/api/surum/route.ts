@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
  * ⚠️ Bu dosyayi PowerShell `Set-Content` ile guncelleme: BOM ekliyor ve
  * Turkce karakterleri bozuyor. Duzenleme araciyla veya Write ile yaz.
  */
-const SURUM = "2026-09-01-58-google-yorum";
+const SURUM = "2026-09-01-59-degerlendir-sayfasi";
 
 export async function GET() {
   return NextResponse.json({ surum: SURUM });

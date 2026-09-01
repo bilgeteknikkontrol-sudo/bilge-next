@@ -638,13 +638,39 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
         tip: "ayar",
         baslik: "Google yorum bağlantısı",
         aciklama:
-          "Doldurursanız iletişim sayfasında “Bizi Google'da değerlendirin” kutusu görünür. Boş bırakırsanız kutu hiç çıkmaz. Bağlantıyı Google İşletme Profilinizde “Yorum isteyin” bölümünden alabilirsiniz (g.page/r/… ile başlar). Kutunun yazılarını “Tüm Metinler” ekranından değiştirebilirsiniz.",
+          "Bir kez girin, iki yerde birden çalışır: iletişim sayfasındaki “Bizi Google'da değerlendirin” kutusu ve müşterilere gönderdiğiniz bilgekontrol.com/degerlendir sayfası. Boş bırakırsanız kutu görünmez ve /degerlendir sayfası açılmaz. Bağlantıyı Google İşletme Profilinizde “Yorum isteyin” bölümünden alabilirsiniz (g.page/r/… ile başlar).",
         alanlar: [
           {
             ad: "googleYorumLinki",
             etiket: "Google “yorum yaz” adresi",
             not: "Örnek: https://g.page/r/CxxxxxxxxxxxxxEBM/review",
           },
+        ],
+      },
+    ],
+  },
+  {
+    id: "degerlendir",
+    ad: "Değerlendirme Sayfası",
+    ikon: "⭐",
+    yol: "/degerlendir",
+    aciklama:
+      "Müşterilere gönderdiğiniz sayfa: bilgekontrol.com/degerlendir. Tek işi Google'da yorum yazdırmak. Bağlantı İletişim ekranından girilir; arama motorlarına kapalıdır, yalnızca siz paylaştığınızda görülür.",
+    bolumler: [
+      {
+        tip: "metin",
+        baslik: "Sayfa yazıları",
+        aciklama: "Başlık, açıklama, buton ve “nasıl yapılır” adımları.",
+        anahtarlar: [
+          "degerlendir_baslik",
+          "degerlendir_giris",
+          "degerlendir_buton",
+          "degerlendir_buton_not",
+          "degerlendir_adim_baslik",
+          "degerlendir_adim1",
+          "degerlendir_adim2",
+          "degerlendir_adim3",
+          "degerlendir_tesekkur",
         ],
       },
     ],

@@ -546,6 +546,45 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
       },
     ]
   ),
+
+  /**
+   * DEGERLENDIRME SAYFASI — /degerlendir
+   *
+   * ⚠️ NEDEN AYRI SAYFA: bu adres musteriye ELDEN gonderiliyor (e-posta,
+   * WhatsApp, rapor teslimi). "bilgekontrol.com/degerlendir" yazmak, Google'in
+   * uzun g.page baglantisini yapistirmaktan hem daha temiz hem daha guvenilir
+   * gorunuyor — musteri tanidigi alan adini goruyor.
+   *
+   * Sayfa arama motoruna KAPALI (noindex): tek isi olan, kisa bir yonlendirme
+   * sayfasi; indekslenirse hem "ince icerik" sayilir hem de arama sonucunda
+   * isi olmayan bir sayfa cikar.
+   */
+  sayfa(
+    "Değerlendirme Sayfası",
+    "/degerlendir",
+    "degerlendir",
+    "Bizi Google'da değerlendirin",
+    "Periyodik kontrol sürecimizle ilgili deneyiminizi paylaşmanız bizim için çok değerli. Yazacağınız birkaç cümle, bizi arayan diğer işletmelere de yol gösteriyor.",
+    [
+      { anahtar: "degerlendir_buton", etiket: "Buton", varsayilan: "Google'da değerlendir" },
+      {
+        anahtar: "degerlendir_buton_not",
+        etiket: "Butonun altındaki küçük not",
+        varsayilan: "Google hesabınızla açılır · yaklaşık 1 dakika sürer",
+      },
+      { anahtar: "degerlendir_adim_baslik", etiket: "Adımlar bölümü başlığı", varsayilan: "Nasıl yapılır?" },
+      { anahtar: "degerlendir_adim1", etiket: "1. adım", varsayilan: "Yukarıdaki butona dokunun; Google değerlendirme ekranı açılır." },
+      { anahtar: "degerlendir_adim2", etiket: "2. adım", varsayilan: "Yıldız verin." },
+      { anahtar: "degerlendir_adim3", etiket: "3. adım", varsayilan: "Dilerseniz birkaç cümle yazıp gönderin. Hepsi bu." },
+      {
+        anahtar: "degerlendir_tesekkur",
+        etiket: "Alt bölüm yazısı",
+        uzun: true,
+        varsayilan:
+          "Ayırdığınız zaman için teşekkür ederiz. Görüşleriniz, hizmetimizi geliştirmemize doğrudan yardımcı oluyor.",
+      },
+    ]
+  ),
   {
     /**
      * ⚠️ BU GRUP 92 SAYFAYI BIRDEN ETKILER. Her hizmet sayfasi ayni sablonu

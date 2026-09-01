@@ -94,7 +94,9 @@ export default async function IletisimPage() {
           <div>
             <h2 className="text-2xl font-black text-navy">{m("iletisim_bolum_baslik")}</h2>
 
-            <dl className="mt-6 space-y-5">
+            {/* space-y-5 -> space-y-4: bes satir arasindaki bosluk sol sutunu
+                gereksiz uzatiyor ve liste dagilmis gorunuyordu. */}
+            <dl className="mt-6 space-y-4">
               <div className="flex gap-4">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-soft text-xl">📍</span>
                 <div>
@@ -136,27 +138,17 @@ export default async function IletisimPage() {
               </div>
             </dl>
 
-            <div className="mt-8 rounded-card border border-line bg-bgsoft p-6">
-              <h3 className="text-lg font-bold text-navy">{m("iletisim_teklif_baslik")}</h3>
-              <p className="mt-2 text-sm text-muted">{m("iletisim_teklif_yazi")}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link href="/teklif" className="btn-primary">{m("iletisim_teklif_btn1")}</Link>
-                <Link href="/hesapla" className="btn-ghost">{m("iletisim_teklif_btn2")}</Link>
-              </div>
-            </div>
-
-            {/* Google yorum cagrisi — panelde baglanti girilmemisse hic basilmaz. */}
-            <GoogleYorum
-              link={ayarlar?.googleYorumLinki ?? ""}
-              baslik={m("iletisim_yorum_baslik")}
-              yazi={m("iletisim_yorum_yazi")}
-              buton={m("iletisim_yorum_buton")}
-            />
-
-            {/* Teknik ekip listesi yalnizca kayit varsa basiliyor. */}
+            {/*
+              ⚠️ Uzmanlik listesi YUKARI ALINDI (once teklif ve yorum
+              kutularinin ALTINDA, sayfanin en dibindeydi). Orada iki adet
+              yalniz rozet gibi duruyor, "artakalan" izlenimi veriyordu.
+              Kim oldugumuz bilgisi, iletisim bilgilerinin devami — yeri burasi.
+            */}
             {uzmanlikListesi.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-lg font-bold text-navy">{m("iletisim_ekip_baslik")}</h3>
+              <div className="mt-7 border-t border-line pt-6">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-muted">
+                  {m("iletisim_ekip_baslik")}
+                </h3>
                 <ul className="mt-3 flex flex-wrap gap-2">
                   {uzmanlikListesi.map((u) => (
                     <li
@@ -170,13 +162,40 @@ export default async function IletisimPage() {
                 </ul>
               </div>
             )}
+
+            <div className="mt-7 rounded-card border border-line bg-bgsoft p-6">
+              <h3 className="text-lg font-bold text-navy">{m("iletisim_teklif_baslik")}</h3>
+              <p className="mt-2 text-sm text-muted">{m("iletisim_teklif_yazi")}</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link href="/teklif" className="btn-primary">{m("iletisim_teklif_btn1")}</Link>
+                <Link href="/hesapla" className="btn-ghost">{m("iletisim_teklif_btn2")}</Link>
+              </div>
+            </div>
           </div>
 
-          <HaritaGomulu
-            lat={KURUM.geo.lat}
-            lng={KURUM.geo.lng}
-            baslik={`${KURUM.kisaAd} konum haritası`}
-          />
+          {/*
+            ⚠️ SAG SUTUN. Once yalnizca harita vardi: harita 420px'te bitiyor,
+            sol sutun ise dort blokla asagi devam ediyordu — sagda yarim ekran
+            bosluk kaliyor ve sayfa dagilmis gorunuyordu.
+
+            Google yorum kutusu buraya tasindi. Iki isi birden cozuyor:
+            bosluk doluyor, ve kutu ust uste yigilmis kartlarin altinda
+            kaybolmak yerine kendi alaninda one cikiyor.
+          */}
+          <div>
+            <HaritaGomulu
+              lat={KURUM.geo.lat}
+              lng={KURUM.geo.lng}
+              baslik={`${KURUM.kisaAd} konum haritası`}
+            />
+            {/* Panelde baglanti girilmemisse hic basilmaz. */}
+            <GoogleYorum
+              link={ayarlar?.googleYorumLinki ?? ""}
+              baslik={m("iletisim_yorum_baslik")}
+              yazi={m("iletisim_yorum_yazi")}
+              buton={m("iletisim_yorum_buton")}
+            />
+          </div>
         </div>
       </section>
       <Footer />
