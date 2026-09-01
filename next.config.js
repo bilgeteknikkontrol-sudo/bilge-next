@@ -166,6 +166,38 @@ const nextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           // Sitenin ihtiyaci olmayan donanim izinlerini bastan kapat.
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+
+          /**
+           * ⚠️ HTTP/3 (QUIC) KAPATILIYOR — ANDROID'DE BEYAZ EKRAN SEBEBIYDI.
+           *
+           * Hostinger'in kenar sunucusu (Server: hcdn) HER yanita
+           * `alt-svc: h3=":443"; ma=86400` ekliyor, yani "bu adres HTTP/3
+           * konusuyor, 24 saat boyunca onu kullan" diyor. Ama o QUIC baglantisi
+           * BOZUK: 2026-09-01'de olculdu, sayfa yuklemelerinin neredeyse
+           * hepsinde tarayici konsolunda
+           *
+           *   net::ERR_QUIC_PROTOCOL_ERROR
+           *
+           * cikiyor ve h3 uzerinden giden kaynak yarida kesiliyor.
+           *
+           * Masaustunde fark edilmiyordu: Chrome hemen HTTP/2'ye dusup istegi
+           * tekrarliyor. ANDROID/TABLETTE ise QUIC cok daha israrla tercih
+           * ediliyor ve mobil sebekede geri dusme uzun suruyor. Ilk ziyaret
+           * h2 ile sorunsuz aciliyor, alt-svc onbellege giriyor ve
+           * SAYFA YENILENDIGINDE belge istegi h3'e gecip yarida kaliyor —
+           * kullanicinin gordugu sey bos/beyaz ekran.
+           *
+           * `Alt-Svc: clear` (RFC 7838) tarayiciya bu adres icin kayitli tum
+           * alternatif servisleri UNUT der; h3 duyurusu gecersiz kalir ve
+           * baglanti guvenilir h2 uzerinde durur.
+           *
+           * NOT: Asil cozum hPanel'den Hostinger CDN'inin (ya da varsa HTTP/3
+           * secenegin) kapatilmasidir; bu baslik uygulama tarafindan
+           * yapilabilecek olan. Kenar sunucu kendi alt-svc'sini yine de
+           * eklerse baslik iki degerli ve gecersiz olur, tarayici da yok sayar
+           * — sonuc yine "h3 kullanma" olur.
+           */
+          { key: "Alt-Svc", value: "clear" },
         ],
       },
       {

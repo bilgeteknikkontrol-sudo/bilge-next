@@ -62,7 +62,13 @@ export default function HeaderIstemci({ menu, bilgi }: { menu: MenuOge[]; bilgi:
   return (
     // Zemin renkleri panelden yonetiliyor (Admin > Site Ayarlari > Renkler):
     // bg-header = ana cubuk, bg-headertop = ustteki iletisim seridi.
-    <header className="sticky top-0 z-50 border-b border-line bg-header/95 backdrop-blur-md">
+    //
+    // ⚠️ `backdrop-blur-md` KALDIRILDI. Yapiskan bir baslikta backdrop-filter,
+    // her kaydirma karesinde arkasindaki tum ekranin GPU'dan geri okunmasini
+    // zorunlu kiliyor; Android'de bilinen bir takilma kaynagi. Zemin zaten %95
+    // opak oldugu icin bulaniklik pratikte gorunmuyordu — gorunum ayni kaldi,
+    // mobilde kaydirma ucuzladi.
+    <header className="sticky top-0 z-50 border-b border-line bg-header/95">
       {/* ÜST ŞERİT — iletişim ve güven bilgileri.
           Sag tarafta akreditasyon rozeti sertifika sayfasina baglaniyor. */}
       <div className="hidden bg-headertop text-white/80 md:block">

@@ -54,7 +54,24 @@
 
 :root { color-scheme: light; }
 
-html { scroll-behavior: smooth; }
+/* ---------------------------------------------------------------------------
+   Yumusak kaydirma — YALNIZCA kullanici bir capa baglantisina tikladiginda.
+
+   ⚠️ Onceden kosulsuz `html { scroll-behavior: smooth }` idi. Sorun: sayfa
+   YENILENDIGINDE tarayici kaldiginiz kaydirma konumunu geri yukluyor ve bu
+   kural yuzunden Android Chrome bunu animasyonlu yapiyor — sayfanin tepesinden
+   asagiya kadar suzuluyor. Suzulme yolundaki butun `loading="lazy"` gorseller
+   ayni anda tetikleniyor; /ekipman sayfasinda 92 gorsel var ve mobilde
+   `sizes="...100vw"` yuzunden her biri 1200px surumune dusuyor. Zayif bir
+   telefonda bu tek basina saniyelerce kilitlenme demek.
+
+   `:focus-within` hilesi ikisini ayirir: capa baglantisina tiklandiginda
+   baglanti odagi alir -> yumusak kaydirma calisir. Yenilemede hicbir sey odakli
+   olmadigi icin geri yukleme ANINDA olur, yolda gorsel tetiklenmez.
+   (Safari baglantiya odak vermez; orada kaydirma yumusak degil ani olur —
+   islevsel kayip yok.)
+--------------------------------------------------------------------------- */
+html:focus-within { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-sans);
