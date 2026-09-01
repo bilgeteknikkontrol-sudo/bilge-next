@@ -74,13 +74,20 @@ export default async function SeoSayfasi() {
           baslik="Bu ekranın ölçmediği tek şey: gerçek sıralama"
           aciklama="Aşağıdakiler ancak Google'ın kendi araçlarıyla görülebilir."
         >
-          <Bilgi tur="uyari">
-            <strong>Google Search Console hâlâ bağlı değil.</strong> Sitenin hangi aramalarda kaçıncı
-            sırada çıktığı, hangi sayfaların indekslenemediği ve hangi adreslerin hata verdiği
-            bilgisinin tamamı şu an ölçülmüyor. Bağlamak için hPanel → Ortam değişkenleri →{" "}
-            <code className="rounded bg-white/60 px-1 py-0.5 text-xs">GOOGLE_SITE_VERIFICATION</code>{" "}
-            değerini girin; kod değişikliği gerekmiyor. Sitede zaten GA4 kurulu, aynı Google hesabı
-            GA4 mülkünün sahibiyse Search Console doğrulamayı kendiliğinden yapabilir.
+          <Bilgi>
+            Sitenin hangi aramalarda kaçıncı sırada çıktığı, hangi sayfaların dizine
+            eklenemediği ve hangi adreslerin hata verdiği burada görünmez — o veri yalnızca{" "}
+            <a
+              href="https://search.google.com/search-console"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold underline"
+            >
+              Google Search Console
+            </a>
+            &apos;da bulunur. Site oraya bağlı ve veri topluyor. Bu ekrandaki denetim ile orayı
+            birlikte kullanın: burası &quot;arama sonucunda nasıl görüneceği&quot;ni, orası
+            &quot;gerçekte ne olduğu&quot;nu söyler.
           </Bilgi>
         </Kart>
       </div>
