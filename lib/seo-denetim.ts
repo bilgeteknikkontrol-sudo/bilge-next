@@ -37,8 +37,26 @@ const MARKA_EKI_UZUNLUK = " | Bilge Teknik Kontrol".length;
  */
 export const ACIKLAMA_ALT_SINIR = 70;
 
-/** Basligin alt siniri: 30 karakterin altina anahtar kelime sigmiyor. */
-export const BASLIK_ALT_SINIR = 30;
+/**
+ * ⛔ BASLIK ICIN ALT SINIR KURALI YOK — BILEREK. TEKRAR EKLEMEYIN.
+ *
+ * Ilk surumde "30 karakterin altindaki baslik zayif" diye bir uyari vardi.
+ * 2026-09-01'de olculdu: 153 sayfanin 40'ini (%26) isaretliyordu ve
+ * isaretlediklerinin HICBIRI sorun degildi:
+ *
+ *   24  "Yangın Tesisatı Kontrolü"
+ *   24  "Dozer Periyodik Kontrolü"
+ *   19  "Sık Sorulan Sorular"
+ *    8  "İletişim"
+ *
+ * Kirk yanlis alarm, sifir gercek bulgu. Google kisa basligi cezalandirmiyor;
+ * onemli olan basligin ARANAN TERIMI karsilamasi, uzunlugu degil. "Forklift
+ * Periyodik Kontrolü" 27 karakterdir ve o sorgu icin ideal basliktir.
+ *
+ * Surekli yanlis alarm veren bir arac, dogru alarm verdiginde de okunmaz.
+ * Bu yuzden kural kaldirildi. Baslik kalitesi icin gercekten ise yarayan
+ * kontrol, YINELENEN baslik kontrolu — o duruyor.
+ */
 
 export type Onem = "hata" | "uyari" | "bilgi";
 
@@ -98,13 +116,7 @@ function baslikBulgulari(ham: string): Bulgu[] {
       mesaj: `${n} karakter. Sığmadığı için sonuna “| Bilge Teknik Kontrol” eklenmiyor; başlık tam görünüyor. Sorun değil.`,
     });
   }
-  if (n > 0 && n < BASLIK_ALT_SINIR) {
-    b.push({
-      onem: "uyari",
-      kural: "Başlık kısa",
-      mesaj: `${n} karakter. ${BASLIK_ALT_SINIR} karakterin altındaki başlığa aranan kelimeler sığmıyor; arama sonucunda da zayıf duruyor.`,
-    });
-  }
+  // ⛔ Baslik icin ALT sinir kontrolu yok — sebebi yukarida yazili.
   return b;
 }
 
