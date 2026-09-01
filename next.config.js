@@ -168,24 +168,38 @@ const nextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 
           /**
-           * ⚠️ HTTP/3 (QUIC) BURADAN KAPATILAMAZ — DENENDI, ISE YARAMIYOR.
+           * ⚠️ HTTP/3 (QUIC) BOZUK — bu baslik bir DENEME.
            *
-           * Hostinger'in kenar sunucusu (Server: hcdn) HER yanita
-           * `alt-svc: h3=":443"; ma=86400` ekliyor. O QUIC baglantisi bozuk:
-           * 2026-09-01 olcumunde sayfa yuklemelerinin neredeyse hepsinde
-           * tarayici konsolunda `net::ERR_QUIC_PROTOCOL_ERROR` cikti ve h3
-           * uzerinden giden kaynak yarida kesildi. Android'de yenilemede
-           * gorulen beyaz ekranin ilk supheli sebebi bu.
+           * Sunucu her yanita `alt-svc` ile "bu adres HTTP/3 konusuyor" diyor
+           * ama o QUIC baglantisi calismiyor: 2026-09-01 olcumunde sayfa
+           * yuklemelerinin neredeyse hepsinde tarayici konsolunda
+           * `net::ERR_QUIC_PROTOCOL_ERROR` cikti, h3 uzerinden giden kaynak
+           * yarida kesilip HTTP/2 ile tekrar istendi. Android'de yenilemede
+           * gorulen beyaz ekranin en guclu supheli sebebi bu.
            *
-           * `Alt-Svc: clear` (RFC 7838) eklenip dagitildi: hcdn basligi
-           * TAMAMEN EZIYOR, tarayiciya yalnizca kendi `h3=":443"` degeri
-           * ulasiyor. Iki origin IP'sine (77.37.83.223 / 77.37.53.62)
-           * dogrudan gidildiginde de yanit `Server: hcdn` — yani hcdn'i
-           * atlayan bir yol yok. Bu baslik uygulamanin denetiminde DEGIL.
+           * ⚠️ Hata AGDA DEGIL SUNUCUDA: ayni tarayici ve ayni agdan
+           * cloudflare.com (112 kaynak) ve google.com (27 kaynak) tamamen h3
+           * uzerinden TEK hata olmadan yukleniyor.
            *
-           * Tekrar denemeyin. Cozum yalnizca Hostinger tarafinda: hPanel'den
-           * CDN'i kapatmak ya da destek kaydi acmak.
+           * GECMIS:
+           *  - 1. deneme (CDN acikken): hcdn basligi tamamen EZDI, tarayiciya
+           *    yalnizca kendi `h3=":443"; ma=86400` degeri ulasti. Basarisiz.
+           *  - Hostinger destegi 2026-09-01'de CDN'i kapatti. Sunucu artik
+           *    `Server: LiteSpeed` ve alt-svc DAHA KOTU:
+           *    `h3=":443"; ma=2592000, h3-29=":443"; ma=2592000`
+           *    (1 gun yerine 30 gun, ustelik eski h3-29 taslagi da var).
+           *  - 2. deneme (su an): hcdn aradan cikinca LiteSpeed backend'in
+           *    basligini gecirir mi? Iki `Alt-Svc` basligi olusursa deger
+           *    listesinde `clear` bulunmasi RFC 7838'e gore alani gecersiz
+           *    kilar ve tarayici tumunu yok sayar — istedigimiz sonuc.
+           *
+           * OLCMEDEN "calisiyor" DEME:
+           *   curl -sI https://bilgekontrol.com | grep -i alt-svc
+           * Cikti hala yalnizca LiteSpeed'in h3 degeriyse bu satiri KALDIR ve
+           * cozumu Hostinger'dan iste (LiteSpeed'de vhost bazinda QUIC ayari
+           * var; destek kapatabilir).
            */
+          { key: "Alt-Svc", value: "clear" },
         ],
       },
       {
