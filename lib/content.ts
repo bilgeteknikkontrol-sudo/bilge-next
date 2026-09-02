@@ -804,6 +804,58 @@ ekipman bazında yasal süreleri <a href="/periyodik-kontrol-sureleri">süreler 
       { q: "Periyodik kontrol ne sıklıkla yapılır?", a: "Elektrik tesisatı, topraklama tesisatı ve yıldırımdan korunma tesisatı için ilgili standartlarda aksi belirtilmedikçe yılda bir kez yapılır." },
     ],
   },
+
+  /* ---- Elektrik kumesinin devami (2026-09-02, kullanici istegi) --------
+     Kullanici "elektrik panosu ve topraklama icin yazman daha mantikli"
+     dedi. Ikisi de rakibin ayri sayfa actigi, sitede ise hic gecmeyen
+     terimler.
+
+     ⚠️ YAMYAMLASMA ONLENDI: `topraklama-direnci-kac-ohm-olmali` zaten var
+     ve DEGERI anlatiyor (kac ohm, hangi kosulda). Buradaki yazi BELGEYI
+     anlatiyor (raporda ne bulunmali, ne zaman yenilenir). Ikisi birbirine
+     acikca link veriyor; ayni aramaya iki sayfayla girmiyoruz.
+
+     ⚠️ Topraklamalar Yonetmeligi Ek-P'deki periyot TABLOSU birincil
+     kaynaktan dogrulanamadi (mevzuat.gov.tr PDF'inin metin katmani
+     okunamadi, Resmi Gazete 2001 arsivi yalnizca fihrist veriyor).
+     Bu yuzden metinde Ek-P'den SAYI VERILMEDI; dogrulanmis olan
+     Is Ekipmanlari Yonetmeligi Ek-III "yilda bir" kurali kullanildi. ---- */
+  {
+    slug: "elektrik-panosu-uygunluk-belgesi",
+    title: "Elektrik Panosu Uygunluk Belgesi: Hangi Belge, Kimden İstenir?",
+    seoTitle: "Elektrik Panosu Uygunluk Belgesi",
+    description: "Pano uygunluk beyanı imalatçıdan, periyodik kontrol raporu muayene kuruluşundan gelir. Sizden istenen belgeyi ayırt etmenin pratik yolu.",
+    category: "Rehber",
+    date: "2026-09-02",
+    readMin: 5,
+    keywords: ["elektrik panosu uygunluk belgesi", "pano periyodik kontrolü", "rehber"],
+    lead: "Bir işletmeden &quot;pano uygunluk belgesi&quot; istendiğinde kastedilen çoğu zaman iki farklı belgeden biridir: panoyu imal eden firmanın uygunluk beyanı ya da işletmedeki panonun periyodik kontrol raporu. İkisini karıştırmak, olmayan bir belgeyi aramakla sonuçlanıyor.",
+    body: "<h2>Panoyla ilgili iki ayrı belge</h2>\n<p><strong>1. İmalatçının uygunluk beyanı.</strong> Panonun <strong>TS EN 61439</strong> serisine göre tasarım doğrulaması yapılarak üretildiğini gösterir ve panoyu imal eden firmadan gelir. Bu seri, eski TS EN 60439'un yerini aldı; eskiden &quot;tip test&quot; ve &quot;kısmi tip test&quot; diye ayrılan yaklaşım, yerini bütün alçak gerilim pano tasarımları için <strong>tasarımın doğrulanması</strong> şartına bıraktı. Beyanı imalatçı hazırlar; sonradan bir muayene kuruluşu tarafından üretilemez.</p>\n<p><strong>2. Periyodik kontrol raporu.</strong> İşletmede <em>kullanılan</em> panonun düzenli kontrolünü belgeler. Pano, elektrik tesisatının bir parçası olarak değerlendirilir ve ilgili standartlarda aksi belirtilmedikçe yılda bir kontrol edilir. 1 Eylül 2025'ten beri bu kontrol, Çalışma ve Sosyal Güvenlik Bakanlığı'nın <a href=\"/yazilar/elektrik-periyodik-kontrol-rapor-formati\">zorunlu rapor formatıyla</a> raporlanır.</p>\n<h2>&quot;Pano belgesi&quot; isteyen taraf aslında ne istiyor?</h2>\n<ul>\n<li><strong>Yeni tesis, enerji başvurusu, ruhsat:</strong> istenen genellikle panonun kendisi değil, <a href=\"/yazilar/elektrik-ic-tesisat-uygunluk-belgesi\">iç tesisat uygunluk belgesidir</a>.</li>\n<li><strong>İSG denetimi, ekipman dosyası:</strong> elektrik tesisatı periyodik kontrol raporu.</li>\n<li><strong>Pano satın alma, ihale, kabul:</strong> imalatçının uygunluk beyanı ve tasarım doğrulama dokümanları.</li>\n</ul>\n<h2>Pano kontrolünde tipik olarak nelere bakılır?</h2>\n<ul>\n<li>Etiketleme ve tek hat şemasının panonun mevcut hâliyle uyumu</li>\n<li>Koruma elemanlarının seçiciliği ve kesme kapasitesinin tesise uygunluğu</li>\n<li>Bağlantıların sıkılığı ve ısınma belirtileri</li>\n<li>Gövde topraklaması ve topraklama sürekliliği</li>\n<li>Dokunma koruması, kapak ve kilit düzeni, koruma sınıfı</li>\n<li>Pano önünde güvenli müdahale için gereken açıklık</li>\n</ul>\n<p>Bu başlıkların çoğu gözle ve ölçümle birlikte değerlendirilir; tek başına &quot;pano yeni&quot; olması bir bulgu değildir.</p>\n<h2>Sık yapılan hata: tip testli görünümlü pano</h2>\n<p>Panonun standartlara uygun bileşenlerden üretilmiş olması, panonun kendisinin tasarım doğrulamasından geçtiği anlamına gelmiyor. Sektörde bu ayrım &quot;tip testli&quot; ile &quot;tip testli görünümlü&quot; pano arasındaki fark olarak anlatılır. Satın alırken bileşen markalarını değil, panonun kendisi için düzenlenmiş doğrulama dokümanını sormak gerekir.</p>\n<h2>Özetle</h2>\n<p>İmalatçı beyanı panonun <em>nasıl üretildiğini</em>, periyodik kontrol raporu ise <em>bugün hangi durumda olduğunu</em> anlatır. Biri diğerinin yerine geçmez; bir denetimde ikisi de ayrı ayrı sorulabilir. Tesisatın bütünü için <a href=\"/ekipman/elektrik-tesisat\">elektrik tesisatı periyodik kontrolü</a> sayfasına bakabilirsiniz.</p>",
+    faq: [
+      { q: "Pano uygunluk belgesini muayene kuruluşu düzenler mi?", a: "İmalatçının uygunluk beyanını hayır — onu panoyu üreten firma hazırlar. Muayene kuruluşu, işletmedeki panonun periyodik kontrolünü yapar ve kontrol raporunu düzenler." },
+      { q: "Panolar hangi standarda göre üretiliyor?", a: "Alçak gerilim anahtarlama ve kontrol düzenleri için TS EN 61439 serisi geçerlidir; bu seri eski TS EN 60439'un yerini almıştır ve tasarımın doğrulanmasını şart koşar." },
+      { q: "Pano kontrolü elektrik tesisatı kontrolünden ayrı mı yapılır?", a: "Genellikle ayrı değil: pano, elektrik tesisatı periyodik kontrolünün içinde değerlendirilir ve aynı raporda yer alır." },
+      { q: "Panom yeni, yine de kontrol gerekir mi?", a: "Evet. Periyodik kontrol panonun yaşına değil, kullanımda olmasına bağlıdır. Yeni bir panoda da bağlantı gevşemesi, etiket uyumsuzluğu veya yanlış koruma seçimi çıkabilir." },
+    ],
+  },
+  {
+    slug: "topraklama-olcum-raporu",
+    title: "Topraklama Ölçüm Raporu: Neleri İçermeli, Ne Zaman Yenilenir?",
+    seoTitle: "Topraklama Ölçüm Raporu",
+    description: "Geçerli bir topraklama ölçüm raporunda hangi bilgiler bulunur, ne sıklıkla yenilenir ve hangi eksikler raporu tartışmalı hale getirir?",
+    category: "Rehber",
+    date: "2026-09-02",
+    readMin: 5,
+    keywords: ["topraklama ölçüm raporu", "topraklama raporu geçerlilik", "rehber"],
+    lead: "Topraklama ölçüm raporu, tesisin topraklama sisteminin ölçülerek değerlendirildiğini gösteren belgedir. Denetimlerde en sık istenen elektrik belgelerinden biri; ama elde olan her rapor aynı ölçüde işe yaramıyor.",
+    body: "<h2>Rapor neyi belgeler?</h2>\n<p>Topraklama ölçüm raporu, bir arıza anında kaçak akımın güvenli şekilde toprağa aktarılıp aktarılamayacağını ve koruma düzeninin bu akımı zamanında kesip kesmeyeceğini ölçümle ortaya koyar. Yani belge, &quot;topraklama var mı&quot; sorusunu değil <em>&quot;topraklama işini yapıyor mu&quot;</em> sorusunu yanıtlar.</p>\n<h2>Ne sıklıkla yenilenir?</h2>\n<p>İş sağlığı ve güvenliği tarafında kural nettir: topraklama tesisatının periyodik kontrolü, ilgili standartlarda aksi belirtilmedikçe <strong>yılda bir</strong> yapılır. Bunun yanında Elektrik Tesislerinde Topraklamalar Yönetmeliği, tesis türüne göre kendi denetim periyotlarını ayrıca tanımlar; işletmenizin türüne ve topraklanan elemanın sabit ya da hareketli olmasına göre daha sık ölçüm gerekebilir. Bu yüzden &quot;herkes için tek bir süre&quot; demek yerine tesisin türünü konuşmak gerekir. Ekipman bazında süreler için <a href=\"/periyodik-kontrol-sureleri\">periyodik kontrol süreleri tablosuna</a> bakabilirsiniz.</p>\n<h2>Geçerli bir raporda ne bulunur?</h2>\n<ul>\n<li>Tesisin şebeke tipi (TT, TN, IT) — değerlendirmenin tamamı buna bağlı</li>\n<li>Ölçüm yapılan noktalar ve her noktada okunan <strong>sayısal değer</strong></li>\n<li>Topraklama direncinin yanında <strong>süreklilik</strong> ölçümü</li>\n<li>Koruma cihazının tipi ve anma akımı</li>\n<li>Kullanılan ölçüm cihazı ve kalibrasyon bilgisi</li>\n<li>Ölçümü yapan kişinin adı, unvanı ve yetkisi ile ölçüm tarihi</li>\n</ul>\n<p>1 Eylül 2025'ten beri bu bilgiler serbest bir düzende değil, Bakanlığın <a href=\"/yazilar/elektrik-periyodik-kontrol-rapor-formati\">zorunlu rapor formatındaki</a> başlıklar altında yazılıyor.</p>\n<h2>Raporu tartışmalı hale getiren üç eksik</h2>\n<ol>\n<li><strong>Sadece &quot;uygundur&quot; yazması.</strong> Ölçülen değer yazmıyorsa rapor, bir sonraki ölçümle karşılaştırılamaz; bozulmayı kimse fark edemez.</li>\n<li><strong>Tek noktadan ölçüm.</strong> Büyük bir tesiste tek bir bara ölçülüp tesisin tamamı hakkında hüküm kurulamaz.</li>\n<li><strong>Sürekliliğin atlanması.</strong> Topraklama direnci uygun çıksa bile, bir makineye giden koruma iletkeni kopuksa o makine korumasızdır.</li>\n</ol>\n<p>Değerin kendisi nasıl yorumlanır, hangi koşulda kaç ohm beklenir sorusunu ayrı bir yazıda ele aldık: <a href=\"/yazilar/topraklama-direnci-kac-ohm-olmali\">topraklama direnci kaç ohm olmalı</a>.</p>\n<h2>Ölçüm günü için hazırlık</h2>\n<p>Ölçümün hızlı ve eksiksiz geçmesi için tek hat şeması, bir önceki rapor, topraklama baralarına ve ölçüm kutularına fiziksel erişim ile hangi hattın ne kadar süre enerjisiz kalabileceğine dair bir plan yeterlidir. Sistem ve ölçüm kapsamı için <a href=\"/ekipman/topraklama-olcumu\">topraklama ölçümü</a> sayfasına bakabilirsiniz.</p>",
+    faq: [
+      { q: "Topraklama ölçüm raporu kaç yıl geçerli?", a: "İş sağlığı ve güvenliği kapsamında topraklama tesisatının periyodik kontrolü, ilgili standartlarda aksi belirtilmedikçe yılda bir yapılır. Tesis türüne göre daha sık ölçüm gerektiren durumlar olabilir." },
+      { q: "Raporda sadece 'uygun' yazıyor, sorun olur mu?", a: "Ölçülen sayısal değerler yazmıyorsa rapor sonraki ölçümle karşılaştırılamaz ve zamanla oluşan bozulma görülemez. Değerlerin nokta nokta yazılmasını istemek en doğrusu." },
+      { q: "Kaçak akım rölesi varsa topraklama ölçümü gerekir mi?", a: "Evet. Kaçak akım rölesi topraklamanın yerine geçmez; röle görevi yapabilmek için de uygun bir topraklama düzenine ihtiyaç duyar." },
+      { q: "Ölçümü kim yapabilir?", a: "Elektrikle ilgili tesisatın periyodik kontrolleri; elektrik mühendisleri, elektrik eğitimi bölümü mezunu teknik öğretmenler ile elektrik teknikeri veya yüksek teknikerleri tarafından yapılır." },
+    ],
+  },
 ];
 
 export function slugify(tr: string): string {

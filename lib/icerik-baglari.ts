@@ -44,7 +44,12 @@ export const YAZI_EKIPMAN: Record<string, string[]> = {
   "elektrik-tesisat-projesi-zorunlu-mu": ["elektrik-tesisat", "makinalarda-elektriksel-kontrol"],
   "periyodik-kontrol-yaptirmamanin-cezasi": ["mekanik-periyodik-kontrol"],
   "periyodik-kontrol-cezasi-2026": ["mekanik-periyodik-kontrol"],
-  "isg-denetiminde-istenen-belgeler": ["mekanik-periyodik-kontrol", "elektrik-tesisat"],
+  // ⚠️ 2026-09-02: `elektrik-tesisat` bu satirdan CIKARILDI. O sayfada rehber
+  // sayisi 6'ya cikmisti ve kutu en fazla 5 gosterdigi icin listeye en son
+  // eklenen yazi hic link alamiyordu. Genel bir ISG yazisi olarak asil yeri
+  // zaten `mekanik-periyodik-kontrol`; elektrikteki yeri daha dogrudan
+  // konusu olan yazilara birakildi.
+  "isg-denetiminde-istenen-belgeler": ["mekanik-periyodik-kontrol"],
 
   /* ---- 2026-09-02'de eklenenler ----------------------------------------
      Canli site tarandiginda 30 rehber yazinin 11'i bu tabloda YOKTU; yani
@@ -78,6 +83,8 @@ export const YAZI_EKIPMAN: Record<string, string[]> = {
     "elektrik-tesisat", "topraklama-olcumu", "paratoner-yildirimdan-korunma", "yangin-algilama",
   ],
   "elektrik-ic-tesisat-uygunluk-belgesi": ["elektrik-tesisat", "makinalarda-elektriksel-kontrol"],
+  "elektrik-panosu-uygunluk-belgesi": ["elektrik-tesisat", "makinalarda-elektriksel-kontrol"],
+  "topraklama-olcum-raporu": ["topraklama-olcumu", "paratoner-yildirimdan-korunma"],
 };
 
 /**
