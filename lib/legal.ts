@@ -103,11 +103,19 @@ export const CEREZ_TABLOSU = [
    * (app/components/GoogleAnalytics.tsx) listede HIC YOKTU. Yani cerez
    * politikasi calismayan bir servisi beyan edip calisani gizliyordu.
    */
+  /**
+   * ⚠️ 2026-09-02'de GUNCELLENDI — davranis degisti, metin de degismek
+   * zorundaydi. Once etiket onay verilmedikce HIC yuklenmiyordu; artik
+   * Consent Mode v2 gelismis modda calisiyor: etiket yukleniyor ama izinler
+   * "denied" varsayilaniyla basliyor. Onay yoksa CEREZ YAZILMAZ, yalnizca
+   * kimlik tasimayan bir ping gider. Bunu yazmamak, calisan sistemi yanlis
+   * beyan etmek olurdu — cerez politikasinin tek isi dogru beyan.
+   */
   {
     ad: "Google Analytics 4",
     saglayici: "Google Ireland Ltd. / Google LLC (ABD)",
     amac:
-      "Hangi sayfaların ne sıklıkta görüntülendiğinin ve ziyaretçilerin siteyi nasıl kullandığının toplu olarak ölçülmesi. Yalnızca “Tümünü kabul et” dediğinizde yüklenir; reddederseniz hiç çalışmaz.",
+      "Hangi sayfaların ne sıklıkta görüntülendiğinin ve ziyaretçilerin siteyi nasıl kullandığının toplu olarak ölçülmesi. “Tümünü kabul et” demediğiniz sürece cihazınıza çerez yazılmaz ve sizi tanımlayan bir kimlik oluşturulmaz; bu durumda Google’a yalnızca kimlik taşımayan, toplu istatistik amaçlı bir sinyal (sayfa adresi ve IP) iletilir. Onay verdiğinizde ölçüm normal şekilde çalışır.",
     tip: "Analitik",
   },
   {
