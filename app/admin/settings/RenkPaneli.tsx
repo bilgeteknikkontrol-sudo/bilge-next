@@ -47,7 +47,7 @@ const GRUPLAR: Grup[] = [
       {
         key: "blue",
         label: "Mavi — bağlantı ve vurgu",
-        not: "Tıklanabilir yazılar, yazı içi bağlantılar, rakamlar (2014 / 500+ / 92), küçük etiketler.",
+        not: "Tıklanabilir yazılar, yazı içi bağlantılar, rakamlar (2009 / 500+ / 92), küçük etiketler.",
       },
       {
         key: "accent",

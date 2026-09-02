@@ -140,7 +140,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     url: "https://bilgekontrol.com",
     /**
      * ⚠️ Kurulus yili ve logo yoktu. Ikisi de E-E-A-T (deneyim/uzmanlik/
-     * otorite/guvenilirlik) sinyali: 2014'ten beri faaliyette olan bir
+     * otorite/guvenilirlik) sinyali: 2009'ten beri faaliyette olan bir
      * kurulusun bunu arama motoruna soylememesi karsiliksiz kayip.
      * Yil lib/site-data.ts KURUM.kurulus'tan — tek kaynak.
      */

@@ -62,7 +62,7 @@ const HERO_MADDELERI = [
 ];
 
 const RAKAMLAR = [
-  ["2014", "Yılından beri"],
+  ["2009", "Yılından beri"],
   ["500+", "Müşteri firma"],
   ["92", "Ekipman türü"],
   [KURUM.akreditasyon, "Akreditasyon no"],
@@ -131,7 +131,7 @@ export default async function Home() {
   const heroSubtitle =
     settings?.heroSubtitle ||
     "Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri periyodik kontrolünü uluslararası geçerli raporlarla belgeliyoruz.";
-  const aboutTitle = settings?.aboutTitle || "2014'ten beri iş güvenliğinin yanında";
+  const aboutTitle = settings?.aboutTitle || "2009'ten beri iş güvenliğinin yanında";
   const aboutText =
     settings?.aboutText ||
     "Bilge Teknik Kontrol; iş ekipmanlarının periyodik kontrolünde TÜRKAK akreditasyonuyla (AB-0296-M) bağımsız, tarafsız ve yasal olarak geçerli raporlar sunar.";

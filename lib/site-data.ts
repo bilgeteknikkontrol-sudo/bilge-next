@@ -143,7 +143,7 @@ export const GENEL_SSS: SSS[] = [
   { q: "Periyodik kontrol periyotları (süreleri) nasıl belirlenir?", a: "Kontrol periyodu, İş Ekipmanlarının Kullanımında Sağlık ve Güvenlik Şartları Yönetmeliği Ek-III'te yer alan madde 1.4 ve 1.10'a göre belirlenir. Ekipmanın periyodik kontrol aralığı önce imalatçının öngördüğü süreye, o belirtilmemişse ilgili ulusal/uluslararası standarda, o da yoksa yönetmelikteki azami sürelere göre belirlenir. İşyeri ortam koşulları, kullanım sıklığı, ekipmanın yaşı ve önceki kontrol sonuçları gibi faktörlere göre yapılacak risk değerlendirmesiyle kontrol sıklığı azami süreyi aşmamak koşuluyla artırılabilir." },
   { q: "Yaygın ekipmanlar için genel kontrol periyodu nedir?", a: "Yönetmelik Ek-III tablolarında, ilgili standartta ayrıca bir süre belirtilmediği sürece çoğu ekipman için azami periyot 1 yıldır: basınçlı kaplar (kazanlar, tanklar), kren/vinç ve kaldırma-iletme ekipmanları, forklift ve endüstriyel araçlar, elektrik ve topraklama tesisatı, yangın söndürme sistemleri, endüstriyel raf sistemleri, yürüyen merdiven ve bantlar. Yapı iskeleleri ve katodik koruma tesisatı için azami süre 6 aydır. Bilge Teknik Kontrol olarak ayrıca, kaldırma-iletme makinelerinin üç ayda bir, basınçlı kapların ise yılda bir kontrol edilmesini tavsiye ediyoruz." },
   { q: "İSG-KATİP sözleşme uygulaması nedir, nasıl uygulanır?", a: "04.02.2024 tarihli ve 32450 sayılı Resmî Gazete'de yayımlanan yönetmelik değişikliği uyarınca, işveren ile periyodik kontrol yapmaya yetkili kişiler arasında sözleşme imzalanması gerekliliği hükme bağlanmıştır. Bu kapsamda, kamu kurumları ile periyodik kontrol yetkilisi kişiler arasında düzenlenecek iş ekipmanı periyodik kontrol sözleşmelerinin İSG-KATİP üzerinden yapılması gerekmektedir. Ayrıntılı bilgiye <a href=\"https://isekipmanlari.csgb.gov.tr/detay.aspx?d=1028\" target=\"_blank\" rel=\"noopener noreferrer\">isekipmanlari.csgb.gov.tr</a> adresinden ulaşabilirsiniz." },
-  { q: "Bilge Teknik Kontrol ile çalışmanın avantajları nelerdir?", a: "TS EN ISO/IEC 17020 kapsamında TÜRKAK'tan akredite A Tipi Muayene Kuruluşuyuz. Periyodik kontrol raporlarımızı yazılım programı üzerinden hazırlıyor ve resimli olarak teslim ediyoruz; kontroller sırasında görülen eksiklik, hata ve kusurlar test/kontrol fotoğrafları ve ekipmanın genel görünüm resimleriyle birlikte rapora ekleniyor. Raporlar e-imzalı olarak verildiği için istediğiniz zaman ve yerden raporlarınıza ulaşabilirsiniz. 2014 yılından bu yana değişmeyen uzman mühendis kadromuzla hizmet vermeye devam ediyoruz." },
+  { q: "Bilge Teknik Kontrol ile çalışmanın avantajları nelerdir?", a: "TS EN ISO/IEC 17020 kapsamında TÜRKAK'tan akredite A Tipi Muayene Kuruluşuyuz. Periyodik kontrol raporlarımızı yazılım programı üzerinden hazırlıyor ve resimli olarak teslim ediyoruz; kontroller sırasında görülen eksiklik, hata ve kusurlar test/kontrol fotoğrafları ve ekipmanın genel görünüm resimleriyle birlikte rapora ekleniyor. Raporlar e-imzalı olarak verildiği için istediğiniz zaman ve yerden raporlarınıza ulaşabilirsiniz. 2009 yılından bu yana değişmeyen uzman mühendis kadromuzla hizmet vermeye devam ediyoruz." },
 ];
 
 export const KURUM = {
@@ -162,7 +162,7 @@ export const KURUM = {
   ilce: "Beylikdüzü",
   il: "İstanbul",
   ulke: "TR",
-  kurulus: "2014",
+  kurulus: "2009",
   geo: { lat: 41.0027, lng: 28.675 },
   // Kullanici 2026-08-27'de dogruladi: acilis 08:00.
   // (Eski PHP sitesinde iki farkli yerde 09:00 ve 08:00 yaziyordu, celiski cozuldu.)

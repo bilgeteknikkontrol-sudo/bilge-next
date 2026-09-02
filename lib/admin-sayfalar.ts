@@ -96,7 +96,7 @@ export const ADMIN_SAYFALAR: AdminSayfa[] = [
         tur: "rakam",
         baslik: "Rakam şeridi",
         aciklama:
-          "Üst bölümün altındaki ince şerit (2014 · 500+ · 92 · AB-0296-M). Başlık = rakam, Metin = altındaki etiket.",
+          "Üst bölümün altındaki ince şerit (2009 · 500+ · 92 · AB-0296-M). Başlık = rakam, Metin = altındaki etiket.",
       },
       {
         tip: "metin",

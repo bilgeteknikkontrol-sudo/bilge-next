@@ -236,7 +236,7 @@ export const METIN_GRUPLARI: MetinGrubu[] = [
         bicimli: true,
         varsayilan: `## Biz kimiz?
 
-2014 yılından bu yana iş ekipmanlarının periyodik kontrolü alanında hizmet veriyoruz. Beylikdüzü / İstanbul'daki merkez ofisimizden hareketle Türkiye genelindeki işletmelere yerinde muayene hizmeti sunuyoruz.
+2009 yılından bu yana iş ekipmanlarının periyodik kontrolü alanında hizmet veriyoruz. Beylikdüzü / İstanbul'daki merkez ofisimizden hareketle Türkiye genelindeki işletmelere yerinde muayene hizmeti sunuyoruz.
 
 Amacımız yalnızca bir kontrol belgesi düzenlemek değil; işletmenizin iş sağlığı ve güvenliği risklerini gerçek anlamda azaltmak ve yasal yükümlülüklerini zamanında karşılamasını sağlamaktır. Bu nedenle raporlarımızda yalnızca "uygundur" ibaresi değil, tespit edilen uygunsuzluklar ve giderilme önerileri de yer alır.
 
@@ -782,7 +782,7 @@ Bilge Teknik Kontrol, TÜRKAK tarafından **TS EN ISO/IEC 17020** kapsamında ak
         not: "Logonun altındaki kısa kurum açıklaması",
         uzun: true,
         varsayilan:
-          "TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş bağımsız A Tipi muayene kuruluşu. 2014’ten bu yana iş ekipmanlarının periyodik kontrolünde uzmanız.",
+          "TÜRKAK tarafından TS EN ISO/IEC 17020 standardına göre akredite edilmiş bağımsız A Tipi muayene kuruluşu. 2009’ten bu yana iş ekipmanlarının periyodik kontrolünde uzmanız.",
       },
       { anahtar: "footer_kurumsal_baslik", etiket: "Birinci sütun başlığı", varsayilan: "Kurumsal" },
       { anahtar: "footer_hizmet_baslik", etiket: "İkinci sütun başlığı", varsayilan: "Hizmetler" },

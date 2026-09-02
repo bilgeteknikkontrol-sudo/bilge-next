@@ -321,7 +321,7 @@ export function defaultSettings(): SiteSettings {
     heroTitle: "İş Ekipmanınızın Güvenliği, Kanıtlanmış Uzmanlıkla",
     heroSubtitle:
       "Basınçlı kap, kaldırma, elektrik, yangın ve iş makineleri periyodik kontrolünü uluslararası geçerli raporlarla belgeliyoruz.",
-    aboutTitle: "2014'ten beri iş güvenliğinin yanında",
+    aboutTitle: "2009'ten beri iş güvenliğinin yanında",
     aboutText:
       "Bilge Teknik Kontrol; iş ekipmanlarının periyodik kontrolünde TÜRKAK akreditasyonuyla (AB-0296-M) bağımsız, tarafsız ve yasal olarak geçerli raporlar sunar.",
     ctaTitle: "İş Güvenliğinizi Sıraya Koymayın",

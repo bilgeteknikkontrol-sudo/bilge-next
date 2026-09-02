@@ -45,7 +45,7 @@ export const TUR_ETIKET: Record<BlokTuru, string> = {
 export const TUR_IPUCU: Record<BlokTuru, string> = {
   hero: "Görsel zorunlu. Başlık/metin boş bırakılabilir; slayt yalnızca arka plan görselidir.",
   ozellik: "İkon = emoji (🛡️ 📋 🇹🇷), Başlık = kalın yazan kısa cümle, Metin = altındaki açıklama.",
-  rakam: "Başlık = rakamın kendisi (2014, 500+, 92), Metin = altındaki etiket (Yılından beri).",
+  rakam: "Başlık = rakamın kendisi (2009, 500+, 92), Metin = altındaki etiket (Yılından beri).",
   avantaj: "İkon = emoji, Başlık = kart başlığı, Metin = açıklama. Dört kart yan yana en iyi görünür.",
   surec: "Başlık = adımın adı, Metin = açıklaması. Numara sıraya göre otomatik verilir.",
   referans: "Başlık = firma adı, Görsel = logo. Bağlantı isteğe bağlı.",
