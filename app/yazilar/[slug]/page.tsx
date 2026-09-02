@@ -96,8 +96,12 @@ export default async function YaziPage({ params }: { params: Promise<{ slug: str
     datePublished: a.date,
     // ⚠️ Yoktu. Google, tarihi olmayan rehber icerigi "ne zaman yazildigi
     // belirsiz" sayiyor; guncellik bu konuda (mevzuat degisiyor) siralama
-    // sinyali. Yazinin kendi tarihi tek kaynak.
-    dateModified: a.date,
+    // sinyali.
+    // ⚠️ 2026-09-02: artik once GERCEK duzenleme ani (`guncellendi`), yoksa
+    // yayin tarihi. Once ikisi de `a.date` idi; yani panelden guncellenen bir
+    // yazi Google'a hala eski tarihiyle gidiyordu. Alan bos olan kayitlarda
+    // davranis degismiyor (bkz. lib/cms.ts GUNCELLENDI notu).
+    dateModified: a.guncellendi ?? a.date,
     /**
      * ⚠️ GORSEL YOKTU — Article zengin sonucunun en belirleyici alani.
      * Google'in "Article structured data" dokumaninda `image` tavsiye edilen

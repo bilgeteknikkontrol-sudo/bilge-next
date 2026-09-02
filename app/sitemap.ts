@@ -41,6 +41,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getLocations().catch(() => null),
   ]);
 
+  /**
+   * ⚠️ `lastmod` YALNIZCA GERCEK BIR TARIH VARSA basiliyor.
+   *
+   * Google, guvenmedigi lastmod degerlerini yok sayar; her sayfaya "bugun"
+   * yazmak taramayi hizlandirmaz, tersine site haritasinin tamamini
+   * guvenilmez yapar. Kayitlarda 2026-09-02'de acilan `guncellendi` alani
+   * doluysa o kullaniliyor (bkz. lib/cms.ts GUNCELLENDI notu); alan bos olan
+   * eski kayitlar lastmod'suz giriyor ve panelden ilk duzenlemede kendiliginden
+   * dolar.
+   *
+   * ⚠️ Gecersiz bir tarih `Invalid Date` uretip site haritasinin TAMAMINI
+   * dusurebilir; bu yuzden ayristirma tek yerde ve kontrollu.
+   */
+  const tarih = (v?: string): Date | undefined => {
+    if (!v) return undefined;
+    const d = new Date(v);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+  };
+
   const core: MetadataRoute.Sitemap = [
     { url: base + "/", changeFrequency: "weekly", priority: 1 },
     { url: base + "/ekipman", changeFrequency: "weekly", priority: 0.9 },
@@ -70,11 +89,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // ⚠️ Once `a.date || now` yaziyordu; `now` kaldirilinca gecersiz bir tarih
       // `Invalid Date` uretip site haritasinin TAMAMINI dusurebilirdi. Tarih
       // okunamiyorsa alan hic basilmiyor.
-      const t = a.date ? new Date(a.date) : null;
-      const gecerli = t && !Number.isNaN(t.getTime());
+      // Panelden duzenlendiyse gercek duzenleme ani, yoksa yayin tarihi.
+      const t = tarih((a as { guncellendi?: string }).guncellendi) ?? tarih(a.date);
       return {
         url: `${base}/yazilar/${a.slug}`,
-        ...(gecerli ? { lastModified: t } : {}),
+        ...(t ? { lastModified: t } : {}),
         changeFrequency: "monthly" as const,
         priority: 0.6,
       };
@@ -82,20 +101,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const sehirGirdileri: MetadataRoute.Sitemap = (sehirler ?? LOCATIONS)
     .filter((l) => !("aktif" in l) || l.aktif)
-    .map((l) => ({
-      url: `${base}/bolge/${l.slug}`,
-      changeFrequency: "monthly" as const,
-      // Sehir sayfalari yerel aramalarin giris kapisi; yazilardan onemli.
-      priority: 0.8,
-    }));
+    .map((l) => {
+      const t = tarih((l as { guncellendi?: string }).guncellendi);
+      return {
+        url: `${base}/bolge/${l.slug}`,
+        ...(t ? { lastModified: t } : {}),
+        changeFrequency: "monthly" as const,
+        // Sehir sayfalari yerel aramalarin giris kapisi; yazilardan onemli.
+        priority: 0.8,
+      };
+    });
 
   const ekipmanGirdileri: MetadataRoute.Sitemap = (ekipmanlar ?? ALL_EKIPMAN)
     .filter((e) => !("aktif" in e) || e.aktif)
-    .map((e) => ({
-      url: `${base}/ekipman/${e.slug}`,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    }));
+    .map((e) => {
+      const t = tarih((e as { guncellendi?: string }).guncellendi);
+      return {
+        url: `${base}/ekipman/${e.slug}`,
+        ...(t ? { lastModified: t } : {}),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      };
+    });
 
   return [...core, ...yaziGirdileri, ...sehirGirdileri, ...ekipmanGirdileri];
 }

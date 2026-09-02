@@ -28,8 +28,29 @@ export type Article = {
    * Bos birakilirsa lib/images.ts icindeki slug eslesmeli varsayilan kullanilir.
    */
   image?: string;
+  /** Son icerik degisikligi (ISO 8601). bkz. GUNCELLENDI notu. */
+  guncellendi?: string;
 };
 
+/**
+ * GUNCELLENDI — kaydin son degistigi an (ISO 8601).
+ *
+ * ⚠️ NEDEN VAR: site haritasindaki `lastmod`. 2026-09-02 denetiminde 158
+ * girdinin 124'unde lastmod yoktu; cunku ekipman ve bolge kayitlarinda hicbir
+ * tarih tutulmuyordu. Hepsine "bugun" yazmak kolay olurdu ama Google
+ * guvenmedigi lastmod'u yok sayar ve yanlis tarih yanlis sinyaldir; bu yuzden
+ * gercek bir alan acildi.
+ *
+ * ⚠️ TARIH SQL'DE `NOW()` ILE DAMGALANMAZ. `dbPersist` panelde yapilan HER
+ * kayitta butun satirlari yeniden yaziyor (bir ayar degisikligi 92 ekipmani
+ * da UPDATE ediyor). NOW() kullanilsaydi tek bir ayar kaydi tum sitenin
+ * "bugun guncellendi" gorunmesine yol acardi. Bunun yerine damga, DEGISEN
+ * kaydin nesnesine `saveEquipment` / `saveLocation` / `saveArticle` icinde
+ * basiliyor; toplu yazmada digerleri kendi eski degeriyle geri yaziliyor.
+ *
+ * Bos olabilir: alan acilmadan once var olan kayitlarda deger yok ve
+ * uydurulmuyor — o sayfalar site haritasina lastmod'suz giriyor.
+ */
 export type Equipment = {
   slug: string;
   ad: string;
@@ -61,6 +82,8 @@ export type Equipment = {
   lead?: string;
   body?: string;
   faq?: { q: string; a: string }[];
+  /** Son icerik degisikligi (ISO 8601). bkz. GUNCELLENDI notu. */
+  guncellendi?: string;
 };
 
 export type Location = {
@@ -73,6 +96,8 @@ export type Location = {
   hizmetler: string[];
   aktif: boolean;
   sira: number;
+  /** Son icerik degisikligi (ISO 8601). bkz. GUNCELLENDI notu. */
+  guncellendi?: string;
 };
 
 export type MediaItem = {
@@ -165,6 +190,10 @@ function ensureSchema(): Promise<void> {
       await run(s`ALTER TABLE equipment ADD COLUMN \`lead\` TEXT`).catch(() => {});
       await run(s`ALTER TABLE equipment ADD COLUMN body LONGTEXT`).catch(() => {});
       await run(s`ALTER TABLE equipment ADD COLUMN faq JSON`).catch(() => {});
+      // Site haritasi lastmod'u icin gercek guncelleme tarihi (2026-09-02).
+      await run(s`ALTER TABLE equipment ADD COLUMN guncellendi VARCHAR(32)`).catch(() => {});
+      await run(s`ALTER TABLE locations ADD COLUMN guncellendi VARCHAR(32)`).catch(() => {});
+      await run(s`ALTER TABLE articles ADD COLUMN guncellendi VARCHAR(32)`).catch(() => {});
     } else {
       await run(s`CREATE TABLE IF NOT EXISTS equipment (slug text PRIMARY KEY, ad text, kategori text, standart text, periyot int, periyot_not text, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
       await run(s`CREATE TABLE IF NOT EXISTS locations (slug text PRIMARY KEY, il text, ilce text, title text, description text, intro text, hizmetler jsonb, aktif boolean DEFAULT true, sira int DEFAULT 0)`);
@@ -179,6 +208,9 @@ function ensureSchema(): Promise<void> {
       await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS lead text`);
       await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS body text`);
       await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS faq jsonb`);
+      await run(s`ALTER TABLE equipment ADD COLUMN IF NOT EXISTS guncellendi text`);
+      await run(s`ALTER TABLE locations ADD COLUMN IF NOT EXISTS guncellendi text`);
+      await run(s`ALTER TABLE articles ADD COLUMN IF NOT EXISTS guncellendi text`);
     }
     await seedIfEmpty(s);
   })().catch((e) => {
@@ -439,6 +471,7 @@ function rowToEquipment(r: Record<string, unknown>): Equipment {
     lead: r.lead ? String(r.lead) : undefined,
     body: r.body ? String(r.body) : undefined,
     faq: jsonDizi<{ q: string; a: string }>(r.faq),
+    guncellendi: r.guncellendi ? String(r.guncellendi) : undefined,
   };
 }
 
@@ -453,6 +486,7 @@ function rowToLocation(r: Record<string, unknown>): Location {
     hizmetler: jsonDizi<string>(r.hizmetler),
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
+    guncellendi: r.guncellendi ? String(r.guncellendi) : undefined,
   };
 }
 
@@ -472,6 +506,7 @@ function rowToArticle(r: Record<string, unknown>): Article {
     aktif: Boolean(r.aktif ?? true),
     sira: Number(r.sira ?? 0),
     image: r.image ? String(r.image) : undefined,
+    guncellendi: r.guncellendi ? String(r.guncellendi) : undefined,
   };
 }
 
@@ -576,12 +611,12 @@ async function dbSaveEquipment(e: Equipment): Promise<void> {
   const q = sql();
   await run(
     isMysql()
-      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image, \`lead\`, body, faq)
-          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null}, ${e.lead ?? null}, ${e.body ?? null}, ${JSON.stringify(e.faq ?? [])})
-          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}, \`lead\`=${e.lead ?? null}, body=${e.body ?? null}, faq=${JSON.stringify(e.faq ?? [])}`
-      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image, lead, body, faq)
-          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null}, ${e.lead ?? null}, ${e.body ?? null}, ${JSON.stringify(e.faq ?? [])}::jsonb)
-          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}, lead=${e.lead ?? null}, body=${e.body ?? null}, faq=${JSON.stringify(e.faq ?? [])}::jsonb`
+      ? q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image, \`lead\`, body, faq, guncellendi)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null}, ${e.lead ?? null}, ${e.body ?? null}, ${JSON.stringify(e.faq ?? [])}, ${e.guncellendi ?? null})
+          ON DUPLICATE KEY UPDATE ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}, \`lead\`=${e.lead ?? null}, body=${e.body ?? null}, faq=${JSON.stringify(e.faq ?? [])}, guncellendi=${e.guncellendi ?? null}`
+      : q`INSERT INTO equipment (slug, ad, kategori, standart, periyot, periyot_not, aktif, sira, image, lead, body, faq, guncellendi)
+          VALUES (${e.slug}, ${e.ad}, ${e.kategori}, ${e.standart}, ${e.periyot}, ${e.periyotNot ?? null}, ${e.aktif}, ${e.sira}, ${e.image ?? null}, ${e.lead ?? null}, ${e.body ?? null}, ${JSON.stringify(e.faq ?? [])}::jsonb, ${e.guncellendi ?? null})
+          ON CONFLICT (slug) DO UPDATE SET ad=${e.ad}, kategori=${e.kategori}, standart=${e.standart}, periyot=${e.periyot}, periyot_not=${e.periyotNot ?? null}, aktif=${e.aktif}, sira=${e.sira}, image=${e.image ?? null}, lead=${e.lead ?? null}, body=${e.body ?? null}, faq=${JSON.stringify(e.faq ?? [])}::jsonb, guncellendi=${e.guncellendi ?? null}`
   );
 }
 
@@ -590,12 +625,12 @@ async function dbSaveLocation(l: Location): Promise<void> {
   const q = sql();
   await run(
     isMysql()
-      ? q`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
-          VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}, ${l.aktif}, ${l.sira})
-          ON DUPLICATE KEY UPDATE il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}, aktif=${l.aktif}, sira=${l.sira}`
-      : q`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira)
-          VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, ${l.aktif}, ${l.sira})
-          ON CONFLICT (slug) DO UPDATE SET il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}::jsonb, aktif=${l.aktif}, sira=${l.sira}`
+      ? q`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira, guncellendi)
+          VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}, ${l.aktif}, ${l.sira}, ${l.guncellendi ?? null})
+          ON DUPLICATE KEY UPDATE il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}, aktif=${l.aktif}, sira=${l.sira}, guncellendi=${l.guncellendi ?? null}`
+      : q`INSERT INTO locations (slug, il, ilce, title, description, intro, hizmetler, aktif, sira, guncellendi)
+          VALUES (${l.slug}, ${l.il}, ${l.ilce ?? null}, ${l.title}, ${l.description}, ${l.intro}, ${JSON.stringify(l.hizmetler)}::jsonb, ${l.aktif}, ${l.sira}, ${l.guncellendi ?? null})
+          ON CONFLICT (slug) DO UPDATE SET il=${l.il}, ilce=${l.ilce ?? null}, title=${l.title}, description=${l.description}, intro=${l.intro}, hizmetler=${JSON.stringify(l.hizmetler)}::jsonb, aktif=${l.aktif}, sira=${l.sira}, guncellendi=${l.guncellendi ?? null}`
   );
 }
 
@@ -604,12 +639,12 @@ async function dbSaveArticle(a: Article): Promise<void> {
   const q = sql();
   await run(
     isMysql()
-      ? q`INSERT INTO articles (slug, title, seo_title, description, category, date, readmin, keywords, \`lead\`, body, faq, aktif, sira, image)
-          VALUES (${a.slug}, ${a.title}, ${a.seoTitle ?? null}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}, ${a.aktif}, ${a.sira}, ${a.image ?? null})
-          ON DUPLICATE KEY UPDATE title=${a.title}, seo_title=${a.seoTitle ?? null}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}, \`lead\`=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
-      : q`INSERT INTO articles (slug, title, seo_title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image)
-          VALUES (${a.slug}, ${a.title}, ${a.seoTitle ?? null}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null})
-          ON CONFLICT (slug) DO UPDATE SET title=${a.title}, seo_title=${a.seoTitle ?? null}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}`
+      ? q`INSERT INTO articles (slug, title, seo_title, description, category, date, readmin, keywords, \`lead\`, body, faq, aktif, sira, image, guncellendi)
+          VALUES (${a.slug}, ${a.title}, ${a.seoTitle ?? null}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}, ${a.aktif}, ${a.sira}, ${a.image ?? null}, ${a.guncellendi ?? null})
+          ON DUPLICATE KEY UPDATE title=${a.title}, seo_title=${a.seoTitle ?? null}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}, \`lead\`=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}, guncellendi=${a.guncellendi ?? null}`
+      : q`INSERT INTO articles (slug, title, seo_title, description, category, date, readmin, keywords, lead, body, faq, aktif, sira, image, guncellendi)
+          VALUES (${a.slug}, ${a.title}, ${a.seoTitle ?? null}, ${a.description}, ${a.category}, ${a.date}, ${a.readMin}, ${JSON.stringify(a.keywords)}::jsonb, ${a.lead ?? null}, ${a.body}, ${JSON.stringify(a.faq ?? [])}::jsonb, ${a.aktif}, ${a.sira}, ${a.image ?? null}, ${a.guncellendi ?? null})
+          ON CONFLICT (slug) DO UPDATE SET title=${a.title}, seo_title=${a.seoTitle ?? null}, description=${a.description}, category=${a.category}, date=${a.date}, readmin=${a.readMin}, keywords=${JSON.stringify(a.keywords)}::jsonb, lead=${a.lead ?? null}, body=${a.body}, faq=${JSON.stringify(a.faq ?? [])}::jsonb, aktif=${a.aktif}, sira=${a.sira}, image=${a.image ?? null}, guncellendi=${a.guncellendi ?? null}`
   );
 }
 
@@ -664,11 +699,19 @@ export async function getEquipmentBySlug(slug: string): Promise<Equipment | null
   return s.equipment.find((e) => e.slug === slug) ?? null;
 }
 
+/**
+ * ⚠️ GUNCELLENDI DAMGASI BURADA basiliyor, SQL'de degil — sebebi Equipment
+ * tipinin ustundeki not: `dbPersist` her kayitta butun satirlari yeniden
+ * yaziyor, `NOW()` kullanilsaydi tek bir ayar degisikligi tum sayfalari
+ * "bugun guncellendi" gosterirdi. Burada yalnizca GERCEKTEN kaydedilen
+ * kaydin tarihi degisiyor.
+ */
 export async function saveEquipment(e: Equipment): Promise<void> {
   const s = await getState();
-  const i = s.equipment.findIndex((x) => x.slug === e.slug);
-  if (i >= 0) s.equipment[i] = e;
-  else s.equipment.push(e);
+  const kayit = { ...e, guncellendi: new Date().toISOString() };
+  const i = s.equipment.findIndex((x) => x.slug === kayit.slug);
+  if (i >= 0) s.equipment[i] = kayit;
+  else s.equipment.push(kayit);
   await setState(s);
 }
 
@@ -689,9 +732,10 @@ export async function getLocationBySlug(slug: string): Promise<Location | null> 
 
 export async function saveLocation(l: Location): Promise<void> {
   const s = await getState();
-  const i = s.locations.findIndex((x) => x.slug === l.slug);
-  if (i >= 0) s.locations[i] = l;
-  else s.locations.push(l);
+  const kayit = { ...l, guncellendi: new Date().toISOString() };
+  const i = s.locations.findIndex((x) => x.slug === kayit.slug);
+  if (i >= 0) s.locations[i] = kayit;
+  else s.locations.push(kayit);
   await setState(s);
 }
 
@@ -713,9 +757,10 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 
 export async function saveArticle(a: Article): Promise<void> {
   const s = await getState();
-  const i = s.articles.findIndex((x) => x.slug === a.slug);
-  if (i >= 0) s.articles[i] = a;
-  else s.articles.push(a);
+  const kayit = { ...a, guncellendi: new Date().toISOString() };
+  const i = s.articles.findIndex((x) => x.slug === kayit.slug);
+  if (i >= 0) s.articles[i] = kayit;
+  else s.articles.push(kayit);
   await setState(s);
 }
 
