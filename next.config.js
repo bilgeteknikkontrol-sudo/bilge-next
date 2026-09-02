@@ -64,6 +64,48 @@ const ESKI_SAYFALAR = {
   "periyodik-kontrol-sureleri": "/periyodik-kontrol-sureleri",
 };
 
+/**
+ * ESKI PDF'LER -> en yakin guncel sayfa (kalici 301)
+ *
+ * ⚠️ 2026-09-02: Google'da hala eski statik surumun PDF'leri cikiyor ve
+ * hepsi 404 veriyor. Aramada goruldu:
+ *
+ *   /assets/images/demo/teknikimg/sikca-sorulan-sorular.pdf   404
+ *   /assets/images/demo/teknikimg/gizlilik-sozlesmesi.pdf     404
+ *
+ * ESKI_SAYFALAR tablosu yalnizca SAYFALARI kapsiyordu; kurumsal PDF'ler
+ * gozden kacmisti. Dosyalarin tam listesi eski yedekten alindi
+ * (`Desktop/ftp degisikligi/.../assets/images/demo/teknikimg`).
+ *
+ * PDF'i HTML sayfaya yonlendirmek dogru: dosyalar artik yayinda degil, ama
+ * icerikleri sitede karsiliksiz da degil (SSS -> /sss, gizlilik -> /kvkk,
+ * on hazirliklar -> hazirlik rehberi). 404 birakmak, o adreslere gelen
+ * baglantilari ve arama sonucundaki tiklamalari cope atmak olurdu.
+ */
+const ESKI_PDF_KLASORU = "/assets/images/demo/teknikimg";
+const ESKI_PDFLER = {
+  "sikca-sorulan-sorular": "/sss",
+  "gizlilik-sozlesmesi": "/kvkk",
+  "bilge-teknik-kontrol-brosur": "/dosya/bilge-teknik-kontrol-katalog.pdf",
+  "on-hazirliklar-talimati": "/yazilar/periyodik-kontrole-hazirlik",
+  "kalite-politikasi": "/kurumsal",
+  "musteri-memnuniyeti": "/kurumsal",
+  "organizasyon-semasi-rev03": "/kurumsal",
+  "personel-taahhutnamesi": "/kurumsal",
+  personel1: "/kurumsal",
+  "sikayet-itiraz-is-akis-semasi": "/iletisim",
+  "sikayet-itiraz-ve-oneri-formu": "/iletisim",
+  isemri: "/teklif",
+};
+
+function eskiPdfYonlendirmeleri() {
+  return Object.entries(ESKI_PDFLER).map(([ad, hedef]) => ({
+    source: `${ESKI_PDF_KLASORU}/${ad}.pdf`,
+    destination: hedef,
+    permanent: true,
+  }));
+}
+
 /** ESKI_SAYFALAR tablosunu `.php` ve `.html` uzantili iki kurala acar. */
 function eskiAdresYonlendirmeleri() {
   return Object.entries(ESKI_SAYFALAR).flatMap(([ad, hedef]) =>
@@ -228,6 +270,7 @@ const nextConfig = {
       },
 
       ...eskiAdresYonlendirmeleri(),
+      ...eskiPdfYonlendirmeleri(),
 
       /**
        * ⚠️ Ekipmanin slug'i `makina-tezgah`, ama bolge sayfasi metinlerinde
@@ -241,6 +284,19 @@ const nextConfig = {
         destination: "/ekipman/makina-tezgah",
         permanent: true,
       },
+      /**
+       * ⚠️ 2026-09-02: BU KURAL SU AN CALISMIYOR — kod yanlis degil, alan adi
+       * buraya gelmiyor. `bilgeteknikkontrol.com` A kaydi 84.32.84.91'i
+       * gosteriyor (ayri bir Hostinger konagi); uygulama 89.116.147.247'de.
+       * Olculdu: kok adres 301 ile bilgekontrol.com'a gidiyor ama
+       * `/kurumsal.html`, `/forklift`, `/hizmetlerimiz.php` gibi DERIN yollarin
+       * hepsi 404. Eski alan adina gelen her derin baglanti cope gidiyor.
+       *
+       * Cozum hPanel'de: alan adi Node uygulamasina baglanirsa bu kural
+       * kendiliginde devreye girer ve tam joker yonlendirme olur.
+       * ⚠️ E-posta etkilenmez: MX kayitlari A kaydindan bagimsizdir
+       * (bilgeteknikkontrol.com'da mx1/mx2.hostinger.com duruyor).
+       */
       {
         source: "/:path*",
         has: [{ type: "host", value: "bilgeteknikkontrol.com" }],
