@@ -2,6 +2,7 @@ import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import YaziGorseli from "../components/YaziGorseli";
+import KirintiYolu from "../components/KirintiYolu";
 import { getArticles } from "@/lib/cms";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { seoBaslik } from "@/lib/seo-baslik";
@@ -39,7 +40,8 @@ export default async function YazilarPage() {
       <Header />
       <section className="bg-bgsoft py-14">
         <div className="mx-auto max-w-[1200px] px-5 text-center">
-          <span className="inline-flex rounded-full bg-blue-soft px-4 py-1.5 text-sm font-bold text-blue">Bilgi Merkezi</span>
+          <KirintiYolu ad="Bilgi Merkezi" yol="/yazilar" merkez />
+          <span className="mt-3 inline-flex rounded-full bg-blue-soft px-4 py-1.5 text-sm font-bold text-blue">Bilgi Merkezi</span>
           <h1 className="mt-4 text-3xl font-black text-navy md:text-4xl">{m("yazilar_baslik")}</h1>
           <p className="mt-3 text-muted">{m("yazilar_giris")}</p>
         </div>

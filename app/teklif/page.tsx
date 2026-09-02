@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import TeklifForm from "../components/TeklifForm";
+import KirintiYolu from "../components/KirintiYolu";
 import { metinleriOku } from "@/lib/sayfa-metin";
 import { sorularHaritasi } from "@/lib/teklif-sorulari";
 
@@ -23,7 +24,8 @@ export default async function TeklifPage() {
       <section className="py-16 md:py-20">
         <div className="mx-auto max-w-[1200px] px-5">
           <div className="mx-auto mb-10 max-w-[760px] text-center">
-            <span className="chip">Bağlayıcı Değil</span>
+            <KirintiYolu ad="Online Teklif" yol="/teklif" merkez />
+            <span className="chip mt-3">Bağlayıcı Değil</span>
             <h1 className="mt-4 text-3xl font-black text-navy md:text-4xl">{m("teklif_baslik")}</h1>
             <p className="mt-3 text-muted">{m("teklif_giris")}</p>
           </div>

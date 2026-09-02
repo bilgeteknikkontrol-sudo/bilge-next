@@ -165,8 +165,24 @@ async function Sayfa() {
                   <>
                     {b.gorsel && (
                       <span className="block aspect-[3/4] overflow-hidden rounded-xl border border-line bg-white">
+                        {/* ⚠️ width/height, gorselin gercek olculeri (1275x1650).
+                            Kap zaten aspect-[3/4] oldugu icin kayma riski
+                            yoktu ama denetim araclari olcusuz <img> etiketini
+                            CLS bulgusu olarak isaretliyor — 2026-09-02 tam
+                            taramada sitedeki TEK bulgu buydu.
+                            Panelden yuklenen gorseller baska olcude olabilir;
+                            object-contain oldugu icin oran bozulmaz.
+                            lazy: belgeler her zaman ekranin altinda kaliyor. */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={b.gorsel} alt={b.baslik} className="h-full w-full object-contain p-3" />
+                        <img
+                          src={b.gorsel}
+                          alt={b.baslik}
+                          width={1275}
+                          height={1650}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-contain p-3"
+                        />
                       </span>
                     )}
                     <span className="mt-4 block font-bold text-navy">{b.baslik}</span>
