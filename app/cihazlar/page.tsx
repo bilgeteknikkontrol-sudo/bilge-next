@@ -55,7 +55,9 @@ function CihazKutusu({ c, zemin }: { c: Cihaz; zemin: string }) {
             className="h-full w-full object-contain p-2"
           />
         ) : (
-          <CihazSimge tip={c.tip} className="h-14 w-14 text-navy sm:h-20 sm:w-20" />
+          // ⚠️ Simge, renkli kareyi ornekteki fotograflar gibi doldurmali;
+          // 80px'te kutunun icinde kaybolmustu. 96/128 ≈ %75 doluluk.
+          <CihazSimge tip={c.tip} className="h-16 w-16 text-navy sm:h-24 sm:w-24" />
         )}
       </div>
 
