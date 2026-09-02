@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import BelgeGoruntuleyici from "../components/BelgeGoruntuleyici";
 import { bloklar } from "@/lib/bloklar";
 import { KURUM } from "@/lib/site-data";
 import { iletisimBilgi } from "@/lib/iletisim-bilgi";
@@ -161,10 +162,8 @@ async function Sayfa() {
           {belgeler.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {belgeler.map((b) => {
-                const icerik = (
-                  <>
-                    {b.gorsel && (
-                      <span className="block aspect-[3/4] overflow-hidden rounded-xl border border-line bg-white">
+                const kucukGorsel = b.gorsel && (
+                      <span className="block aspect-[3/4] overflow-hidden rounded-xl border border-line bg-white transition group-hover:border-blue">
                         {/* ⚠️ width/height, gorselin gercek olculeri (1275x1650).
                             Kap zaten aspect-[3/4] oldugu icin kayma riski
                             yoktu ama denetim araclari olcusuz <img> etiketini
@@ -184,22 +183,40 @@ async function Sayfa() {
                           className="h-full w-full object-contain p-3"
                         />
                       </span>
-                    )}
+                    );
+
+                const yazi = (
+                  <>
                     <span className="mt-4 block font-bold text-navy">{b.baslik}</span>
                     {b.metin && <span className="mt-1 block text-sm text-muted">{b.metin}</span>}
-                    {b.url && (
-                      <span className="mt-3 block text-sm font-bold text-blue">Belgeyi aç →</span>
-                    )}
                   </>
                 );
+
+                /**
+                 * ⚠️ Gorsel artik TIKLANINCA TAM EKRAN aciliyor: belgeler
+                 * 1275x1650 ve karttaki kucuk kutuda kapsam satirlari
+                 * okunmuyordu — oysa "neyi kapsiyor" sorusu bu sayfanin tek
+                 * isi. Buyutme/kucultme icin bkz. BelgeGoruntuleyici.
+                 *
+                 * ⚠️ Panelden bir belgeye DOSYA ADRESI (b.url) girilmisse o
+                 * baglanti korunuyor: orada genellikle PDF'in kendisi duruyor
+                 * ve onu yeni sekmede acmak goruntuleyiciden iyi. Gorsel yine
+                 * de buyutulebiliyor; ikisi ayri eylem.
+                 */
                 return (
                   <div key={b.id} className="card p-5">
+                    {kucukGorsel ? (
+                      <BelgeGoruntuleyici gorsel={b.gorsel} baslik={b.baslik}>
+                        {kucukGorsel}
+                      </BelgeGoruntuleyici>
+                    ) : null}
                     {b.url ? (
                       <a href={b.url} target="_blank" rel="noopener noreferrer" className="block">
-                        {icerik}
+                        {yazi}
+                        <span className="mt-3 block text-sm font-bold text-blue">Belgeyi aç →</span>
                       </a>
                     ) : (
-                      icerik
+                      yazi
                     )}
                   </div>
                 );
