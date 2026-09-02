@@ -76,6 +76,28 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
       "Elektrik tesisatı, topraklama, yıldırımdan korunma ve yangın algılama kontrollerinde kullanılır.",
     hizmet: { yol: "/ekipman/elektrik-tesisat", ad: "Elektrik tesisatı periyodik kontrolü" },
     cihazlar: [
+      /* ⚠️ SIRA: kullanici "oncelik Fluke cihazlari olsun" dedi (2026-09-02).
+         Once Fluke'lar (once termal kameralar, sonra test cihazlari), ardindan
+         diger markalar. Kutular tabloyu sirayla bastigi icin sira burada
+         degistirilir; sayfada ayrica siralama yok. */
+      {
+        ad: "Fluke Ti480 PRO — Termal kamera",
+        tip: "termal",
+        ozellikler: [
+          "640×480 dedektör, 50 mK termal hassasiyet",
+          "MultiSharp Focus: farklı mesafedeki noktalar tek karede net",
+          "Pano ve klemens ısınmasını arıza oluşmadan yakalar",
+        ],
+      },
+      {
+        ad: "Fluke Ti200 — Termal kamera",
+        tip: "termal",
+        ozellikler: [
+          "LaserSharp otomatik odaklama",
+          "IR-Fusion: termal görüntüyü gerçek görüntüyle bindirir",
+          "Isınan elemanı tam yerinde gösterir",
+        ],
+      },
       {
         ad: "Fluke 1664 FC — Tesisat test cihazı",
         tip: "tesisat-test",
@@ -96,6 +118,15 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
         ],
       },
       {
+        ad: "Fluke 179 — Dijital multimetre",
+        tip: "multimetre",
+        ozellikler: [
+          "True-RMS gerilim ve akım ölçümü",
+          "Sıcaklık probuyla −40…400 °C",
+          "CAT III 1000 V / CAT IV 600 V",
+        ],
+      },
+      {
         ad: "Fluke 302+ — Pens ampermetre",
         tip: "pens",
         ozellikler: [
@@ -104,6 +135,7 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
           "CAT III 600 V",
         ],
       },
+      /* ---- Fluke disi cihazlar buradan sonra ---- */
       {
         ad: "Sanwa DCM60R — Pens ampermetre",
         tip: "pens",
@@ -114,39 +146,12 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
         ],
       },
       {
-        ad: "Fluke 179 — Dijital multimetre",
-        tip: "multimetre",
-        ozellikler: [
-          "True-RMS gerilim ve akım ölçümü",
-          "Sıcaklık probuyla −40…400 °C",
-          "CAT III 1000 V / CAT IV 600 V",
-        ],
-      },
-      {
         ad: "Sonel PRS-1 — Zemin ve duvar yalıtım probu",
         tip: "prob",
         ozellikler: [
           "Zemin ve duvar yalıtım direnci ölçümü",
           "Yaklaşık 900 mm² temas yüzeyi",
           "EN 1081'e uygun ölçüm",
-        ],
-      },
-      {
-        ad: "Fluke Ti480 PRO — Termal kamera",
-        tip: "termal",
-        ozellikler: [
-          "640×480 dedektör, 50 mK termal hassasiyet",
-          "MultiSharp Focus: farklı mesafedeki noktalar tek karede net",
-          "Pano ve klemens ısınmasını arıza oluşmadan yakalar",
-        ],
-      },
-      {
-        ad: "Fluke Ti200 — Termal kamera",
-        tip: "termal",
-        ozellikler: [
-          "LaserSharp otomatik odaklama",
-          "IR-Fusion: termal görüntüyü gerçek görüntüyle bindirir",
-          "Isınan elemanı tam yerinde gösterir",
         ],
       },
       {
