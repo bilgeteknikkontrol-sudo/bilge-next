@@ -61,10 +61,13 @@ export default function CihazlarPage() {
 
       <section className="py-12">
         <div className="mx-auto max-w-[900px] px-5">
+          {/* ⚠️ "Duzenli olarak" yaziyordu; kullanici 2026-09-02'de periyodu
+              verdi: yilda bir. Somut sure, belirsiz ifadeden daha guclu bir
+              guven sinyali. Periyot degisirse burasi guncellenir. */}
           <p className="text-lg font-medium leading-relaxed text-ink">
-            Ölçüm cihazları, akreditasyon şartları gereği düzenli olarak kalibre edilir ve
-            kalibrasyon kayıtları saklanır. Raporda yer alan her değer, aşağıdaki cihazlarla
-            sahada bizzat alınmış ölçümlerden gelir.
+            Ölçüm cihazlarımız <strong>yılda bir kez kalibre edilir</strong> ve kalibrasyon
+            kayıtları saklanır. Raporda yer alan her değer, aşağıdaki cihazlarla sahada bizzat
+            alınmış ölçümlerden gelir.
           </p>
 
           <div className="mt-10 space-y-12">
