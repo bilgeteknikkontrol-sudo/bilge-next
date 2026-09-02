@@ -12,6 +12,10 @@ const KURUMSAL = [
   { href: "/kurumsal", label: "Hakkımızda" },
   { href: "/referanslar", label: "Referanslarımız" },
   { href: "/sertifikalar", label: "Akreditasyon & Sertifikalar" },
+  // Sahada kullanilan olcum cihazlari. Yeni sayfanin yetim kalmamasi icin
+  // buradan link aliyor; sertifikalarin hemen yaninda duruyor cunku ikisi de
+  // ayni soruyu yanitliyor: "bu olcume neden guveneyim?"
+  { href: "/cihazlar", label: "Ölçüm Cihazlarımız" },
   { href: "/bolge", label: "Hizmet Bölgeleri" },
   { href: "/sss", label: "Sık Sorulan Sorular" },
   // "Fenni muayene" terimini karsilayan merkez sayfa. Her sayfadan link

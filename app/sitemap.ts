@@ -53,6 +53,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: base + "/hesapla", changeFrequency: "monthly", priority: 0.8 },
     { url: base + "/kurumsal", changeFrequency: "monthly", priority: 0.8 },
     { url: base + "/sertifikalar", changeFrequency: "monthly", priority: 0.8 },
+    // Sahada kullanilan olcum cihazlari — yetkinlik sayfasi, sertifikalarla ayni seviyede.
+    { url: base + "/cihazlar", changeFrequency: "monthly", priority: 0.7 },
     { url: base + "/iletisim", changeFrequency: "monthly", priority: 0.8 },
     { url: base + "/yazilar", changeFrequency: "weekly", priority: 0.7 },
     { url: base + "/sss", changeFrequency: "monthly", priority: 0.7 },
