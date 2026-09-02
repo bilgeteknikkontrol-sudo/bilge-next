@@ -27,7 +27,13 @@ export type MenuOge = {
   alt?: MenuAlt[];
 };
 
-/** Ust seviye menu: en fazla 5 oge sigiyor (1024px'te tasiyor). */
+/**
+ * Ust seviye menu: en fazla 5 oge sigiyor (1024px'te tasiyor).
+ *
+ * ⚠️ BU LISTE YALNIZCA VARSAYILAN. Panelden bir menu kaydedilmisse site onu
+ * okur ve buradaki degisiklik canliya YANSIMAZ (bkz. menuOku). Koda yeni bir
+ * baglanti eklendiginde canlida gorunmuyorsa once Admin > Menu'ye bakin.
+ */
 export const VARSAYILAN_MENU: MenuOge[] = [
   { label: "Hizmetler", ozel: "hizmetler" },
   {
@@ -38,6 +44,8 @@ export const VARSAYILAN_MENU: MenuOge[] = [
       { href: "/referanslar", label: "Referanslarımız", not: "Çalıştığımız firmalar" },
       { href: "/bolge", label: "Hizmet Bölgeleri", not: "20 şehirde yerinde muayene" },
       { href: "/sss", label: "Sık Sorulan Sorular", not: "Süre, kapsam, mevzuat" },
+      { href: "/cihazlar", label: "Ölçüm Cihazlarımız", not: "Sahada kullandığımız cihazlar" },
+      { href: "/degerlendir", label: "Bizi Değerlendirin", not: "Google'da yorum bırakın" },
     ],
   },
   { label: "Bilgi Merkezi", href: "/yazilar" },

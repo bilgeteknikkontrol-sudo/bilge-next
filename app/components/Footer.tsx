@@ -23,6 +23,13 @@ const KURUMSAL = [
   { href: "/fenni-muayene", label: "Fenni Muayene Nedir?" },
   { href: "/yazilar", label: "Bilgi Merkezi" },
   { href: "/iletisim", label: "İletişim" },
+  /**
+   * ⚠️ `/degerlendir` NOINDEX ve site haritasinda YOK — birkac cumlelik
+   * yonlendirme sayfasi, indekslenirse ince icerik sayilir. Buradan (ve
+   * menuden) link almasi bunu degistirmiyor: baglanti musteriye sayfayi
+   * hatirlatmak icin, arama motoru icin degil.
+   */
+  { href: "/degerlendir", label: "Bizi Değerlendirin" },
 ];
 
 const ARACLAR = [
