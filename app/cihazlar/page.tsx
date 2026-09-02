@@ -1,34 +1,78 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { CIHAZ_GRUPLARI, CIHAZ_SAYISI } from "@/lib/cihazlar";
+import CihazSimge from "../components/CihazSimge";
+import { CIHAZ_GRUPLARI, CIHAZ_SAYISI, type Cihaz } from "@/lib/cihazlar";
 import { KURUM } from "@/lib/site-data";
 
 /**
  * OLCUM CIHAZLARIMIZ
  *
- * ⚠️ Sayfa bilerek SADE: tek sutun, gruplanmis kartlar, her cihaz icin tek
- * cumle. Kullanicinin istegi "cok kafa karistirmadan" idi; teknik bir
- * listede tablo/ikon/rozet kalabaligi okumayi zorlastirir, guveni artirmaz.
+ * ⚠️ DUZEN: kullanicinin istegi — SOLDA elektrik, SAGDA mekanik, her cihaz
+ * ayri kutu, kutunun ustunde gorsel, altinda kisa maddeler. Mobilde iki
+ * sutun yan yana sigmadigi icin alt alta diziliyor; sira degismiyor
+ * (once elektrik, sonra mekanik).
  *
- * ⚠️ Cihaz fotografi KONULMADI. Uretici ve satici sitelerindeki urun
- * gorselleri telif korumali; ticari bir sitede izinsiz kullanilamaz.
- * Sahada cekilmis kendi fotograflarimiz geldiginde her karta gorsel alani
- * eklenebilir — o fotograflar zaten stok gorselden daha ikna edici olur.
+ * ⚠️ Kutulardaki cizimler bu proje icin yazilmis SVG simgeler
+ * (app/components/CihazSimge.tsx). Uretici/satici urun fotograflari telif
+ * korumali oldugu icin kullanilmadi. Kendi cekilmis fotograf eklendiginde
+ * `Cihaz.gorsel` doldurulur; kutu kendiliginden fotografa geciyor, burada
+ * degisiklik gerekmiyor.
  *
  * Veri: lib/cihazlar.ts
  */
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Ölçüm Cihazlarımız",
   // ⚠️ 160 karakter siniri: ilk yazimda 161 idi ve canlida olculdu.
   // Google fazlasini kirpiyor, aciklama cumlenin ortasinda kesiliyor.
+  title: "Ölçüm Cihazlarımız",
   description:
     "Periyodik kontrollerde sahada kullandığımız ölçüm cihazları: termal kamera, tesisat test cihazı, topraklama ölçer, dedektör testi ve basınç pompaları.",
   alternates: { canonical: "/cihazlar" },
 };
+
+function CihazKutusu({ c }: { c: Cihaz }) {
+  return (
+    <li className="rounded-card border border-line bg-white p-5">
+      {/* Gorsel alani: fotograf varsa fotograf, yoksa cizim. Oran sabit
+          oldugu icin fotograf eklendiginde kutu zipllamiyor. */}
+      <div className="flex aspect-[5/3] items-center justify-center overflow-hidden rounded-xl bg-bgsoft">
+        {c.gorsel ? (
+          <Image
+            src={c.gorsel}
+            alt={c.ad}
+            width={420}
+            height={252}
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <CihazSimge tip={c.tip} className="h-20 w-20 text-blue" />
+        )}
+      </div>
+
+      <h3 className="mt-4 font-bold leading-snug text-navy">
+        {c.ad}
+        {c.adet && c.adet > 1 && (
+          <span className="ml-2 whitespace-nowrap rounded-full border border-accent/40 px-2 py-0.5 text-xs font-semibold text-muted">
+            {c.adet} adet
+          </span>
+        )}
+      </h3>
+
+      <ul className="mt-3 space-y-1.5 text-sm leading-relaxed text-muted">
+        {c.ozellikler.map((o) => (
+          <li key={o} className="flex gap-2">
+            <span aria-hidden className="mt-[.45rem] h-1 w-1 shrink-0 rounded-full bg-accent" />
+            <span>{o}</span>
+          </li>
+        ))}
+      </ul>
+    </li>
+  );
+}
 
 export default function CihazlarPage() {
   const breadcrumbLd = {
@@ -60,35 +104,25 @@ export default function CihazlarPage() {
       </section>
 
       <section className="py-12">
-        <div className="mx-auto max-w-[900px] px-5">
+        <div className="mx-auto max-w-[1200px] px-5">
           {/* ⚠️ "Duzenli olarak" yaziyordu; kullanici 2026-09-02'de periyodu
               verdi: yilda bir. Somut sure, belirsiz ifadeden daha guclu bir
               guven sinyali. Periyot degisirse burasi guncellenir. */}
-          <p className="text-lg font-medium leading-relaxed text-ink">
+          <p className="max-w-3xl text-lg font-medium leading-relaxed text-ink">
             Ölçüm cihazlarımız <strong>yılda bir kez kalibre edilir</strong> ve kalibrasyon
             kayıtları saklanır. Raporda yer alan her değer, aşağıdaki cihazlarla sahada bizzat
             alınmış ölçümlerden gelir.
           </p>
 
-          <div className="mt-10 space-y-12">
+          <div className="mt-10 grid gap-10 lg:grid-cols-2">
             {CIHAZ_GRUPLARI.map((grup) => (
               <div key={grup.baslik}>
                 <h2 className="text-2xl font-black text-navy">{grup.baslik}</h2>
                 <p className="mt-2 leading-relaxed text-muted">{grup.aciklama}</p>
 
-                <ul className="mt-5 space-y-4">
+                <ul className="mt-5 space-y-5">
                   {grup.cihazlar.map((c) => (
-                    <li key={c.ad} className="rounded-card border border-line bg-white p-5">
-                      <h3 className="font-bold text-navy">
-                        {c.ad}
-                        {c.adet && c.adet > 1 && (
-                          <span className="ml-2 rounded-full border border-accent/40 px-2 py-0.5 text-xs font-semibold text-muted">
-                            {c.adet} adet
-                          </span>
-                        )}
-                      </h3>
-                      <p className="mt-2 leading-relaxed text-muted">{c.ozet}</p>
-                    </li>
+                    <CihazKutusu key={c.ad} c={c} />
                   ))}
                 </ul>
 
@@ -104,7 +138,7 @@ export default function CihazlarPage() {
             ))}
           </div>
 
-          <div className="mt-12 rounded-card border border-line bg-bgsoft p-6">
+          <div className="mt-12 max-w-3xl rounded-card border border-line bg-bgsoft p-6">
             <h2 className="text-lg font-bold text-navy">Cihaz listesi neden önemli?</h2>
             <p className="mt-2 leading-relaxed text-muted">
               Aynı kontrol, farklı cihazlarla farklı derinlikte yapılabilir. Örneğin bir pano
@@ -118,7 +152,7 @@ export default function CihazlarPage() {
             </div>
           </div>
 
-          <p className="mt-8 text-sm text-muted">
+          <p className="mt-8 max-w-3xl text-sm text-muted">
             Kontrol edilecek ekipmanınız listede olmayan özel bir ölçüm gerektiriyorsa{" "}
             <Link href="/iletisim" className="font-semibold text-blue hover:underline">
               bize ulaşın
