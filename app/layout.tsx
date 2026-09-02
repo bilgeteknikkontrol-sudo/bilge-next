@@ -26,6 +26,23 @@ export const revalidate = 300;
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
 
+/**
+ * ⚠️ 2026-09-02: canli sitede su etiket basiliyordu:
+ *   <meta name="google-site-verification" content="GOOGLE_SITE_VERIFICATION">
+ * Yani hPanel'de ortam degiskenine DEGER yerine DEGISKENIN ADI girilmisti.
+ * Kod dogruydu ama sonuc, Google'in asla dogrulayamayacagi sahte bir etiketti.
+ *
+ * Bu yuzden deger artik bicimsel olarak deneniyor: Google'in verdigi kod
+ * bosluksuz, en az 20 karakterlik bir belirtec (harf/rakam/_/-). Yer tutucu
+ * ya da yanlislikla girilmis bir metin etikete donusmuyor.
+ */
+function gecerliDogrulamaKodu(deger: string | undefined): boolean {
+  const kod = deger?.trim();
+  if (!kod) return false;
+  if (kod === "GOOGLE_SITE_VERIFICATION") return false;
+  return /^[A-Za-z0-9_-]{20,128}$/.test(kod);
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://bilgekontrol.com"),
   title: {
@@ -70,8 +87,8 @@ export const metadata: Metadata = {
    * Google hesabi GA4 mulkunun sahibiyse Search Console dogrulamayi
    * kendiliginden yapar ve buraya hic deger girmek gerekmez.
    */
-  verification: process.env.GOOGLE_SITE_VERIFICATION
-    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+  verification: gecerliDogrulamaKodu(process.env.GOOGLE_SITE_VERIFICATION)
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION!.trim() }
     : undefined,
 };
 
