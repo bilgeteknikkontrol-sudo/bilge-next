@@ -70,6 +70,14 @@ export const YAZI_EKIPMAN: Record<string, string[]> = {
   "periyodik-kontrolde-en-sik-cikan-uygunsuzluklar": ["makina-tezgah", "topraklama-olcumu"],
   "periyodik-kontrole-hazirlik": ["buhar-kazani"],
   "operator-belgesi-mi-periyodik-kontrol-mu": ["mobil-vinc", "egitim"],
+
+  /* Ayni gun eklenen iki yeni elektrik yazisi. Ikisi de dogrudan bir hizmet
+     sayfasinin konusunu anlattigi icin bagi mekanik: rapor formati dort
+     tesisat sayfasini birden ilgilendiriyor. */
+  "elektrik-periyodik-kontrol-rapor-formati": [
+    "elektrik-tesisat", "topraklama-olcumu", "paratoner-yildirimdan-korunma", "yangin-algilama",
+  ],
+  "elektrik-ic-tesisat-uygunluk-belgesi": ["elektrik-tesisat", "makinalarda-elektriksel-kontrol"],
 };
 
 /**

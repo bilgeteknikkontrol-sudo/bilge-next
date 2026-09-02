@@ -205,6 +205,8 @@ export const YAZI_GORSEL: Record<string, StaticImageData> = {
   "basincli-kap-hidrostatik-test": img_basincli_kaplarin_periyodik_kontrolu,
   "celik-halat-ne-zaman-degistirilir": img_kaldirma_araclari_teknik_kontrolu,
   "ekipnet-nedir": img_egitim,
+  "elektrik-ic-tesisat-uygunluk-belgesi": img_elektirik_olcumleri,
+  "elektrik-periyodik-kontrol-rapor-formati": img_elektirik_olcumleri,
   "elektrik-tesisat-projesi-zorunlu-mu": img_elektirik_olcumleri,
   "forklift-periyodik-kontrolu": img_kaldirma_araclari_teknik_kontrolu,
   "havalandirma-projesi-zorunlu-mu": img_havalandirma_sistemleri,
