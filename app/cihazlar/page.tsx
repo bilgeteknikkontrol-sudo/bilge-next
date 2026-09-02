@@ -43,8 +43,13 @@ export const metadata: Metadata = {
 function CihazKutusu({ c, zemin }: { c: Cihaz; zemin: string }) {
   return (
     <li className="flex gap-4 rounded-card border border-line bg-white p-4 sm:gap-5 sm:p-5">
+      {/* ⚠️ Fotograf varsa zemin BEYAZ: urun cekimlerinin arka plani beyaz,
+          renkli karenin uzerinde beyaz bir dikdortgen gibi durup yamali
+          gorunuyordu. Renkli zemin yalnizca simge kullanilan kartlarda. */}
       <div
-        className={`flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl sm:h-32 sm:w-32 ${zemin}`}
+        className={`flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl sm:h-32 sm:w-32 ${
+          c.gorsel ? "border border-line bg-white" : zemin
+        }`}
       >
         {c.gorsel ? (
           <Image
