@@ -34,42 +34,47 @@ export const metadata: Metadata = {
   alternates: { canonical: "/cihazlar" },
 };
 
-function CihazKutusu({ c }: { c: Cihaz }) {
+/**
+ * ⚠️ Kart duzeni kullanicinin gonderdigi ornek tasarimdan alindi: SOLDA
+ * yumusak zeminli kare gorsel, SAGDA kalin baslik ve altinda alt alta sade
+ * satirlar. Ornekte madde isareti yok — satirlar duz; buradaki liste de
+ * oyle. Gorsel karesi sabit olculu, boylece kartlar ayni hizada duruyor.
+ */
+function CihazKutusu({ c, zemin }: { c: Cihaz; zemin: string }) {
   return (
-    <li className="rounded-card border border-line bg-white p-5">
-      {/* Gorsel alani: fotograf varsa fotograf, yoksa cizim. Oran sabit
-          oldugu icin fotograf eklendiginde kutu zipllamiyor. */}
-      <div className="flex aspect-[5/3] items-center justify-center overflow-hidden rounded-xl bg-bgsoft">
+    <li className="flex gap-4 rounded-card border border-line bg-white p-4 sm:gap-5 sm:p-5">
+      <div
+        className={`flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl sm:h-32 sm:w-32 ${zemin}`}
+      >
         {c.gorsel ? (
           <Image
             src={c.gorsel}
             alt={c.ad}
-            width={420}
-            height={252}
-            className="h-full w-full object-contain"
+            width={256}
+            height={256}
+            className="h-full w-full object-contain p-2"
           />
         ) : (
-          <CihazSimge tip={c.tip} className="h-20 w-20 text-blue" />
+          <CihazSimge tip={c.tip} className="h-14 w-14 text-navy sm:h-20 sm:w-20" />
         )}
       </div>
 
-      <h3 className="mt-4 font-bold leading-snug text-navy">
-        {c.ad}
-        {c.adet && c.adet > 1 && (
-          <span className="ml-2 whitespace-nowrap rounded-full border border-accent/40 px-2 py-0.5 text-xs font-semibold text-muted">
-            {c.adet} adet
-          </span>
-        )}
-      </h3>
+      <div className="min-w-0">
+        <h3 className="font-bold leading-snug text-navy">
+          {c.ad}
+          {c.adet && c.adet > 1 && (
+            <span className="ml-2 whitespace-nowrap rounded-full border border-accent/40 px-2 py-0.5 text-xs font-semibold text-muted">
+              {c.adet} adet
+            </span>
+          )}
+        </h3>
 
-      <ul className="mt-3 space-y-1.5 text-sm leading-relaxed text-muted">
-        {c.ozellikler.map((o) => (
-          <li key={o} className="flex gap-2">
-            <span aria-hidden className="mt-[.45rem] h-1 w-1 shrink-0 rounded-full bg-accent" />
-            <span>{o}</span>
-          </li>
-        ))}
-      </ul>
+        <ul className="mt-2 space-y-1 text-sm leading-relaxed text-muted">
+          {c.ozellikler.map((o) => (
+            <li key={o}>{o}</li>
+          ))}
+        </ul>
+      </div>
     </li>
   );
 }
@@ -114,15 +119,23 @@ export default function CihazlarPage() {
             alınmış ölçümlerden gelir.
           </p>
 
-          <div className="mt-10 grid gap-10 lg:grid-cols-2">
+          {/* ⚠️ Iki grubun arasindaki DIKEY TURUNCU CIZGI ornek tasarimdan:
+              elektrik ve mekanik sutunlarini bir bakista ayiriyor. Yalnizca
+              iki sutunun yan yana durdugu genislikte cikiyor; mobilde
+              gruplar alt alta dizildigi icin cizgi anlamsiz olurdu. */}
+          <div className="relative mt-10 grid gap-10 lg:grid-cols-2 lg:gap-12">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-[3px] -translate-x-1/2 rounded-full bg-accent lg:block"
+            />
             {CIHAZ_GRUPLARI.map((grup) => (
               <div key={grup.baslik}>
                 <h2 className="text-2xl font-black text-navy">{grup.baslik}</h2>
                 <p className="mt-2 leading-relaxed text-muted">{grup.aciklama}</p>
 
-                <ul className="mt-5 space-y-5">
+                <ul className="mt-5 space-y-4">
                   {grup.cihazlar.map((c) => (
-                    <CihazKutusu key={c.ad} c={c} />
+                    <CihazKutusu key={c.ad} c={c} zemin={grup.zemin} />
                   ))}
                 </ul>
 

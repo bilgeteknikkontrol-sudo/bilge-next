@@ -56,6 +56,12 @@ export type CihazGrubu = {
   aciklama: string;
   /** Grubun dogal karsiligi olan hizmet sayfasi. */
   hizmet?: { yol: string; ad: string };
+  /**
+   * Kartin sol tarafindaki gorsel karesinin zemin rengi (Tailwind sinifi).
+   * Ornek tasarimda her kartin gorseli yumusak pastel bir zemin uzerinde
+   * duruyor; burada renk gruba bagli, boylece iki sutun bir bakista ayriliyor.
+   */
+  zemin: string;
   cihazlar: Cihaz[];
 };
 
@@ -75,6 +81,7 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
     aciklama:
       "Elektrik tesisatı, topraklama, yıldırımdan korunma ve yangın algılama kontrollerinde kullanılır.",
     hizmet: { yol: "/ekipman/elektrik-tesisat", ad: "Elektrik tesisatı periyodik kontrolü" },
+    zemin: "bg-blue/10",
     cihazlar: [
       /* ⚠️ SIRA: kullanici "oncelik Fluke cihazlari olsun" dedi (2026-09-02).
          Once Fluke'lar (once termal kameralar, sonra test cihazlari), ardindan
@@ -170,6 +177,7 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
     aciklama:
       "Basınçlı kap, kazan, kaldırma ekipmanı ve havalandırma kontrollerinde kullanılır.",
     hizmet: { yol: "/ekipman/basincli-kaplar", ad: "Basınçlı kapların periyodik kontrolü" },
+    zemin: "bg-accent/10",
     cihazlar: [
       {
         ad: "REMS E-Push 2 — Elektrikli basınç test pompası",
