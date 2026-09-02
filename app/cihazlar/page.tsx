@@ -23,8 +23,10 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Ölçüm Cihazlarımız",
+  // ⚠️ 160 karakter siniri: ilk yazimda 161 idi ve canlida olculdu.
+  // Google fazlasini kirpiyor, aciklama cumlenin ortasinda kesiliyor.
   description:
-    "Periyodik kontrollerde sahada kullandığımız ölçüm cihazları: termal kamera, tesisat test cihazı, topraklama ölçer, dedektör test cihazı ve basınç test pompaları.",
+    "Periyodik kontrollerde sahada kullandığımız ölçüm cihazları: termal kamera, tesisat test cihazı, topraklama ölçer, dedektör testi ve basınç pompaları.",
   alternates: { canonical: "/cihazlar" },
 };
 
