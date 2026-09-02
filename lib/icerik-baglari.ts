@@ -94,6 +94,36 @@ export const EKIPMAN_YAZI: Record<string, string[]> = Object.entries(YAZI_EKIPMA
 );
 
 /**
+ * ELEKTRIK GRUBU ZORUNLU RAPOR FORMATI
+ *
+ * ⚠️ 1 Eylul 2025'ten beri, CSGB Is Sagligi ve Guvenligi Genel Mudurlugu
+ * onayli "Elektrik Grubu Is Ekipmanlari Zorunlu Periyodik Kontrol Rapor
+ * Formati"nin sekil ve icerik olarak eksiksiz kullanilmasi zorunlu
+ * (dayanak: Is Ekipmanlari Yonetmeligi md. 14/B). Kapsam Bakanligin
+ * duyurusunda sayilan basliklarla sinirli — bu yuzden liste tum elektrik
+ * sayfalarini degil, YALNIZCA duyuruda gecen kontrolleri iceriyor.
+ *
+ * ⚠️ NEDEN SAYFADA YAZIYOR: 2026-09-02 taramasinda sitenin 153 sayfasinin
+ * HICBIRINDE "rapor formati" ifadesi gecmiyordu; oysa kural bir yildir
+ * yururlukte ve kurulus raporlarini bu formatta duzenliyor (kullanici
+ * teyit etti). Musteri icin ayirt edici bir bilgi ve E-E-A-T sinyali;
+ * dogru yer, karar verilen sayfa.
+ *
+ * ⚠️ Bu liste KODDA: ekipman sayfasinin govde metni panelden yonetiliyor
+ * ama bu not sablonda duruyor, boylece panelde metin degistirildiginde
+ * kaybolmuyor ve tek yerden guncelleniyor.
+ */
+export const ELEKTRIK_RAPOR_FORMATI_SLUGLARI = [
+  "elektrik-tesisat", // elektrik tesisati gozle kontrol ve fonksiyon testleri
+  "topraklama-olcumu", // alcak gerilim topraklama tesisati
+  "paratoner-yildirimdan-korunma", // yildirimdan korunma tesisati
+  "yangin-algilama", // yangin algilama ve uyari sistemleri
+  // ⚠️ `makinalarda-elektriksel-kontrol` BILEREK YOK: duyurudaki basliklarla
+  // birebir eslesmiyor. Duyuruda ayrica 1-36 kV transformator geciyor, sitede
+  // ona karsilik gelen bir ekipman sayfasi bulunmuyor.
+];
+
+/**
  * Bolge sayfasinda one cikarilacak hizmetler.
  *
  * Sehre gore secildi: Kocaeli agir sanayi ve liman, Bursa otomotiv/tekstil

@@ -5,7 +5,13 @@ import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { getEquipmentBySlug, getEquipment, getLocations, getArticles } from "@/lib/cms";
-import { EKIPMAN_YAZI, esAnlamliAdlar, hizmetBasligi, sadeAd } from "@/lib/icerik-baglari";
+import {
+  EKIPMAN_YAZI,
+  ELEKTRIK_RAPOR_FORMATI_SLUGLARI,
+  esAnlamliAdlar,
+  hizmetBasligi,
+  sadeAd,
+} from "@/lib/icerik-baglari";
 // Ekipmana ozel uzun icerik ve gorseller CMS'te tutulmuyor; slug uzerinden
 // statik kaynaklardan geliyor. Panelden eklenen yeni bir ekipmanin slug'i
 // bu kaynaklarda yoksa sayfa genel metinle calismaya devam eder.
@@ -318,6 +324,29 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
                   dangerouslySetInnerHTML={{ __html: metniHtml(m("hizmet_liste")) }}
                 />
               </>
+            )}
+
+            {/*
+              ZORUNLU RAPOR FORMATI NOTU — bkz. lib/icerik-baglari.ts
+
+              Yalnizca Bakanligin duyurusunda sayilan elektrik grubu
+              kontrollerinde gorunur. Teklif dugmelerinin hemen ustunde
+              duruyor: karar anindan once okunmasi gereken bilgi bu.
+            */}
+            {ELEKTRIK_RAPOR_FORMATI_SLUGLARI.includes(slug) && (
+              <p className="mt-10 rounded-card border border-accent/40 bg-white p-5 text-sm leading-relaxed text-muted">
+                <strong className="text-navy">Raporunuz zorunlu formatta düzenlenir.</strong>{" "}
+                Elektrik grubu iş ekipmanlarında, Çalışma ve Sosyal Güvenlik Bakanlığı onaylı
+                standart periyodik kontrol rapor formatının kullanılması 1 Eylül 2025&apos;ten
+                beri zorunludur. Raporlarımızı bu formatta düzenliyoruz.{" "}
+                <Link
+                  href="/yazilar/elektrik-periyodik-kontrol-rapor-formati"
+                  className="font-semibold text-blue hover:underline"
+                >
+                  Formatın kapsamı ve ne değiştiği
+                </Link>
+                .
+              </p>
             )}
 
             <div className="mt-10 flex flex-wrap gap-3">
