@@ -72,15 +72,12 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
           "400 A'e kadar AC akım ölçer. 30 mm çene açıklığıyla pano içindeki dar aralıklarda, hattı kesmeden ölçüm alınabilir.",
       },
       {
-        // ⚠️ MODEL TEYIT BEKLIYOR: kullanicinin gonderdigi bag DCM60R'ye
-        // gidiyor, gonderdigi fotograf ise DCM301 gosteriyor (dosya adini da
-        // kullanici "SanwaDCM301" koymus). Iki model farkli: DCM60R 600 A /
-        // 600 V, DCM301 1000 A / 1000 V + EF alan algilama. Yanlis deger
-        // yazmamak icin model ve aralik BILEREK yazilmadi; ikisi icin de
-        // dogru olan tek sey birakildi.
-        ad: "Sanwa — Pens ampermetre",
+        // ⚠️ 2026-09-02: model kullanici tarafindan teyit edildi -> DCM60R.
+        // Gonderilen fotograf DCM301 gosteriyordu (dosya adi da oyleydi) ama
+        // sahadaki cihaz DCM60R. Fotograf yaniltmis; model geri kondu.
+        ad: "Sanwa DCM60R — Pens ampermetre",
         ozet:
-          "True-RMS ölçüm yapan pens ampermetre. Hattı kesmeden akım okumak ve ikinci bir ölçüm noktası açmak için kullanılır.",
+          "True-RMS ölçüm yapar; 600 A akım, 600 V gerilim ve direnç/süreklilik. Hattı kesmeden akım okumak ve ikinci bir ölçüm noktası açmak için kullanılır.",
       },
     ],
   },
@@ -145,18 +142,17 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
           "Manometreli manuel pompa. Elektrik bulunmayan ya da elektrikli ekipmanın uygun olmadığı sahalarda basınç ve sızdırmazlık testi için kullanılır.",
       },
       {
-        // ⚠️ ARALIK TEYIT BEKLIYOR. Uc kaynak uc ayri sey soyluyor:
-        //  - Satici basligi: "1.6 Bar" (Mitalub MIGP10016B)
-        //  - Model kodu: MIGP + kadran + bar => 100 mm / 16 bar. Ayni
-        //    saticinin MIGP6310B urunu "63 mm / 10 bar" oldugu icin bu
-        //    okuma dogrulanmis sayilir; saticinin basligi virgul hatasi.
-        //  - Kullanicinin fotografi: PAKKENS 0-160 bar, bambaska bir marka.
-        // Kadran capi (100 mm) ve 1/2" baglanti her ihtimalde ayni oldugu
-        // icin onlar yazildi, ARALIK yazilmadi.
-        ad: "Gliserinli manometre (100 mm, 1/2\")",
+        // ⚠️ 2026-09-02: kullanici cihazin kadranini okudu — 0/25 bar, Ø60 mm,
+        // KL 1,6, gliserinli. Ne gonderilen bag (Mitalub, 100 mm) ne de
+        // fotograf (Pakkens 0-160 bar) dogruymus.
+        // ⭐ "1,6" bilmecesi de boylece cozuldu: o basinc degil DOGRULUK
+        // SINIFI (KL 1,6). Saticinin "1.6 Bar" basligi buyuk ihtimalle ayni
+        // karisiklik. Sinif degeri, gostergenin tam skalasina gore izin
+        // verilen sapma yuzdesini anlatir.
+        ad: "Gliserinli manometre (0–25 bar, Ø60 mm, KL 1,6)",
         adet: 2,
         ozet:
-          "Paslanmaz gövdeli, alttan çıkışlı gösterge. Gliserin dolgusu basınç dalgalanmasında ibrenin titremesini keser; test basıncı sağlıklı okunur.",
+          "Test hattındaki basıncı okumak için kullanılır. Gliserin dolgusu basınç dalgalanmasında ibrenin titremesini keser; değer sıçramadan, sağlıklı okunur.",
       },
     ],
   },
@@ -177,13 +173,14 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
           "50 metreye kadar ölçüm. Yükseklik, geçiş genişliği ve güvenlik mesafesi gibi ölçüler için hızlı ve tek kişiyle alınabilir.",
       },
       {
-        // ⚠️ MODEL TEYIT BEKLIYOR: gonderilen bag dijital bir kumpasa
-        // (Mitutoyo 500-181-20, 0,01 mm) gidiyor, gonderilen fotograf ise
-        // MEKANIK surmeli kumpas gosteriyor. Cozunurluk ikisinde farkli
-        // oldugu icin sayi yazilmadi.
-        ad: "Mitutoyo kumpas (150 mm)",
+        // ⚠️ 2026-09-02: celiski cozuldu — kullanici "her ikisi" dedi. Bag
+        // dijital modele (Mitutoyo 500-181-20, 0,01 mm), fotograf mekanik
+        // surmeli kumpasa aitti; ikisi de sahada. Bu yuzden tek kayit,
+        // adet 2.
+        ad: "Mitutoyo kumpas — dijital ve sürmeli",
+        adet: 2,
         ozet:
-          "Halat, zincir ve kanca gibi elemanlardaki aşınmayı gözle değil ölçüyle değerlendirmek için. Ölçülen değer rapora yazılır, bir sonraki kontrolde karşılaştırılır.",
+          "150 mm ölçüm aralığı; dijital olanı 0,01 mm çözünürlükte okur. Halat, zincir ve kanca gibi elemanlardaki aşınmayı gözle değil ölçüyle değerlendirmek için; ölçülen değer rapora yazılır ve bir sonraki kontrolde karşılaştırılır.",
       },
     ],
   },
