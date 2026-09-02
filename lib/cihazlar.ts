@@ -72,9 +72,15 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
           "400 A'e kadar AC akım ölçer. 30 mm çene açıklığıyla pano içindeki dar aralıklarda, hattı kesmeden ölçüm alınabilir.",
       },
       {
-        ad: "Sanwa DCM60R — Pens ampermetre",
+        // ⚠️ MODEL TEYIT BEKLIYOR: kullanicinin gonderdigi bag DCM60R'ye
+        // gidiyor, gonderdigi fotograf ise DCM301 gosteriyor (dosya adini da
+        // kullanici "SanwaDCM301" koymus). Iki model farkli: DCM60R 600 A /
+        // 600 V, DCM301 1000 A / 1000 V + EF alan algilama. Yanlis deger
+        // yazmamak icin model ve aralik BILEREK yazilmadi; ikisi icin de
+        // dogru olan tek sey birakildi.
+        ad: "Sanwa — Pens ampermetre",
         ozet:
-          "True-RMS ölçüm yapar; 600 A akım, 600 V gerilim ve direnç/süreklilik. Kompakt gövdesiyle ikinci ölçüm noktası için kullanılır.",
+          "True-RMS ölçüm yapan pens ampermetre. Hattı kesmeden akım okumak ve ikinci bir ölçüm noktası açmak için kullanılır.",
       },
     ],
   },
@@ -121,16 +127,32 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
     hizmet: { yol: "/ekipman/basincli-kaplar", ad: "Basınçlı kapların periyodik kontrolü" },
     cihazlar: [
       {
-        ad: "REMS E-Push — Elektrikli basınç test pompası",
+        // ⚠️ Model duzeltildi: bag "E-Push" diyordu ama o sayfanin kendi teknik
+        // degerleri (1300 W, 60 bar, 6,5 l/dak, 12 kg) E-Push 2'nin degerleri
+        // ve kullanicinin fotografi da E-Push 2 gosteriyor. Iki bagimsiz
+        // isaret ayni yeri gosterdigi icin bu duzeltme guvenli.
+        ad: "REMS E-Push 2 — Elektrikli basınç test pompası",
         ozet:
           "60 bara kadar basınç üretir. Boru, tank ve yangın tesisatında sızdırmazlık testini elle pompalamaya göre çok daha kararlı bir basınçla yapar.",
       },
       {
-        ad: "El tipi basınç test pompası (2,5 / 6,3 MPa)",
+        // ⚠️ Kullanicinin fotografi Turk yapimi ERYIL marka el pompasi
+        // gosteriyor; gonderilen bag ise bambaska bir ureticinin (ATO)
+        // urunuydu. O bagdaki degerler (4,5 L depo, 2,5/6,3 MPa) baska bir
+        // urune ait oldugu icin YAZILMADI. Marka/model teyit bekliyor.
+        ad: "El tipi basınç test pompası",
         ozet:
-          "4,5 litre depolu manuel pompa. Elektrik bulunmayan ya da elektrikli ekipmanın uygun olmadığı sahalarda basınç testi için kullanılır.",
+          "Manometreli manuel pompa. Elektrik bulunmayan ya da elektrikli ekipmanın uygun olmadığı sahalarda basınç ve sızdırmazlık testi için kullanılır.",
       },
       {
+        // ⚠️ ARALIK TEYIT BEKLIYOR. Uc kaynak uc ayri sey soyluyor:
+        //  - Satici basligi: "1.6 Bar" (Mitalub MIGP10016B)
+        //  - Model kodu: MIGP + kadran + bar => 100 mm / 16 bar. Ayni
+        //    saticinin MIGP6310B urunu "63 mm / 10 bar" oldugu icin bu
+        //    okuma dogrulanmis sayilir; saticinin basligi virgul hatasi.
+        //  - Kullanicinin fotografi: PAKKENS 0-160 bar, bambaska bir marka.
+        // Kadran capi (100 mm) ve 1/2" baglanti her ihtimalde ayni oldugu
+        // icin onlar yazildi, ARALIK yazilmadi.
         ad: "Gliserinli manometre (100 mm, 1/2\")",
         adet: 2,
         ozet:
@@ -155,9 +177,13 @@ export const CIHAZ_GRUPLARI: CihazGrubu[] = [
           "50 metreye kadar ölçüm. Yükseklik, geçiş genişliği ve güvenlik mesafesi gibi ölçüler için hızlı ve tek kişiyle alınabilir.",
       },
       {
-        ad: "Mitutoyo 500-181-20 — Dijital kumpas",
+        // ⚠️ MODEL TEYIT BEKLIYOR: gonderilen bag dijital bir kumpasa
+        // (Mitutoyo 500-181-20, 0,01 mm) gidiyor, gonderilen fotograf ise
+        // MEKANIK surmeli kumpas gosteriyor. Cozunurluk ikisinde farkli
+        // oldugu icin sayi yazilmadi.
+        ad: "Mitutoyo kumpas (150 mm)",
         ozet:
-          "150 mm ölçüm aralığı, 0,01 mm çözünürlük. Halat, zincir ve kanca gibi elemanlardaki aşınmayı gözle değil ölçüyle değerlendirmek için.",
+          "Halat, zincir ve kanca gibi elemanlardaki aşınmayı gözle değil ölçüyle değerlendirmek için. Ölçülen değer rapora yazılır, bir sonraki kontrolde karşılaştırılır.",
       },
     ],
   },
