@@ -45,6 +45,31 @@ export const YAZI_EKIPMAN: Record<string, string[]> = {
   "periyodik-kontrol-yaptirmamanin-cezasi": ["mekanik-periyodik-kontrol"],
   "periyodik-kontrol-cezasi-2026": ["mekanik-periyodik-kontrol"],
   "isg-denetiminde-istenen-belgeler": ["mekanik-periyodik-kontrol", "elektrik-tesisat"],
+
+  /* ---- 2026-09-02'de eklenenler ----------------------------------------
+     Canli site tarandiginda 30 rehber yazinin 11'i bu tabloda YOKTU; yani
+     hicbir hizmet sayfasindan onlara link gitmiyordu. Ucu (17020, operator
+     belgesi, en sik uygunsuzluklar) tum sitede YALNIZCA /yazilar listesinden
+     link aliyordu — Search Console'da 45 sayfanin "kesfedildi/tarandi ama
+     dizine eklenmedi" durumunda beklemesinin bilinen sebeplerinden biri
+     tam olarak budur.
+
+     ⚠️ Bunlar konu olarak GENEL yazilar (mevzuat, sozlesme, rapor okuma).
+     Hepsini ayni "genel" hizmet sayfasina bagli birakmak o sayfada 10
+     maddelik bir liste, digerlerinde ise hic liste birakirdi; bu yuzden
+     her yazi en dogal karsiligi olan 1-2 hizmete dagitildi. Sayfa basina
+     dusen yazi sayisi en fazla 5. ---- */
+  "periyodik-kontrol-nedir": ["mekanik-periyodik-kontrol"],
+  "periyodik-kontrolu-kimler-yapabilir": ["mekanik-periyodik-kontrol"],
+  "periyodik-kontrol-yeni-yonetmelik-2025": ["is-makineleri"],
+  "ekipnet-nedir": ["is-makineleri"],
+  "isg-katip-periyodik-kontrol-sozlesmesi": ["forklift"],
+  "iso-iec-17020-2026-yenilikleri": ["basincli-kaplar"],
+  "periyodik-kontrol-raporu-nasil-okunur": ["kaldirma-iletme"],
+  "periyodik-kontrol-sureleri": ["kompresor-hava-tanki", "havalandirma"],
+  "periyodik-kontrolde-en-sik-cikan-uygunsuzluklar": ["makina-tezgah", "topraklama-olcumu"],
+  "periyodik-kontrole-hazirlik": ["buhar-kazani"],
+  "operator-belgesi-mi-periyodik-kontrol-mu": ["mobil-vinc", "egitim"],
 };
 
 /**

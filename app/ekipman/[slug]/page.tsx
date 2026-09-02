@@ -111,8 +111,14 @@ export default async function EkipmanPage({ params }: { params: Promise<{ slug: 
    */
   const bolgeler = (await getLocations().catch(() => [])).filter((b) => b.aktif);
   const yaziSluglari = EKIPMAN_YAZI[slug] ?? [];
+  // ⚠️ Ust sinir: tablo buyudukce bu kutu sinirsiz uzuyordu. Hizmet sayfasinin
+  // isi satis; rehber listesi sayfayi bastirmamali. Siralama tablodaki gibi
+  // kalsin (ilk sirada ekipmanin kendi konusu var), fazlasi kirpilsin.
   const ilgiliYazilar = yaziSluglari.length
-    ? (await getArticles(true).catch(() => [])).filter((a) => yaziSluglari.includes(a.slug))
+    ? (await getArticles(true).catch(() => []))
+        .filter((a) => yaziSluglari.includes(a.slug))
+        .sort((x, y) => yaziSluglari.indexOf(x.slug) - yaziSluglari.indexOf(y.slug))
+        .slice(0, 5)
     : [];
 
   const jsonLd = {
