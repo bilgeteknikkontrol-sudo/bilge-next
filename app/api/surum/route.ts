@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
  * ⚠️ Bu dosyayi PowerShell `Set-Content` ile guncelleme: BOM ekliyor ve
  * Turkce karakterleri bozuyor. Duzenleme araciyla veya Write ile yaz.
  */
-const SURUM = "2026-09-03-85-android-kopya-duzeltmesi";
+const SURUM = "2026-09-03-86-kvkk-fotograf-beyani";
 
 export async function GET() {
   return NextResponse.json({ surum: SURUM });

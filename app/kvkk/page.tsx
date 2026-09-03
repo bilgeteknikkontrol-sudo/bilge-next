@@ -177,6 +177,20 @@ export default async function KvkkPage() {
               Sonuçlanmayan teklif taleplerine ilişkin veriler, talebin değerlendirilmesi için
               gereken makul süre sonunda silinir.
             </p>
+            {/**
+             * ⚠️ 03.09.2026'da EKLENDI. Ek not alanina eklenen fotograflar
+             * veritabanina YAZILMIYOR; yalnizca bildirim e-postasinin ekinde
+             * kurumsal posta kutusuna dusuyor (app/api/teklif/route.ts).
+             * Saklama yeri diger verilerden farkli oldugu icin ayrica beyan
+             * ediliyor — "hangi verim nerede duruyor" sorusunun dogru cevabi.
+             */}
+            <p>
+              Teklif formundaki ek not alanına eklediğiniz <strong>fotoğraflar</strong>, sitenin
+              veritabanında saklanmaz; talebinizle birlikte yalnızca kurumsal e-posta kutumuza
+              iletilir ve talebinizin değerlendirilmesi için gereken süre boyunca orada muhafaza
+              edilir. Fotoğraf eklemek zorunlu değildir; eklediğiniz görsellerde üçüncü kişilerin
+              yer almamasına özen göstermenizi rica ederiz.
+            </p>
 
             <h2 id="haklar">7. KVKK md. 11 Kapsamındaki Haklarınız</h2>
             <p>Veri sahibi olarak aşağıdaki haklara sahipsiniz:</p>

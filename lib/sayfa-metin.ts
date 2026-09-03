@@ -675,8 +675,8 @@ Akreditasyon, kuruluşun teknik yeterliliğinin ve tarafsızlığının bağıms
       {
         anahtar: "yasal_son_guncelleme",
         etiket: "“Son güncelleme” tarihi",
-        not: "Her iki yasal sayfanın üstünde görünür. Metinlerin gövdesi güvenlik gereği kodda tutuluyor; değişiklik gerekirse söyleyin.",
-        varsayilan: "31 Ağustos 2026",
+        not: "Her iki yasal sayfanın üstünde görünür. Metinlerin gövdesi güvenlik gereği kodda tutuluyor; değişiklik gerekirse söyleyin. Metnin içeriği her değiştiğinde bu tarih de güncellenmeli — yasal metinde gerçeğe aykırı tarih bırakılmaz.",
+        varsayilan: "3 Eylül 2026",
       },
     ],
   },

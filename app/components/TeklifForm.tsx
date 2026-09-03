@@ -502,7 +502,8 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
                 disabled={gorselCalisiyor || gorseller.length >= EN_FAZLA_GORSEL}
               />
               <span className="ml-2 text-xs text-muted">
-                Etiket, plaka, arıza… en fazla {EN_FAZLA_GORSEL} fotoğraf.
+                Etiket, plaka, arıza… en fazla {EN_FAZLA_GORSEL} fotoğraf. Mümkünse kişilerin
+                göründüğü kareleri eklemeyin.
               </span>
 
               {gorseller.length > 0 && (
@@ -604,8 +605,12 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
               acik riza kutusu degil, bilgilendirme baglantisi kullaniliyor. */}
           <div className="col-span-2">
             <p className="text-xs leading-relaxed text-muted">
-              Formu göndererek iletmiş olduğunuz kimlik ve iletişim bilgileriniz, yalnızca teklif
-              hazırlanması ve talebinizle ilgili sizinle iletişime geçilmesi amacıyla işlenir.
+              {/* ⚠️ "ve varsa eklediginiz fotograflar": 03.09.2026'da fotograf
+                  ekleme geldi. Toplanan veriyi eksik sayan bir aydinlatma
+                  metni, KVKK md. 10 yukumlulugunu karsilamaz. */}
+              Formu göndererek iletmiş olduğunuz kimlik ve iletişim bilgileriniz ile varsa
+              eklediğiniz fotoğraflar, yalnızca teklif hazırlanması ve talebinizle ilgili sizinle
+              iletişime geçilmesi amacıyla işlenir.
               Ayrıntılı bilgi için{" "}
               <Link href="/kvkk" className="font-semibold text-blue underline">
                 KVKK Aydınlatma Metni

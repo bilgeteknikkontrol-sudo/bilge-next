@@ -8,12 +8,23 @@
  */
 
 /**
- * ⚠️ Hukuki metinlerde gercege aykiri beyan birakmamak icin bu tarih, metnin
- * ICERIGI her degistiginde guncellenir. 31.08.2026: barindirma saglayicisi
- * (Vercel -> Hostinger, ABD -> Hollanda) ve analitik servis (Vercel Analytics
- * -> Google Analytics 4) beyanlari gercek duruma gore duzeltildi.
+ * ⚠️ "SON GUNCELLEME" TARIHI BURADA DEGIL.
+ *
+ * Burada `SON_GUNCELLEME` diye bir sabit vardi ve HICBIR YERDE
+ * KULLANILMIYORDU — degistirilince sayfada hicbir sey degismiyordu (03.09.2026'da
+ * olculdu: sabit "3 Eylul" yapildi, sayfa "31 Agustos" demeye devam etti).
+ * Yasal bir metinde bu, degistirdigini saniyorken eski tarihi yayinda birakmak
+ * demek; bu yuzden sabit kaldirildi.
+ *
+ * Gercek kaynak: `lib/sayfa-metin.ts` -> `yasal_son_guncelleme` ve o da
+ * PANELDEN yonetiliyor. Koddaki deger yalnizca tohum; veritabaninda kayitli
+ * bir deger varsa kod degisikligi canliya yansimaz, panelden guncellenmelidir.
+ *
+ * Metnin ICERIGI her degistiginde tarih de guncellenir. Gecmis:
+ * 31.08.2026 barindirma (Vercel -> Hostinger) ve analitik (Vercel Analytics ->
+ * GA4) beyanlari · 03.09.2026 teklif formuna fotograf ekleme (gorsel veri
+ * kategorisi ve dosyalarin nerede saklandigi).
  */
-export const SON_GUNCELLEME = "31 Ağustos 2026";
 
 /** Sitenin fiilen topladigi kisisel veriler. Kaynak: /teklif formu. */
 export const TOPLANAN_VERILER = [
@@ -29,6 +40,20 @@ export const TOPLANAN_VERILER = [
     kategori: "Müşteri İşlem",
     ornek:
       "Talep ettiğiniz muayene hizmetine konu ekipman listesi, talebinize eklediğiniz serbest metin notu, oluşturulan talep referans numarası",
+  },
+  /**
+   * ⚠️ 03.09.2026'da EKLENDI. Teklif formundaki "Ek not" alanina fotograf
+   * eklenebiliyor (bkz. app/components/TeklifForm.tsx). Fotograf kisisel
+   * veridir; toplanan veri listesinde gorunmemesi eksik beyan olurdu.
+   *
+   * Bu dosyalar veritabanina YAZILMIYOR — bildirim e-postasinin ekinde
+   * kurumsal posta kutusuna dusuyor (bkz. app/api/teklif/route.ts). Saklama
+   * yeri farkli oldugu icin /kvkk "Saklama Suresi" bolumunde ayrica yaziyor.
+   */
+  {
+    kategori: "Görsel Veri",
+    ornek:
+      "Ek not alanına isteğe bağlı olarak eklediğiniz fotoğraflar (ekipman, etiket, arıza görseli). Fotoğraf eklemek zorunlu değildir.",
   },
   {
     kategori: "İşlem Güvenliği",
