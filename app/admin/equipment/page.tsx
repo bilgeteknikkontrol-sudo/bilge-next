@@ -1,19 +1,46 @@
 import Link from "next/link";
 import { getEquipment, getEquipmentBySlug } from "@/lib/cms";
-import { saveEquipmentAction, deleteEquipmentAction, hizmetMetinleriniAktarAction } from "../actions";
+import {
+  saveEquipmentAction,
+  deleteEquipmentAction,
+  hizmetMetinleriniAktarAction,
+  hizmetMetniniKoddanYenileAction,
+} from "../actions";
 import { guard } from "@/lib/auth";
+import { EKIPMAN_ICERIK } from "@/lib/ekipman-icerik";
 import GorselSecici from "../GorselSecici";
 
 export default async function EquipmentAdmin({
   searchParams,
 }: {
-  searchParams: Promise<{ edit?: string; new?: string; hata?: string; aktarildi?: string }>;
+  searchParams: Promise<{
+    edit?: string;
+    new?: string;
+    hata?: string;
+    aktarildi?: string;
+    yenilendi?: string;
+  }>;
 }) {
   await guard();
   const sp = await searchParams;
   const list = await getEquipment();
   const item = sp.edit ? await getEquipmentBySlug(sp.edit) : null;
   const isNew = Boolean(sp.new) && !item;
+
+  /**
+   * Koddaki metin panele aktarilandan FARKLI mi?
+   *
+   * ⚠️ Bu karsilastirma olmadan asagidaki "üzerine yaz" dugmesi her zaman
+   * gorunurdu ve kullanicinin kendi duzenlemesini kaybetmesi icin bir davet
+   * olurdu. Fark yoksa dugme hic cizilmiyor.
+   */
+  const koddaki = item ? EKIPMAN_ICERIK[item.slug] : undefined;
+  const metinFarkli = Boolean(
+    koddaki &&
+      item &&
+      ((item.body || "").trim() !== koddaki.bodyHtml.trim() ||
+        (item.lead || "").trim() !== koddaki.lead.trim())
+  );
 
   return (
     <div>
@@ -102,6 +129,45 @@ export default async function EquipmentAdmin({
 
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <h2 className="font-bold text-slate-700">{item || isNew ? "Düzenle" : "Yeni Ekipman"}</h2>
+
+          {sp.yenilendi && (
+            <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+              ✓ Sayfa metni koddaki güncel sürümle değiştirildi.
+            </p>
+          )}
+
+          {/**
+           * ⚠️ KOD ILE PANEL AYRISTIGINDA UYARI.
+           *
+           * 03.09.2026: mevzuat duzeltmesi kodda yapildi, canlida eski cumle
+           * kaldi. Sebep, metin bir kez panele aktarildiktan sonra sayfayi
+           * VERITABANININ beslemesi. Bu kutu, o ayrismayi gorunur kiliyor;
+           * yoksa "duzeltmistim ama sitede eski" durumu ancak sayfayi
+           * okuyarak fark ediliyor.
+           */}
+          {metinFarkli && (
+            <details className="mt-3 rounded-xl border border-amber-300 bg-amber-50 p-3">
+              <summary className="cursor-pointer text-sm font-bold text-amber-900">
+                Kodda bu hizmetin metninin farklı bir sürümü var
+              </summary>
+              <p className="mt-2 text-sm leading-relaxed text-amber-900">
+                Sayfada <b>paneldeki metin</b> görünür; koddaki metin yalnızca ilk aktarımda
+                kullanılır. Bu ikisi şu an farklı — kodda yapılmış bir düzeltme (örneğin mevzuat
+                metni) siteye yansımamış olabilir.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-amber-900">
+                Aşağıdaki düğme <b>giriş, gövde ve SSS alanlarını koddaki sürümle değiştirir</b>;
+                bu alanlarda panelden yaptığınız düzenlemeler kaybolur. Emin değilseniz önce
+                metni kopyalayıp saklayın.
+              </p>
+              <form action={hizmetMetniniKoddanYenileAction} className="mt-3">
+                <input type="hidden" name="slug" value={item?.slug || ""} />
+                <button className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:brightness-110">
+                  Koddaki metinle değiştir
+                </button>
+              </form>
+            </details>
+          )}
           {/* encType: gorsel dosya alani var; yoksa dosya bos gelir. */}
           <form action={saveEquipmentAction} encType="multipart/form-data" className="mt-4 space-y-3">
             <input type="hidden" name="slug" defaultValue={item?.slug || ""} />

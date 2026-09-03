@@ -9,6 +9,7 @@ import {
   deleteArticle,
   saveEquipment,
   getEquipment,
+  getEquipmentBySlug,
   deleteEquipment,
   saveLocation,
   getLocations,
@@ -598,6 +599,38 @@ export async function hizmetMetinleriniAktarAction() {
   }
   revalidatePath("/", "layout");
   redirect(`/admin/equipment?aktarildi=${aktarilan}`);
+}
+
+// ---------- TEK HIZMETIN METNINI KODDAKIYLE DEGISTIR ----------
+/**
+ * Bir hizmetin panel metnini koddaki (lib/ekipman-icerik.ts) guncel surumle
+ * DEGISTIRIR — yukaridaki toplu aktarmanin aksine dolu alanlarin da uzerine
+ * yazar.
+ *
+ * ⚠️ NEDEN AYRI BIR EYLEM GEREKTI: 03.09.2026'da mevzuat duzeltmesi kodda
+ * yapildi ama canlida eski cumle durmaya devam etti. Sebep: metin bir kez
+ * veritabanina aktarildiktan sonra sayfayi VERITABANI besliyor; kod yalnizca
+ * tohum. Toplu aktarma da bilerek yalnizca bos alanlari doldurdugu icin
+ * duzeltme hicbir yoldan canliya gecemiyordu — geriye metni panelde elle
+ * duzenlemek kaliyordu ve yasal/mevzuat metinlerinde bu, elle yeniden yazma
+ * hatasi riski demek.
+ *
+ * Tek kayda etki eder ve ekranda yalnizca kod ile panel metni FARKLIYSA
+ * gosterilir; kullanicinin kendi duzenlemesini sessizce silme riski yok.
+ */
+export async function hizmetMetniniKoddanYenileAction(formData: FormData) {
+  await guard();
+  const slug = String(formData.get("slug") || "");
+  if (!slug) redirect("/admin/equipment");
+
+  const { EKIPMAN_ICERIK } = await import("@/lib/ekipman-icerik");
+  const kod = EKIPMAN_ICERIK[slug];
+  const kayit = await getEquipmentBySlug(slug);
+  if (!kod || !kayit) redirect(`/admin/equipment?edit=${slug}`);
+
+  await saveEquipment({ ...kayit, lead: kod.lead, body: kod.bodyHtml, faq: kod.faq });
+  revalidatePath("/", "layout");
+  redirect(`/admin/equipment?edit=${slug}&yenilendi=1`);
 }
 
 // ---------- YAZILARI KODDAN AKTAR ----------
