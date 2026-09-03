@@ -96,6 +96,14 @@ export default function SesliYazma({
   /** Bu oturumda hic sonuc geldi mi? Sonsuz yeniden baslatma dongusune karsi. */
   const sonucVarRef = useRef(false);
   const baslangicRef = useRef(0);
+  /**
+   * En son nota yazilan cumle ve zamani.
+   *
+   * ⚠️ Oturumlar arasi kopyalamaya karsi: Android'de bir cumle, oturum yeniden
+   * baslatildiktan sonra tekrar gelebiliyor. Indis isaretlemesi yalnizca ayni
+   * oturumun icinde ise yariyor, bu ref oturumdan oturuma tasiniyor.
+   */
+  const sonYazilanRef = useRef<{ metin: string; zaman: number }>({ metin: "", zaman: 0 });
 
   /**
    * Destek yalnizca tarayicida olculebilir.
@@ -141,6 +149,9 @@ export default function SesliYazma({
     const Yapici: TanimaYapici = bulunan;
 
     istekliRef.current = true;
+    // Kullanici yeniden basladiginda kopya suzgeci sifirlaniyor; yoksa
+    // durdurup ayni kelimeyi tekrar soylemek atlanabilirdi.
+    sonYazilanRef.current = { metin: "", zaman: 0 };
 
     /**
      * Tek bir tanima oturumu.
@@ -150,11 +161,40 @@ export default function SesliYazma({
      * kapatiyor. Kullanici "durdur" demedigi surece kendini yeniden cagiriyor.
      */
     function baslat() {
+      /**
+       * ⚠️ Onceki ornek varsa once SUSTURULUP kapatiliyor.
+       *
+       * Iki canli tanima ayni anda dinlerse her cumle iki kez yazilir.
+       * `onend` bosaltilmadan `abort()` cagrilirsa o da yeniden baslatir —
+       * once olay isleyicileri, sonra abort.
+       */
+      const eski = tanimaRef.current;
+      if (eski) {
+        eski.onresult = null;
+        eski.onerror = null;
+        eski.onend = null;
+        try {
+          eski.abort();
+        } catch {
+          /* zaten kapali olabilir */
+        }
+      }
+
       const tanima = new Yapici();
       tanimaRef.current = tanima;
       tanima.lang = "tr-TR";
-      // `continuous`: cumle bitince kapanmasin, musteri konusmaya devam etsin.
-      tanima.continuous = true;
+      /**
+       * ⚠️ ANDROID'DE `continuous` KAPALI — kullanici bildirdi: bir isim
+       * soyleyince nota UC KEZ yaziliyordu, masaustunde sorun yoktu.
+       *
+       * Android Chrome'da `continuous` acikken ayni cumle `results` listesine
+       * birden fazla kez, AYRI indislerle giriyor (bilinen tarayici hatasi).
+       * Android zaten her cumleden sonra oturumu kendi kapatiyor; yani
+       * `continuous` orada bir sey kazandirmiyor, yalnizca bu hatayi
+       * tetikliyor. Kapatinca oturum basina tek sonuc kaliyor, sureklilik de
+       * asagidaki `onend` yeniden baslatmasiyla korunuyor.
+       */
+      tanima.continuous = !/Android/i.test(navigator.userAgent);
       // `interimResults`: konusurken yazi ekranda ilerlesin; mikrofonun
       // calistigi boyle goruluyor. Ara metin nota YAZILMIYOR, gosteriliyor.
       tanima.interimResults = true;
@@ -162,17 +202,42 @@ export default function SesliYazma({
       sonucVarRef.current = false;
       baslangicRef.current = Date.now();
 
+      /** Bu oturumda nota gecirilmis sonuc indisleri. */
+      const yazilan = new Set<number>();
+
       tanima.onresult = (e) => {
         let araMetin = "";
-        for (let i = e.resultIndex; i < e.results.length; i++) {
+        /**
+         * ⚠️ `e.resultIndex`'ten BASLANMIYOR, liste bastan taraniyor.
+         *
+         * Android'de ayni olayda eski sonuclar da yeniden geliyor ve
+         * `resultIndex` her zaman ilerlemiyor; "sadece yeni gelenler" varsayimi
+         * tam olarak ucleme sikayetini uretiyordu. Yazilan indisler
+         * isaretleniyor, ikinci kez gelen sonuc atlaniyor.
+         */
+        for (let i = 0; i < e.results.length; i++) {
           const sonuc = e.results[i];
-          const metin = sonuc[0]?.transcript ?? "";
+          const metin = (sonuc[0]?.transcript ?? "").trim();
           if (sonuc.isFinal) {
+            if (yazilan.has(i)) continue;
+            yazilan.add(i);
             sonucVarRef.current = true;
-            const temiz = metin.trim();
-            if (temiz) onMetin(temiz);
-          } else {
-            araMetin += metin;
+            if (metin && metin !== sonYazilanRef.current.metin) {
+              onMetin(metin);
+              sonYazilanRef.current = { metin, zaman: Date.now() };
+            } else if (metin) {
+              /**
+               * Ayni metin yeni bir INDISLE geldi. Android'de gorulen ikinci
+               * kopyalama bicimi bu. Iki saniyeden sonrasi gercek bir tekrar
+               * sayiliyor ("evet evet" gibi) ve yaziliyor.
+               */
+              if (Date.now() - sonYazilanRef.current.zaman > 2000) {
+                onMetin(metin);
+                sonYazilanRef.current = { metin, zaman: Date.now() };
+              }
+            }
+          } else if (!yazilan.has(i)) {
+            araMetin += metin + " ";
           }
         }
         setAra(araMetin.trim());
