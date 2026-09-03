@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Script from "next/script";
 import { useCerezTercihi } from "@/lib/cerez";
+import { ADS_ID, adsDonusum } from "@/lib/ads";
 
 /**
  * GOOGLE ETIKETI (GA4) — Consent Mode v2, GELISMIS mod.
@@ -32,6 +33,11 @@ import { useCerezTercihi } from "@/lib/cerez";
  * politikasi metninin bunu ANLATMASI gerekir; degistirilirse orasi da
  * guncellenmeli.
  *
+ * ⚠️ AYNI ETIKET GOOGLE ADS ICIN DE KULLANILIYOR: asagida GA4 kimliginin
+ * yanina Ads hesap kimligi de `config` ediliyor. Ayri bir gtag.js yuklemeye
+ * gerek yok; donusum etiketleri ve olcum tek kutuphaneyi paylasiyor
+ * (bkz. lib/ads.ts).
+ *
  * ⚠️ SIRA ONEMLI: izin varsayilanlari gtag.js YUKLENMEDEN once dataLayer'a
  * girmeli. Bu yuzden varsayilanlar `beforeInteractive` (kok duzende calisir),
  * kutuphanenin kendisi `afterInteractive`. Ters sirada calisirsa varsayilan
@@ -60,6 +66,31 @@ export default function GoogleAnalytics({ id }: { id: string }) {
     });
   }, [tercih]);
 
+  /**
+   * TELEFON VE WHATSAPP TIKLAMALARI — tek yerden, olay delegasyonuyla.
+   *
+   * ⚠️ Neden her baglantiya tek tek onClick eklenmedi: `tel:` baglantisi 13
+   * dosyada, `wa.me` 3 dosyada geciyor; ustelik bir kismi panelden yonetilen
+   * icerigin icinden geliyor ve orada React olayi yok. Belge duzeyinde tek
+   * dinleyici hepsini yakalar ve yeni eklenen baglantilar da kendiliginden
+   * olculur.
+   *
+   * Yakalama evresinde (`capture: true`) dinleniyor; aradaki bir bilesen olayi
+   * durdurursa olcum yine de yapilir.
+   */
+  useEffect(() => {
+    function tiklama(e: MouseEvent) {
+      const hedef = e.target as Element | null;
+      const bag = hedef?.closest?.("a[href]");
+      if (!bag) return;
+      const adres = bag.getAttribute("href") || "";
+      if (adres.startsWith("tel:")) adsDonusum("telefon");
+      else if (/(?:wa\.me|api\.whatsapp\.com)/i.test(adres)) adsDonusum("whatsapp");
+    }
+    document.addEventListener("click", tiklama, true);
+    return () => document.removeEventListener("click", tiklama, true);
+  }, []);
+
   if (!id) return null;
 
   return (
@@ -86,6 +117,7 @@ export default function GoogleAnalytics({ id }: { id: string }) {
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${id}');
+          ${ADS_ID ? `gtag('config', '${ADS_ID}');` : ""}
         `}
       </Script>
     </>

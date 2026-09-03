@@ -6,6 +6,7 @@ import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
 import type { TeklifSoru } from "@/lib/teklif-sorulari";
 import { boyutYaz, kucult } from "@/lib/gorsel-kucult";
+import { adsDonusum } from "@/lib/ads";
 import SesliYazma from "./SesliYazma";
 
 /**
@@ -307,6 +308,14 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
         referans: veri?.referans || "",
         gorselUyari: gorseller.length > 0 && veri?.bildirim === false,
       });
+      /**
+       * Google Ads donusumu — YALNIZCA sunucu talebi kabul ettikten sonra.
+       *
+       * ⚠️ Dugmeye basildiginda degil: gonderim 400/503 ile dusebiliyor
+       * (eksik alan, depo ve e-posta birlikte cokerse). Tiklamayi donusum
+       * saymak, olmamis talepleri Google'a ogretmek olurdu.
+       */
+      adsDonusum("teklif");
     } catch {
       setHata("Bağlantı kurulamadı.");
       setYedek(talepMetni(payload));
