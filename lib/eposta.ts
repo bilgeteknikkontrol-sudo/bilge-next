@@ -30,6 +30,15 @@
 export type EpostaSonuc = { gonderildi: boolean; hata?: string; yol?: "smtp" | "resend" };
 
 /**
+ * E-postaya iliştirilen dosya (teklif formundan gelen musteri fotograflari).
+ *
+ * ⚠️ Bu dosyalar hicbir yerde saklanmiyor; tek kopyalari bu e-postanin ekinde.
+ * Gonderim duserse kaybolurlar — cagiran taraf bunu musteriye soyluyor
+ * (bkz. app/api/teklif/route.ts).
+ */
+export type EpostaEki = { ad: string; tur: string; veri: Buffer };
+
+/**
  * SMTP ayarlarini panel kopyalama kazalarina karsi temizler.
  *
  * ⚠️ 2026-08-29: Hostinger'da gonderim `535 5.7.8 authentication failed` ile
@@ -102,12 +111,15 @@ export async function epostaGonder({
   html,
   metin,
   yanitla,
+  ekler = [],
 }: {
   konu: string;
   html: string;
   metin: string;
   /** Musterinin adresi — "Yanitla" dendiginde ona gitsin */
   yanitla?: string;
+  /** Iliştirilecek dosyalar (teklif formundaki fotograflar). */
+  ekler?: EpostaEki[];
 }): Promise<EpostaSonuc> {
   const ayar = epostaAyari();
   if (!ayar.hazir) {
@@ -146,6 +158,15 @@ export async function epostaGonder({
         html,
         text: metin,
         ...(yanitla ? { replyTo: yanitla } : {}),
+        ...(ekler.length
+          ? {
+              attachments: ekler.map((e) => ({
+                filename: e.ad,
+                contentType: e.tur,
+                content: e.veri,
+              })),
+            }
+          : {}),
       });
       return { gonderildi: true, yol: "smtp" };
     } catch (e) {
@@ -172,6 +193,15 @@ export async function epostaGonder({
         html,
         text: metin,
         ...(yanitla ? { reply_to: yanitla } : {}),
+        // Resend eki base64 dize olarak bekliyor (SMTP'de ham Buffer gidiyor).
+        ...(ekler.length
+          ? {
+              attachments: ekler.map((e) => ({
+                filename: e.ad,
+                content: e.veri.toString("base64"),
+              })),
+            }
+          : {}),
       }),
     });
     if (!res.ok) {
@@ -200,6 +230,8 @@ export type TeklifEposta = {
   /** Ekipmana bagli ek bilgi sorulari ve cevaplari (m², kat, dedektor...) */
   bilgiler?: { ekipman: string; soru: string; cevap: string }[];
   tarih: string;
+  /** Musterinin ekledigi fotograf sayisi — dosyalar bu e-postanin ekinde. */
+  ekSayisi?: number;
 };
 
 const esc = (s: string) =>
@@ -311,6 +343,20 @@ export function teklifEpostaHtml(t: TeklifEposta): string {
         : ""
     }
 
+    ${
+      t.ekSayisi
+        ? `<tr><td style="padding:22px 24px 4px;">
+             <div style="font:700 12px/1 Arial,Helvetica,sans-serif;color:#566b7e;letter-spacing:1px;text-transform:uppercase;">Müşterinin eklediği fotoğraflar</div>
+           </td></tr>
+           <tr><td style="padding:8px 24px 0;">
+             <div style="border:1px solid #e6ecf3;background:#f8fbfe;padding:12px 14px;border-radius:8px;font:400 14px/1.6 Arial,Helvetica,sans-serif;color:#0b2a4a;">
+               📷 <strong>${t.ekSayisi} fotoğraf</strong> bu e-postanın ekinde.
+               <span style="color:#7d8b99;">Panelde saklanmaz; ihtiyaç duyulursa bu e-postayı arşivleyin.</span>
+             </div>
+           </td></tr>`
+        : ""
+    }
+
     <!-- Eylem -->
     <tr><td style="padding:24px;">
       <a href="tel:${esc(t.tel)}" style="display:inline-block;background:#0f5aa8;color:#ffffff;font:700 15px Arial,Helvetica,sans-serif;text-decoration:none;padding:13px 26px;border-radius:999px;">Müşteriyi ara</a>
@@ -344,5 +390,6 @@ export function teklifEpostaMetin(t: TeklifEposta): string {
       ? ["", "Teklif için verilen bilgiler:", ...(t.bilgiler || []).map((b) => `  - ${b.soru} ${b.cevap}   (${b.ekipman})`)]
       : []),
     ...(t.not ? ["", `Not: ${t.not}`] : []),
+    ...(t.ekSayisi ? ["", `Ek: ${t.ekSayisi} fotoğraf (bu e-postanın ekinde).`] : []),
   ].join("\n");
 }

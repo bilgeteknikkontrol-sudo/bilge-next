@@ -1,7 +1,80 @@
 import { NextResponse } from "next/server";
 import { saveTeklif } from "@/lib/store";
-import { epostaGonder, teklifEpostaHtml, teklifEpostaMetin } from "@/lib/eposta";
+import { epostaGonder, teklifEpostaHtml, teklifEpostaMetin, type EpostaEki } from "@/lib/eposta";
 import { hataMetni } from "@/lib/hata";
+
+/**
+ * MUSTERININ EKLEDIGI FOTOGRAFLAR
+ *
+ * ⚠️ Fotograflar VERITABANINA YAZILMIYOR; yalnizca bildirim e-postasinin ekine
+ * konuyor. Gerekcesi: `teklifler` tablosunda ek icin sutun yok ve MySQL'de
+ * sutun eklemek ozel gecis kodu istiyor; ustelik musteri fotograflarini base64
+ * olarak satirlara gomek tabloyu hizla sisirir ve KVKK acisindan gereksiz bir
+ * saklama olur. E-posta kutusu bu is icin dogru yer — talep zaten oradan
+ * takip ediliyor. Panelde kayda "N fotograf eklendi" notu dusuluyor.
+ *
+ * Tarayici tarafi fotograflari 1600 px / JPEG'e kucultuyor (lib/gorsel-kucult);
+ * asagidaki sinirlar, kucultmenin calismadigi durumlar icin guvenlik agi.
+ */
+const EN_FAZLA_EK = 5;
+const TEK_EK_SINIRI = 6 * 1024 * 1024;
+const TOPLAM_EK_SINIRI = 8 * 1024 * 1024;
+
+/** Dosya adini e-posta ekine konabilecek zararsiz bir ada indirger. */
+function guvenliAd(ham: string, sira: number): string {
+  const temiz = (ham || "")
+    .replace(/[\\/]/g, "-")
+    .replace(/[^\w.\-() ]+/g, "")
+    .trim()
+    .slice(-80);
+  return temiz || `fotograf-${sira}.jpg`;
+}
+
+/**
+ * Istek govdesini okur.
+ *
+ * Fotograf yoksa istemci eskisi gibi JSON gonderiyor; fotograf varsa
+ * `multipart/form-data` icinde `veri` alani JSON, `gorsel` alanlari dosyalar.
+ * Iki bicim de destekleniyor ki fotograf ozelligi eski akisi bozmasin.
+ */
+async function govdeyiOku(
+  req: Request
+): Promise<{ data: Record<string, unknown> | null; ekler: EpostaEki[] }> {
+  const tur = req.headers.get("content-type") || "";
+  if (!tur.toLowerCase().includes("multipart/form-data")) {
+    return { data: await req.json().catch(() => null), ekler: [] };
+  }
+
+  const fd = await req.formData().catch(() => null);
+  if (!fd) return { data: null, ekler: [] };
+
+  let data: Record<string, unknown> | null = null;
+  try {
+    const ham = fd.get("veri");
+    data = typeof ham === "string" ? (JSON.parse(ham) as Record<string, unknown>) : null;
+  } catch {
+    data = null;
+  }
+
+  const ekler: EpostaEki[] = [];
+  let toplam = 0;
+  for (const parca of fd.getAll("gorsel")) {
+    if (typeof parca === "string" || !(parca instanceof Blob)) continue;
+    if (ekler.length >= EN_FAZLA_EK) break;
+    // Yalnizca gorsel; parca.type istemciden geliyor, bu yuzden ayrica boyut
+    // sinirlari da uygulaniyor.
+    if (!parca.type.startsWith("image/")) continue;
+    if (parca.size === 0 || parca.size > TEK_EK_SINIRI) continue;
+    if (toplam + parca.size > TOPLAM_EK_SINIRI) break;
+    toplam += parca.size;
+    ekler.push({
+      ad: guvenliAd((parca as File).name, ekler.length + 1),
+      tur: parca.type,
+      veri: Buffer.from(await parca.arrayBuffer()),
+    });
+  }
+  return { data, ekler };
+}
 
 /**
  * Online teklif formunun alicisi.
@@ -16,19 +89,23 @@ import { hataMetni } from "@/lib/hata";
  * Sonuc yanitta `bildirim` alaninda donuyor, boylece sorun sessiz kalmiyor.
  */
 export async function POST(req: Request) {
-  const data = await req.json().catch(() => null);
+  const { data, ekler } = await govdeyiOku(req);
 
   const eksik: string[] = [];
   if (!data?.firma) eksik.push("firma adı");
   if (!data?.tel) eksik.push("telefon");
   if (!data?.eposta) eksik.push("e-posta");
   if (!Array.isArray(data?.ekipmanlar) || data.ekipmanlar.length === 0) eksik.push("en az bir ekipman");
-  if (eksik.length) {
+  if (eksik.length || !data) {
     return NextResponse.json(
       { error: `Şu alanlar eksik: ${eksik.join(", ")}.` },
       { status: 400 }
     );
   }
+
+  // Yukaridaki kontrol gecildiyse dizi oldugu kesin; govde `unknown` alanlarla
+  // geldigi icin burada bir kez daraltiliyor.
+  const gelenEkipmanlar = (data.ekipmanlar as unknown[]).map(String);
 
   const tarih = new Date().toISOString();
   const ref = "BLG-" + Date.now().toString(36).toUpperCase();
@@ -64,7 +141,7 @@ export async function POST(req: Request) {
     tel: String(data.tel),
     eposta: String(data.eposta),
     bolge: String(data.bolge || ""),
-    ekipmanlar: data.ekipmanlar.map(String),
+    ekipmanlar: gelenEkipmanlar,
     tarih,
     durum: "yeni",
     gecerli: "Kontrol sonrası belirlenecek",
@@ -81,6 +158,9 @@ export async function POST(req: Request) {
         ? bilgiler.map((b) => `${b.soru} ${b.cevap}`).join("\n")
         : "",
       String(data.not || ""),
+      // Fotograflar burada saklanmiyor; panelde bakan kisi bunlarin bildirim
+      // e-postasinda oldugunu bilmezse hic aramaz.
+      ekler.length ? `📷 ${ekler.length} fotoğraf eklendi (bildirim e-postasının ekinde).` : "",
     ]
       .filter(Boolean)
       .join("\n\n"),
@@ -117,6 +197,7 @@ export async function POST(req: Request) {
     ekipmanlar: kayit.ekipmanlar,
     bilgiler,
     tarih,
+    ekSayisi: ekler.length,
   };
 
   const bildirim = await epostaGonder({
@@ -124,10 +205,16 @@ export async function POST(req: Request) {
     html: teklifEpostaHtml(epostaVerisi),
     metin: teklifEpostaMetin(epostaVerisi),
     yanitla: kayit.eposta,
+    ekler,
   });
 
   if (!bildirim.gonderildi) {
     console.warn("[TEKLIF] Bildirim e-postasi gonderilemedi:", bildirim.hata, "| ref:", ref);
+    // ⚠️ Fotograflarin TEK tasiyicisi bu e-posta; gitmediyse kayboldular.
+    // Musteriye de soyleniyor (yanittaki `bildirim: false` ile).
+    if (ekler.length) {
+      console.warn("[TEKLIF] Musterinin", ekler.length, "fotografi iletilemedi | ref:", ref);
+    }
   }
 
   // Ne kaydedilebildi ne de bildirilebildi -> talep gercekten kayboldu.

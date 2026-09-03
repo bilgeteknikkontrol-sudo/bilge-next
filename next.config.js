@@ -206,8 +206,21 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           // Disariya giden baglantilarda tam adres sizmasin.
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          // Sitenin ihtiyaci olmayan donanim izinlerini bastan kapat.
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          /**
+           * Sitenin ihtiyaci olmayan donanim izinlerini bastan kapat.
+           *
+           * ⚠️ `microphone=(self)` ZORUNLU: teklif formundaki "Sesli yaz"
+           * dugmesi (app/components/SesliYazma.tsx) Web Speech API kullaniyor
+           * ve Chrome bu API'yi de `microphone` iznine bagliyor. Deger `()`
+           * kalirsa tarayici kullaniciya izin bile sormadan `not-allowed`
+           * dondurur; ozellik sessizce calismaz.
+           *
+           * `(self)` yalnizca bu alan adina izin verir — cerceve icine gomulen
+           * ucuncu taraflar bu izni alamaz. Kamera ve konum kapali kaliyor:
+           * fotograf ekleme normal dosya secici ile calisiyor, `getUserMedia`
+           * kullanmiyor.
+           */
+          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
 
           /**
            * ⚠️ HTTP/3 (QUIC) BOZUK — bu baslik bir DENEME.

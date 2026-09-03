@@ -1,10 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { KATEGORILER } from "@/lib/data";
 import { KURUM } from "@/lib/site-data";
 import type { TeklifSoru } from "@/lib/teklif-sorulari";
+import { boyutYaz, kucult } from "@/lib/gorsel-kucult";
+import SesliYazma from "./SesliYazma";
+
+/**
+ * Ek not alanina eklenebilecek fotograf sayisi.
+ *
+ * Fotograflar bildirim e-postasinin EKINE konuyor (veritabaninda saklanmiyor,
+ * bkz. app/api/teklif/route.ts). Bir teklif icin 5 kare fazlasiyla yeter;
+ * ustu hem posta kutusunu hem istek govdesini gereksiz sisirir.
+ */
+const EN_FAZLA_GORSEL = 5;
+/** Kucultmeden SONRAKI toplam sinir; sunucu tarafi da ayni siniri uyguluyor. */
+const TOPLAM_GORSEL_SINIRI = 8 * 1024 * 1024;
+/** Kucultulemeyen (ornek: HEIC) dosyalar icin tek dosya siniri. */
+const TEK_GORSEL_SINIRI = 6 * 1024 * 1024;
+
+type SecilenGorsel = { dosya: File; onizleme: string };
 
 /**
  * Secilen ekipman: adiyla birlikte ADET tutuluyor.
@@ -19,9 +36,16 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
   const [secimler, setSecimler] = useState<Record<string, Secim>>({});
   const [cevaplar, setCevaplar] = useState<Record<string, string>>({});
   const [arama, setArama] = useState("");
+  /** Ek not: sesli yazdirma da bu alani doldurdugu icin kontrollu tutuluyor. */
+  const [not, setNot] = useState("");
+  const [gorseller, setGorseller] = useState<SecilenGorsel[]>([]);
+  const [gorselDurum, setGorselDurum] = useState<{ tip: "bilgi" | "uyari"; metin: string } | null>(
+    null
+  );
+  const [gorselCalisiyor, setGorselCalisiyor] = useState(false);
   // "sent" artik referans numarasini da tasiyor; musteri elinde bir takip
   // numarasiyla ayrilsin diye.
-  const [sent, setSent] = useState<{ referans: string } | null>(null);
+  const [sent, setSent] = useState<{ referans: string; gorselUyari: boolean } | null>(null);
   const [hata, setHata] = useState<string | null>(null);
   /**
    * Sunucuya ulasilamadiginda formun icerigi burada tutulur; musteriye
@@ -53,8 +77,120 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
         : []),
     ];
     if (p.not) satirlar.push("", `Not: ${p.not}`);
+    // Fotograflar bu kanaldan otomatik gidemez; musteri onlari kendi
+    // uygulamasindan ekleyecek. Soylenmezse ekledigini saniyor.
+    if (gorseller.length) {
+      satirlar.push("", `(${gorseller.length} fotoğraf seçilmişti — mesaja ekleyebilirsiniz.)`);
+    }
     return satirlar.join("\n");
   }
+
+  /**
+   * Secilen fotograflar: tarayicida kucultulup JPEG'e ceviriliyor.
+   *
+   * ⚠️ Neden JPEG: bu dosyalar e-posta EKI olarak gidiyor, sitede
+   * gosterilmiyor. WebP daha kucuk ama acamayan posta istemcisi hala var.
+   */
+  async function gorselSecildi(e: React.ChangeEvent<HTMLInputElement>) {
+    const alan = e.currentTarget;
+    const secilenler = Array.from(alan.files || []);
+    if (!secilenler.length) return;
+    /**
+     * Alan HEMEN bosaltiliyor — kucultme beklenmeden.
+     *
+     * Iki isi birden yapiyor:
+     *  1) ayni dosya ikinci kez secilebilsin (degeri degismezse `change`
+     *     tetiklenmez),
+     *  2) ⚠️ olay ayni secim icin iki kez gelirse ikinci calisma bos listeyi
+     *     gorup cikar. Temizlik sona birakildiginda (olculdu) fotograflarin
+     *     kucultulmesi surerken gelen ikinci olay ayni dosyalari BIR DAHA
+     *     ekliyordu.
+     */
+    alan.value = "";
+
+    setGorselCalisiyor(true);
+    setGorselDurum({ tip: "bilgi", metin: "Fotoğraflar hazırlanıyor…" });
+
+    const eklenecek: SecilenGorsel[] = [];
+    const atlanan: string[] = [];
+    let toplam = gorseller.reduce((n, g) => n + g.dosya.size, 0);
+    let yer = EN_FAZLA_GORSEL - gorseller.length;
+
+    for (const ham of secilenler) {
+      if (yer <= 0) {
+        atlanan.push(`${ham.name} (en fazla ${EN_FAZLA_GORSEL} fotoğraf)`);
+        continue;
+      }
+      if (!ham.type.startsWith("image/")) {
+        atlanan.push(`${ham.name} (yalnızca fotoğraf eklenebilir)`);
+        continue;
+      }
+
+      let dosya = ham;
+      try {
+        const kucuk = await kucult(ham, { bicim: "image/jpeg", hedefBoyut: 700 * 1024 });
+        if (kucuk && kucuk.size < ham.size) dosya = kucuk;
+      } catch {
+        // Tarayici cozemedi (bozuk dosya, HEIC...). Orijinali denenir.
+      }
+
+      if (dosya.size > TEK_GORSEL_SINIRI) {
+        atlanan.push(`${ham.name} (${boyutYaz(ham.size)} — çok büyük)`);
+        continue;
+      }
+      if (toplam + dosya.size > TOPLAM_GORSEL_SINIRI) {
+        atlanan.push(`${ham.name} (toplam boyut sınırı)`);
+        continue;
+      }
+
+      toplam += dosya.size;
+      yer--;
+      eklenecek.push({ dosya, onizleme: URL.createObjectURL(dosya) });
+    }
+
+    if (eklenecek.length) setGorseller((g) => [...g, ...eklenecek]);
+
+    setGorselDurum(
+      atlanan.length
+        ? { tip: "uyari", metin: `Eklenemedi: ${atlanan.join(", ")}.` }
+        : eklenecek.length
+          ? {
+              tip: "bilgi",
+              metin: `${eklenecek.length} fotoğraf eklendi · toplam ${boyutYaz(toplam)}`,
+            }
+          : null
+    );
+    setGorselCalisiyor(false);
+  }
+
+  function gorselKaldir(sira: number) {
+    setGorseller((g) => {
+      const cikan = g[sira];
+      if (cikan) URL.revokeObjectURL(cikan.onizleme);
+      return g.filter((_, i) => i !== sira);
+    });
+    setGorselDurum(null);
+  }
+
+  /** Onizleme adresleri tarayici belleginde durur; sayfadan ayrilirken birakiliyor. */
+  useEffect(() => {
+    return () => {
+      for (const g of gorseller) URL.revokeObjectURL(g.onizleme);
+    };
+    // Yalnizca sokulup cikarilirken calissin; her degisimde iptal etmemeli.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * Sesli yazdirmadan gelen cumleyi notun SONUNA ekler.
+   *
+   * Islevsel guncelleme sart: tanima olayi eski bir render'in kapanisindan
+   * geliyor; `not` degiskenine dogrudan bakilirsa arka arkaya taninan cumleler
+   * birbirinin uzerine yazilir.
+   */
+  const sesliEkle = useCallback((parca: string) => {
+    setNot((eski) => (eski && !/\s$/.test(eski) ? `${eski} ${parca}` : `${eski}${parca}`));
+  }, []);
 
   const secilenler = useMemo(() => Object.values(secimler), [secimler]);
 
@@ -123,7 +259,7 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
       tel: fd.get("tel"),
       eposta: fd.get("eposta"),
       bolge: fd.get("bolge"),
-      not: fd.get("not"),
+      not,
       ekipmanlar: secilenler.map((s) => (s.adet > 1 ? `${s.ad} × ${s.adet}` : s.ad)),
       bilgiler: acikSorular
         .map(({ ekipman, soru }) => ({
@@ -139,18 +275,38 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
       // ⚠️ Onceki hali yanitin BASARILI olup olmadigina hic bakmiyordu:
       // sunucu 400/500 donse bile "Talebiniz alindi" yaziyordu ve musteri
       // hicbir sey iletilmedigini bilmiyordu.
-      const res = await fetch("/api/teklif", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      //
+      // Fotograf varsa istek `multipart/form-data`; yoksa eskisi gibi JSON.
+      // Sunucu iki bicimi de kabul ediyor.
+      let govde: BodyInit;
+      let basliklar: HeadersInit | undefined;
+      if (gorseller.length) {
+        const cok = new FormData();
+        cok.append("veri", JSON.stringify(payload));
+        for (const g of gorseller) cok.append("gorsel", g.dosya, g.dosya.name);
+        govde = cok;
+      } else {
+        govde = JSON.stringify(payload);
+        basliklar = { "Content-Type": "application/json" };
+      }
+
+      const res = await fetch("/api/teklif", { method: "POST", body: govde, headers: basliklar });
       const veri = await res.json().catch(() => null);
       if (!res.ok) {
         setHata(veri?.error || "Talebiniz gönderilemedi.");
         setYedek(talepMetni(payload));
         return;
       }
-      setSent({ referans: veri?.referans || "" });
+      /**
+       * ⚠️ Fotograflar YALNIZCA bildirim e-postasiyla gidiyor. Kayit basarili
+       * olsa bile e-posta dusmusse talep panelde gorunur ama fotograflar
+       * kaybolur. Musteriye bunu soyleyip WhatsApp secenegi veriyoruz;
+       * "alindi" deyip susmak, ekledigi fotografin ulastigini sandirir.
+       */
+      setSent({
+        referans: veri?.referans || "",
+        gorselUyari: gorseller.length > 0 && veri?.bildirim === false,
+      });
     } catch {
       setHata("Bağlantı kurulamadı.");
       setYedek(talepMetni(payload));
@@ -298,8 +454,95 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
             <input name="bolge" placeholder="İstanbul / Beylikdüzü" className="w-full rounded-lg border border-line px-3.5 py-3 focus:border-blue focus:ring-4 focus:ring-blue-soft" />
           </div>
           <div className="col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold">Ek not</label>
-            <textarea name="not" rows={3} placeholder="Ekipman adedi, aciliyet vb." className="w-full rounded-lg border border-line px-3.5 py-3 focus:border-blue focus:ring-4 focus:ring-blue-soft" />
+            <label htmlFor="teklif-not" className="mb-1.5 block text-sm font-semibold">
+              Ek not
+            </label>
+            <textarea
+              id="teklif-not"
+              name="not"
+              rows={3}
+              value={not}
+              onChange={(ev) => setNot(ev.target.value)}
+              placeholder="Ekipman adedi, aciliyet vb."
+              className="w-full rounded-lg border border-line px-3.5 py-3 focus:border-blue focus:ring-4 focus:ring-blue-soft"
+            />
+
+            {/* Sesli yazdirma: konusulan metin yukaridaki alana yaziliyor.
+                Desteklemeyen tarayicida (Firefox) bilesen hic cizilmiyor. */}
+            <SesliYazma onMetin={sesliEkle} hedefId="teklif-not" />
+
+            {/* Fotograf ekleme — "sunu tarif edemiyorum, gostereyim" hali.
+                Telefonda `accept="image/*"` kamera secenegini de aciyor. */}
+            <div className="mt-3 rounded-xl border border-dashed border-line bg-bgsoft/60 p-3">
+              <label
+                htmlFor="teklif-gorsel"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-semibold text-navy transition hover:border-blue hover:text-blue"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <circle cx="9" cy="10" r="1.6" />
+                  <path d="m4 17 5-4 4 3 3-2 4 3" strokeLinejoin="round" />
+                </svg>
+                Fotoğraf ekle
+              </label>
+              <input
+                id="teklif-gorsel"
+                type="file"
+                accept="image/*"
+                multiple
+                className="sr-only"
+                onChange={gorselSecildi}
+                disabled={gorselCalisiyor || gorseller.length >= EN_FAZLA_GORSEL}
+              />
+              <span className="ml-2 text-xs text-muted">
+                Etiket, plaka, arıza… en fazla {EN_FAZLA_GORSEL} fotoğraf.
+              </span>
+
+              {gorseller.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {gorseller.map((g, i) => (
+                    <li key={`${g.dosya.name}-${i}`} className="relative">
+                      {/* next/image bu adresleri (blob:) isleyemez; olcusu de
+                          bilinmiyor. Basit <img> dogru arac. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={g.onizleme}
+                        alt={`Eklenen fotoğraf ${i + 1}`}
+                        className="h-20 w-20 rounded-lg border border-line object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => gorselKaldir(i)}
+                        aria-label={`${i + 1}. fotoğrafı kaldır`}
+                        className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-white text-sm font-bold text-navy shadow-sm"
+                      >
+                        ×
+                      </button>
+                      <span className="mt-0.5 block text-center text-[10px] text-muted">
+                        {boyutYaz(g.dosya.size)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {gorselDurum && (
+                <p
+                  className={`mt-2 text-xs ${
+                    gorselDurum.tip === "uyari" ? "text-amber-800" : "text-muted"
+                  }`}
+                >
+                  {gorselDurum.metin}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Canli ozet: musteri gondermeden once tam olarak ne ilettigini
@@ -442,6 +685,25 @@ export default function TeklifForm({ sorular = {} }: { sorular?: Record<string, 
               Ekibimiz kapsam ve fiyat için en kısa sürede size dönüş yapacak. Acil durumlar için{" "}
               <a href="tel:+902128725204" className="font-bold underline">0212 872 52 04</a>.
             </span>
+            {/* Talep kaydedildi ama bildirim e-postasi gitmedi: fotograflar
+                yalnizca o e-postanin ekinde tasindigi icin ulasmadi. */}
+            {sent.gorselUyari && (
+              <span className="mt-2 block rounded-lg border border-amber-300 bg-amber-50 p-2.5 text-amber-900">
+                Eklediğiniz fotoğraflar teknik bir sorun nedeniyle iletilemedi. Talebiniz kayıtlı;
+                fotoğrafları{" "}
+                <a
+                  href={`https://wa.me/${KURUM.whatsappE164}?text=${encodeURIComponent(
+                    `Teklif talebi ${sent.referans} — fotoğraflar`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline"
+                >
+                  WhatsApp
+                </a>{" "}
+                ile gönderebilirsiniz.
+              </span>
+            )}
           </div>
         )}
       </div>

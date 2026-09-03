@@ -1,9 +1,14 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import { boyutYaz, kucult } from "@/lib/gorsel-kucult";
 
 /**
  * Gorsel secme alani — dosyayi TARAYICIDA kucultup gonderir.
+ *
+ * ⚠️ Kucultme kodu artik `lib/gorsel-kucult.ts` icinde; teklif formundaki
+ * fotograf ekleme alani da ayni kodu kullaniyor. Nedeni ve kademeleri orada
+ * yaziyor. Ozeti:
  *
  * ⚠️ NEDEN VAR: 2026-08-31'de "hero slaytini adminde degistirdim ama degismiyor"
  * sikayeti geldi. Sebep panelde ya da veritabaninda degildi: Next.js'te bir
@@ -29,61 +34,8 @@ import { useRef, useState, type ReactNode } from "react";
  * hicbir durumda yuklemeyi engellemiyor, yalnizca kolaylastiriyor.
  */
 
-/** Kucultme hedefi: sitede kullanilan en genis gorsel alani ~1600 px. */
-const HEDEF_GENISLIK = 1600;
-/** Bu boyutun altina inildiginde daha fazla kalite feda edilmiyor. */
-const HEDEF_BOYUT = 900 * 1024;
 /** Sunucu tarafindaki sinir (bkz. app/admin/actions.ts YUKLEME_SINIRI). */
 const SUNUCU_SINIRI = 6 * 1024 * 1024;
-
-function boyutYaz(b: number): string {
-  return b >= 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.round(b / 1024)} KB`;
-}
-
-/**
- * Gorseli olcekleyip WebP'ye cevirir. Cevrilemiyorsa null doner.
- *
- * Kademeli deneme: once 1600 px / 0.82 kalite. Sonuc hala buyukse daha dar ve
- * daha dusuk kaliteyle tekrarlaniyor — cunku asil amac dosyayi istek govdesine
- * sigdirmak; son kademede sonuc ne cikarsa kabul ediliyor.
- */
-async function kucult(dosya: File): Promise<File | null> {
-  if (!dosya.type.startsWith("image/")) return null;
-  // SVG vektorel: canvas'a cizmek onu buyutur, kucultmez.
-  if (dosya.type === "image/svg+xml") return null;
-  if (typeof createImageBitmap !== "function") return null;
-
-  const kare = await createImageBitmap(dosya);
-  try {
-    const kademeler: [number, number][] = [
-      [HEDEF_GENISLIK, 0.82],
-      [1200, 0.75],
-      [900, 0.7],
-    ];
-    for (const [genislik, kalite] of kademeler) {
-      const olcek = Math.min(1, genislik / kare.width);
-      const tuval = document.createElement("canvas");
-      tuval.width = Math.max(1, Math.round(kare.width * olcek));
-      tuval.height = Math.max(1, Math.round(kare.height * olcek));
-      const ctx = tuval.getContext("2d");
-      if (!ctx) return null;
-      ctx.drawImage(kare, 0, 0, tuval.width, tuval.height);
-
-      const blob = await new Promise<Blob | null>((coz) =>
-        tuval.toBlob(coz, "image/webp", kalite)
-      );
-      // toBlob WebP'yi desteklemiyorsa null doner; dosya oldugu gibi gider.
-      if (!blob) return null;
-      if (blob.size <= HEDEF_BOYUT || genislik === 900) {
-        const ad = dosya.name.replace(/\.[^.]+$/, "") + ".webp";
-        return new File([blob], ad, { type: "image/webp" });
-      }
-    }
-    return null;
-  } finally {
-    kare.close();
-  }
-}
 
 type Props = {
   /** Form alan adi — sunucu eylemi dosyayi bu adla okuyor. */
